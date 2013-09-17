@@ -27,6 +27,7 @@ struct movableObject{
 	int width;
 	int height;
 };
+//createsa set of variables designed to fire a bullet and reload it
 struct BulletStruct{
 	vector2 position;
 	vector2 speed;
@@ -49,26 +50,12 @@ const int speed = 2;
 //screen size
 const int screenX = 1280;
 const int screenY = 780;
-//player variables
-const int playerX = 100;
-const int playerW = 20;
-const int playerH = 120;
-//player two variables
-const int player2X = 1200;
-const int player2W = 20;
-const int player2H = 120;
-//ball size
-const int ballW = 64;
-const int ballH = 92;
 //Player two paddle ai timer
 const int maxAiEndTime = 10000;
 int currentAiTime = 1000;
 //Mode variables
-bool twoPlayerMode = true;
-bool mouseMode = false;
-//Determine if the bullet is alive or not
-bool bulletOut = false;
-bool bulletOutTwo = false;
+bool twoPlayerMode = false;
+bool mouseMode = true;
 //Disable the paddles
 bool disablePOne = false;
 int disableTimerOne = 500;
@@ -98,9 +85,9 @@ stableObject brick2 = {230,50,-1,52,52,true,8000};
 stableObject brick3 = {260,50,-1,52,52,true,8000};
 BulletStruct bullet = {-5, -5, 1, 0, -1, 20, 20,false};
 BulletStruct bulletTwo = {-5, -5, 1, 0, -1, 20, 20,false};
-movableObject player1 = {playerX, 100, 0, 0, -1 , playerW, playerH};
-movableObject player2 = {player2X, 100, 0, 0, -1, player2W, player2H};
-movableObject ball = {500, 500, 1,1, -1, ballW, ballH};
+movableObject player1 = {100, 100, 0, 0, -1 , 20, 120};
+movableObject player2 = {1200, 100, 0, 0, -1, 20, 120};
+movableObject ball = {500, 500, 1,1, -1, 64, 92};
 //Vector math functions
 vector2 vectorSubtract(vector2 &v, float s){
 	vector2 result = {v.x - s, v.y - s};
@@ -188,6 +175,14 @@ void fakeAI(movableObject &player, movableObject& ball){
 	}
 	else
 	{
+		if (!bulletTwo.out)
+		{
+			std::cout << "Fire";
+			bulletTwo.out = true;
+			bulletTwo.speed.x = -1;
+			bulletTwo.position.x = player.position.x;
+			bulletTwo.position.y = player.position.y;
+		}
 		if (player.position.y < ball.position.y && player.position.y + speed > 0)
 			player.position.y -= speed/2;
 		else if (player.position.y > ball.position.y && player.position.y + speed < 780)
@@ -412,7 +407,7 @@ void updateMouseMode(movableObject &player)
 		player.position.y = (float)mouseY;// - (player.height/2);
 }
 //drags the player into the black hole or repels him
-void dragPlayer(movableObject &ball, stableObject& hole)
+void dragBall(movableObject &ball, stableObject& hole)
 {
 	if (ball.position.x >= (screenX/2)-100 && ball.position.x <= (screenX/2)+100 && ball.position.y >= (screenY/2)-100 && ball.position.y <= (screenY/2)+100 )
 	{
@@ -426,6 +421,23 @@ void dragPlayer(movableObject &ball, stableObject& hole)
 		{
 			ball.position.x = (float)300+(rand()%600);
 			ball.position.y = (float)200+(rand()%400);
+		}
+	}
+}
+void dragBullet(BulletStruct &bullets, stableObject& hole)
+{
+	if (bullets.position.x >= (screenX/2)-100 && bullets.position.x <= (screenX/2)+100 && bullets.position.y >= (screenY/2)-100 && bullets.position.y <= (screenY/2)+100 )
+	{
+		vector2 movement = {0,0};
+		movement.x = hole.position.x / bullets.position.x;
+		//movement.x /= 1.5;
+		movement.y = hole.position.y / bullets.position.y;
+		//movement.y /= 1.5;
+		bullets.position = vectorAdd(bullets.position,movement);
+		if (bullets.position.x >= (screenX/2)-10 && bullets.position.x <= (screenX/2)+10 && bullets.position.y >= (screenY/2)-10 && bullets.position.y <= (screenY/2)+10 )
+		{
+			bullets.position.x = (float)300+(rand()%600);
+			bullets.position.y = (float)200+(rand()%400);
 		}
 	}
 }
@@ -452,9 +464,9 @@ void loadGame() {
 	brick.sprite = CreateSprite( "./images/brick.png", 52, 52, true );
 	brick2.sprite = CreateSprite( "./images/brick.png", 52, 52, true );
 	brick3.sprite = CreateSprite( "./images/brick.png", 52, 52, true );
-	player1.sprite = CreateSprite( "./images/cat1.png", playerW, playerH, true );
-	player2.sprite = CreateSprite( "./images/cat2.png", player2W, player2H, true );
-	ball.sprite = CreateSprite( "./images/icecream.png", ballW, ballH, true );
+	player1.sprite = CreateSprite( "./images/cat1.png", 20, 120, true );
+	player2.sprite = CreateSprite( "./images/cat2.png", 20, 120, true );
+	ball.sprite = CreateSprite( "./images/icecream.png", 64, 92, true );
 	brick.position.x =  (float)(300+(rand()%600));
 	brick2.position.x =  (float)(300+(rand()%600));
 	brick3.position.x =  (float)(300+(rand()%600));
@@ -525,12 +537,14 @@ void updateGame() {
 	}
 	else
 	{
-		dragPlayer(ball,hole);
+		dragBall(ball,hole);
+		dragBullet(bullet,hole);
+		dragBullet(bulletTwo,hole);
 		updateBallPosition(ball);
 		updatePlayer(player1, ball);
 		updateBullet(bullet,player1);
 		updateBullet2(bulletTwo,player2);
-		if (mouseMode)
+		if (mouseMode && !disablePOne)
 			updateMouseMode(player1);
 		updateBricks();
 
