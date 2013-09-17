@@ -27,6 +27,14 @@ struct movableObject{
 	int width;
 	int height;
 };
+struct BulletStruct{
+	vector2 position;
+	vector2 speed;
+	int sprite;
+	int width;
+	int height;
+	bool out;
+};
 //creates a set of varaibles assigned to a object that does not move
 struct stableObject{
 	vector2 position;
@@ -88,8 +96,8 @@ stableObject scoreIconE3 = {screenX - 260,50,-1,52,52,true,8000};
 stableObject brick = {200,50,-1,52,52,true,8000};
 stableObject brick2 = {230,50,-1,52,52,true,8000};
 stableObject brick3 = {260,50,-1,52,52,true,8000};
-movableObject bullet = {-5, -5, 1, 0, -1, 20, 20};
-movableObject bulletTwo = {-5, -5, 1, 0, -1, 20, 20};
+BulletStruct bullet = {-5, -5, 1, 0, -1, 20, 20,false};
+BulletStruct bulletTwo = {-5, -5, 1, 0, -1, 20, 20,false};
 movableObject player1 = {playerX, 100, 0, 0, -1 , playerW, playerH};
 movableObject player2 = {player2X, 100, 0, 0, -1, player2W, player2H};
 movableObject ball = {500, 500, 1,1, -1, ballW, ballH};
@@ -232,25 +240,39 @@ void detectBrickCollision(stableObject &brick, movableObject& ball, movableObjec
 		ball.speed.x *= -1;
 		ball.speed.y *= -1;
 	}
+	if(bullet.position.x >= brick.position.x - (brick.width/2) && bullet.position.x <= brick.position.x + (brick.width/2)
+		&& bullet.position.y >= brick.position.y - (brick.width/2)&& bullet.position.y <= brick.position.y + (brick.height/2)
+			&& brick.alive)
+	{
+		bullet.out = false;
+		brick.alive = false;
+	}
+	if(bulletTwo.position.x >= brick.position.x - (brick.width/2) && bulletTwo.position.x <= brick.position.x + (brick.width/2)
+		&& bulletTwo.position.y >= brick.position.y - (brick.width/2)&& bulletTwo.position.y <= brick.position.y + (brick.height/2)
+			&& brick.alive)
+	{
+		bulletTwo.out = false;
+		brick.alive = false;
+	}
 }
-void detectBulletCollision( movableObject& bullets, movableObject& player)
+void detectBulletCollision( BulletStruct& bullets, movableObject& player)
 {
 	if(player.position.x >= bullets.position.x - (bullets.width/2) && player.position.x <= bullets.position.x + (bullets.width/2)
 		&& player.position.y >= bullets.position.y - (bullets.width/2)&& player.position.y <= bullets.position.y + (bullets.height/2))
 	{
 		std::cout << "colide 1 function";
 		disablePTwo = true;
-		bulletOut = false;
+		bullet.out = false;
 	}
 }
-void detectBulletCollision2( movableObject& bullets, movableObject& player)
+void detectBulletCollision2( BulletStruct& bullets, movableObject& player)
 {
 	if(player.position.x >= bullets.position.x - (bullets.width/2) && player.position.x <= bullets.position.x + (bullets.width/2)
 		&& player.position.y >= bullets.position.y - (bullets.width/2)&& player.position.y <= bullets.position.y + (bullets.height/2))
 	{
 		std::cout << "colide 2 function";
 		disablePOne = true;
-		bulletOutTwo = false;
+		bulletTwo.out = false;
 	}
 }
 //update everything
@@ -279,18 +301,18 @@ void updatePlayer(movableObject &player, movableObject& ball){
 	}
 	detectPaddleCollision(player,ball);
 }
-void updateBullet( movableObject &bullets,movableObject &paddle)
+void updateBullet( BulletStruct &bullets,movableObject &paddle)
 {
-	if (!bulletOut)
+	if (!bullet.out)
 	{
 		bullets.speed.x = 0;
 		bullets.position.x = -100;
 		bullets.position.y = -100;
 	}
-	if (IsKeyDown(GLFW_KEY_SPACE) && !bulletOut)
+	if (IsKeyDown(GLFW_KEY_SPACE) && !bullet.out)
 	{
 		std::cout << "Fire";
-		bulletOut = true;
+		bullet.out= true;
 		bullets.speed.x = 1;
 		bullets.position.x = paddle.position.x;
 		bullets.position.y = paddle.position.y;
@@ -298,20 +320,20 @@ void updateBullet( movableObject &bullets,movableObject &paddle)
 	bullets.position = vectorAdd(bullets.position, bullets.speed);
 	MoveSprite(bullets.sprite, (int)bullets.position.x, (int)bullets.position.y);
 	if (bullets.position.x >= screenX)
-		bulletOut = false;
+		bullet.out= false;
 }
-void updateBullet2( movableObject &bullets,movableObject &paddle)
+void updateBullet2( BulletStruct &bullets,movableObject &paddle)
 {
-	if (!bulletOutTwo)
+	if (!bulletTwo.out)
 	{
 		bullets.speed.x = 0;
 		bullets.position.x = -100;
 		bullets.position.y = -100;
 	}
-	if (IsKeyDown(GLFW_KEY_ENTER) && !bulletOutTwo)
+	if (IsKeyDown(GLFW_KEY_ENTER) && !bulletTwo.out)
 	{
 		std::cout << "Fire";
-		bulletOutTwo = true;
+		bulletTwo.out = true;
 		bullets.speed.x = -1;
 		bullets.position.x = paddle.position.x;
 		bullets.position.y = paddle.position.y;
@@ -319,7 +341,7 @@ void updateBullet2( movableObject &bullets,movableObject &paddle)
 	bullets.position = vectorAdd(bullets.position, bullets.speed);
 	MoveSprite(bullets.sprite, (int)bullets.position.x, (int)bullets.position.y);
 	if (bullets.position.x <= 0)
-		bulletOutTwo = false;
+		bulletTwo.out = false;
 }
 void updatePlayer2(movableObject &player, movableObject& ball){
 	float speed = sqrt(ball.speed.x*ball.speed.x + ball.speed.y*ball.speed.y);
