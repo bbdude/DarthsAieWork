@@ -44,11 +44,11 @@ const int screenY = 780;
 //player variables
 const int playerX = 100;
 const int playerW = 20;
-const int playerH = 144;
+const int playerH = 120;
 //player two variables
 const int player2X = 1200;
 const int player2W = 20;
-const int player2H = 128;
+const int player2H = 120;
 //ball size
 const int ballW = 64;
 const int ballH = 92;
@@ -56,8 +56,16 @@ const int ballH = 92;
 const int maxAiEndTime = 10000;
 int currentAiTime = 1000;
 //Mode variables
-bool twoPlayerMode = false;
-bool mouseMode = true;
+bool twoPlayerMode = true;
+bool mouseMode = false;
+//Determine if the bullet is alive or not
+bool bulletOut = false;
+bool bulletOutTwo = false;
+//Disable the paddles
+bool disablePOne = false;
+int disableTimerOne = 500;
+bool disablePTwo = false;
+int disableTimerTwo = 500;
 //Player Lives
 int lives = 4;
 int livesE= 3;
@@ -80,6 +88,8 @@ stableObject scoreIconE3 = {screenX - 260,50,-1,52,52,true,8000};
 stableObject brick = {200,50,-1,52,52,true,8000};
 stableObject brick2 = {230,50,-1,52,52,true,8000};
 stableObject brick3 = {260,50,-1,52,52,true,8000};
+movableObject bullet = {-5, -5, 1, 0, -1, 20, 20};
+movableObject bulletTwo = {-5, -5, 1, 0, -1, 20, 20};
 movableObject player1 = {playerX, 100, 0, 0, -1 , playerW, playerH};
 movableObject player2 = {player2X, 100, 0, 0, -1, player2W, player2H};
 movableObject ball = {500, 500, 1,1, -1, ballW, ballH};
@@ -112,6 +122,18 @@ vector2 getNormal(vector2 &v){
 float getMagnitude(vector2 &v){
 	return sqrt(v.x*v.x + v.y*v.y);
 }
+//Fill bullet array
+/*
+void fillBulletStruct()
+{
+	int i = 0;
+	while(i != 2)
+	{
+		bullet[i] = {-5, -5, 1, 0, -1, 20, 20};
+		i++;
+	}
+}
+*/
 //Detect where the ball is. (score and collision)
 bool ballOnScreen(movableObject& obj){
 	if(obj.position.x > screenX) {
@@ -140,7 +162,8 @@ void updateBallPosition(movableObject &obj) {
 void fakeAI(movableObject &player, movableObject& ball){
 	float speed = sqrt(ball.speed.x*ball.speed.x + ball.speed.y*ball.speed.y);
 	//player.position.y = ball.position.y;
-
+	if (!disablePTwo)
+	{
 	currentAiTime -= rand() % 10;
 	if (currentAiTime <= 0)
 		currentAiTime = maxAiEndTime;
@@ -162,30 +185,40 @@ void fakeAI(movableObject &player, movableObject& ball){
 		else if (player.position.y > ball.position.y && player.position.y + speed < 780)
 			player.position.y += speed/2;
 	}
+	}
+	else
+	{
+		disableTimerTwo--;
+		if (disableTimerTwo <= 0)
+		{
+			disableTimerTwo = 500;
+			disablePTwo = false;
+		}
+	}
 	//else
 		//player.position.y--;
 }
 //Detect various collisions
 void detectPaddleCollision(movableObject &player, movableObject& ball){
-	if (ball.position.x >= player.position.x - (player.width/2) && ball.position.x <= player.position.x + (player.width/2))
-	{
-		if (ball.position.y <= player.position.y - (player.width/2) + 5)
-		{
-			ball.speed.y *= -1;
-			updateBallPosition(ball);
-		}
-		if (ball.position.y >= player.position.y + (player.width/2) - 5)
-		{
-			ball.speed.y *= -1;
-			updateBallPosition(ball);
-		}
-	}
+	
 	if(ball.position.x >= player.position.x - (player.width/2) && ball.position.x <= player.position.x + (player.width/2)
 		&& ball.position.y >= player.position.y - (player.width/2)&& ball.position.y <= player.position.y + (player.height/2))
 	{
 		ball.speed.x *= -1;
 		updateBallPosition(ball);
 		//ball.speed.y *= -1;
+	}
+	else if (ball.position.x >= player.position.x - (player.width/2) && ball.position.x <= player.position.x + (player.width/2) && ball.position.y <= player.position.y - (player.width/2) + 5 && ball.position.y >= player.position.y - (player.width/2) - 5)
+	{
+		ball.speed.y *= -1;
+		ball.speed.x *= -1;
+		updateBallPosition(ball);
+	}
+	else if (ball.position.x >= player.position.x - (player.width/2) && ball.position.x <= player.position.x + (player.width/2) && ball.position.y >= player.position.y + (player.width/2) - 5 && ball.position.y <= player.position.y + (player.width/2) + 5)
+	{
+		ball.speed.y *= -1;
+		ball.speed.x *= -1;
+		updateBallPosition(ball);
 	}
 }
 void detectBrickCollision(stableObject &brick, movableObject& ball, movableObject& player1, movableObject& player2){
@@ -200,10 +233,31 @@ void detectBrickCollision(stableObject &brick, movableObject& ball, movableObjec
 		ball.speed.y *= -1;
 	}
 }
+void detectBulletCollision( movableObject& bullets, movableObject& player)
+{
+	if(player.position.x >= bullets.position.x - (bullets.width/2) && player.position.x <= bullets.position.x + (bullets.width/2)
+		&& player.position.y >= bullets.position.y - (bullets.width/2)&& player.position.y <= bullets.position.y + (bullets.height/2))
+	{
+		std::cout << "colide 1 function";
+		disablePTwo = true;
+		bulletOut = false;
+	}
+}
+void detectBulletCollision2( movableObject& bullets, movableObject& player)
+{
+	if(player.position.x >= bullets.position.x - (bullets.width/2) && player.position.x <= bullets.position.x + (bullets.width/2)
+		&& player.position.y >= bullets.position.y - (bullets.width/2)&& player.position.y <= bullets.position.y + (bullets.height/2))
+	{
+		std::cout << "colide 2 function";
+		disablePOne = true;
+		bulletOutTwo = false;
+	}
+}
 //update everything
 void updatePlayer(movableObject &player, movableObject& ball){
 	float speed = sqrt(ball.speed.x*ball.speed.x + ball.speed.y*ball.speed.y);
-
+	if (!disablePOne)
+	{
 	if (IsKeyDown('W') && player.position.y - (player.height/2) - speed >= 0)
 	{
 		player.position.y -= speed;
@@ -212,11 +266,65 @@ void updatePlayer(movableObject &player, movableObject& ball){
 	{
 		player.position.y += speed;
 	}
+	}
+	else
+	{
+		disableTimerOne--;
+		if (disableTimerOne <= 0)
+		{
+			std::cout <<"No more";
+			disableTimerOne = 500;
+			disablePOne = false;
+		}
+	}
 	detectPaddleCollision(player,ball);
+}
+void updateBullet( movableObject &bullets,movableObject &paddle)
+{
+	if (!bulletOut)
+	{
+		bullets.speed.x = 0;
+		bullets.position.x = -100;
+		bullets.position.y = -100;
+	}
+	if (IsKeyDown(GLFW_KEY_SPACE) && !bulletOut)
+	{
+		std::cout << "Fire";
+		bulletOut = true;
+		bullets.speed.x = 1;
+		bullets.position.x = paddle.position.x;
+		bullets.position.y = paddle.position.y;
+	}
+	bullets.position = vectorAdd(bullets.position, bullets.speed);
+	MoveSprite(bullets.sprite, (int)bullets.position.x, (int)bullets.position.y);
+	if (bullets.position.x >= screenX)
+		bulletOut = false;
+}
+void updateBullet2( movableObject &bullets,movableObject &paddle)
+{
+	if (!bulletOutTwo)
+	{
+		bullets.speed.x = 0;
+		bullets.position.x = -100;
+		bullets.position.y = -100;
+	}
+	if (IsKeyDown(GLFW_KEY_ENTER) && !bulletOutTwo)
+	{
+		std::cout << "Fire";
+		bulletOutTwo = true;
+		bullets.speed.x = -1;
+		bullets.position.x = paddle.position.x;
+		bullets.position.y = paddle.position.y;
+	}
+	bullets.position = vectorAdd(bullets.position, bullets.speed);
+	MoveSprite(bullets.sprite, (int)bullets.position.x, (int)bullets.position.y);
+	if (bullets.position.x <= 0)
+		bulletOutTwo = false;
 }
 void updatePlayer2(movableObject &player, movableObject& ball){
 	float speed = sqrt(ball.speed.x*ball.speed.x + ball.speed.y*ball.speed.y);
-
+	if (!disablePTwo)
+	{
 	if (IsKeyDown('I') && player.position.y - (player.height/2) - speed >= 0)
 	{
 		player.position.y -= speed;
@@ -224,6 +332,16 @@ void updatePlayer2(movableObject &player, movableObject& ball){
 	if (IsKeyDown('K') && player.position.y + (player.height/2) + speed <= screenY)
 	{
 		player.position.y += speed;
+	}
+	}
+	else
+	{
+		disableTimerTwo--;
+		if (disableTimerTwo <= 0)
+		{
+			disableTimerTwo = 500;
+			disablePTwo = false;
+		}
 	}
 	detectPaddleCollision(player,ball);
 }
@@ -292,7 +410,7 @@ void dragPlayer(movableObject &ball, stableObject& hole)
 //loads all the images for the game
 void loadGame() {
 	srand((int)time(0));
-
+	//fillBulletStruct();
 	// Now load some sprites
 	bgImage = CreateSprite( "./images/bg.png", screenX, screenY, true );
 	MoveSprite(bgImage, screenX>>1, screenY>>1);
@@ -301,6 +419,8 @@ void loadGame() {
 	play = CreateSprite( "./images/play.png", 400, 300, true );
 	win = CreateSprite( "./images/win.png", 400, 300, true );
 	hole.sprite = CreateSprite( "./images/hole.png", 52, 52, true );
+	bullet.sprite = CreateSprite( "./images/cat1.png", bullet.width, bullet.height, true );
+	bulletTwo.sprite = CreateSprite( "./images/cat1.png", bullet.width, bullet.height, true );
 	scoreIcon.sprite = CreateSprite( "./images/cherry.png", 52, 52, true );
 	scoreIcon2.sprite = CreateSprite( "./images/cherry.png", 52, 52, true );
 	scoreIcon3.sprite = CreateSprite( "./images/cherry.png", 52, 52, true );
@@ -339,6 +459,8 @@ void endGame() {
 	DestroySprite(lose);
 	DestroySprite(leave);
 	DestroySprite(play);
+	DestroySprite(bullet.sprite);
+	DestroySprite(bulletTwo.sprite);
 }
 //update the game
 void updateGame() {
@@ -384,6 +506,8 @@ void updateGame() {
 		dragPlayer(ball,hole);
 		updateBallPosition(ball);
 		updatePlayer(player1, ball);
+		updateBullet(bullet,player1);
+		updateBullet2(bulletTwo,player2);
 		if (mouseMode)
 			updateMouseMode(player1);
 		updateBricks();
@@ -394,7 +518,8 @@ void updateGame() {
 			fakeAI(player2, ball);
 
 		detectPaddleCollision(player2,ball);
-
+		detectBulletCollision(bullet,player2);
+		detectBulletCollision2(bulletTwo,player1);
 		ballOnScreen(ball);
 
 		MoveSprite(player1.sprite, (int)player1.position.x, (int)player1.position.y);
@@ -436,6 +561,8 @@ void drawGame() {
 		DrawSprite(hole.sprite);
 		DrawSprite(player1.sprite);
 		DrawSprite(player2.sprite);
+		DrawSprite(bullet.sprite);
+		DrawSprite(bulletTwo.sprite);
 		if (lives == 3)
 			DrawSprite(scoreIcon3.sprite);
 		if (lives >= 2)
