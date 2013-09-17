@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{55aa8c7e-b2d9-4c91-b500-aa973076980e}</UniqueIdentifier>
+      <Extensions>cpp;cxx;c</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{87726ecc-2f99-43d7-bd52-451aee71dd26}</UniqueIdentifier>
+      <Extensions>hpp;h</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+    <None Include="resources\fonts\arial.fnt" />
+    <None Include="resources\shaders\pixel.glsl" />
+    <None Include="resources\shaders\vertex.glsl" />
+    <None Include="resources\images\Arial_00.png" />
+    <None Include="resources\images\arial_0.png" />
+    <None Include="resources\images\bg.png" />
+    <None Include="resources\images\cat1.png" />
+    <None Include="resources\images\cat2.png" />
+    <None Include="resources\images\icecream.png" />
+    <None Include="resources\images\cherry.png" />
+    <None Include="resources\images\lose.png" />
+    <None Include="resources\images\exit.png" />
+    <None Include="resources\images\play.png" />
+    <None Include="resources\images\brick.png" />
+    <None Include="resources\images\cherrye.png" />
+    <None Include="resources\images\hole.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\AIE.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\KeyCodes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
