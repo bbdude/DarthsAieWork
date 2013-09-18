@@ -260,56 +260,70 @@ struct Screen
 	{
 		int distanceX[3] = {0,0,0};
 		int distanceY[3] = {0,0,0};
+		if (mX != x && mXTwo != x && mXThree != x && mY != y && mYTwo != y && mYThree != y)
+			return 0;
 		if (mX == x)
 		{
-			distanceX[0] = x - mX;
 			if (distanceX[0] < 0)
 				distanceX[0] *= -1;
+			distanceX[0] = x - mX;
 		}
 		if (mXTwo == x)
 		{
-			distanceX[1] = x - mX;
 			if (distanceX[1] < 0)
 				distanceX[1] *= -1;
+			distanceX[1] = x - mX;
 		}
 		if (mXThree == x)
 		{
-			distanceX[2] = x - mX;
 			if (distanceX[2] < 0)
 				distanceX[2] *= -1;
+			distanceX[2] = x - mX;
 		}
 		if (mY == y)
 		{
-			distanceY[0] = y - mY;
 			if (distanceY[0] < 0)
 				distanceY[0] *= -1;
+			distanceY[0] = y - mY;
 		}
 		if (mYTwo == y)
 		{
-			distanceY[1] = y - mY;
 			if (distanceY[1] < 0)
 				distanceY[1] *= -1;
+			distanceY[1] = y - mY;
 		}
 		if (mYThree == y)
 		{
-			distanceY[2] = y - mY;
 			if (distanceY[2] < 0)
 				distanceY[2] *= -1;
+			distanceY[2] = y - mY;
 		}
 		distanceX[0] += distanceY[0];
 		distanceX[1] += distanceY[1];
 		distanceX[2] += distanceY[2];
+		if (mH <= 0)
+			distanceX[0] = 0;
+		if (mHTwo <= 0)
+			distanceX[1] = 0;
+		if (mHThree <= 0)
+			distanceX[2] = 0;
+		if (distanceX[0] >= 10 && distanceX[1] >= 10 && distanceX[2] >= 10)
+		{
+			return 4;
+		}
+		//Creates a problem killing enemy 1
 		//If all the values are 0 or a perfect distance from each other choose none of them
-		if (distanceX[0] == distanceX[1] && distanceX[0] == distanceX[2])
-			return 0;
+		//if (distanceX[0] == distanceX[1] && distanceX[0] == distanceX[2])
+		//if (distanceX[0] == 0 && distanceX[1]  == 0 && distanceX[2] == 0)
+			//return 0;
 		//choose the first one if his position distance total is less then 1 && 2
-		else if ( distanceX[0] >= distanceX[1] && distanceX[0] >= distanceX[2] && mH > 0)
+		if ( distanceX[0] <= distanceX[1] && distanceX[0] <= distanceX[2] && mH > 0)
 			return 1;
 		//choose the second one if his position distance total is less then 0 && 2
-		else if ( distanceX[1] >= distanceX[0] && distanceX[1] >= distanceX[2] && mHTwo > 0)
+		else if ( distanceX[1] <= distanceX[0] && distanceX[1] <= distanceX[2] && mHTwo > 0)
 			return 2;
 		//choose the third one if his position distance total is less then 1 && 0
-		else if ( distanceX[2] >= distanceX[1] && distanceX[2] >= distanceX[0] && mHThree > 0)
+		else if ( distanceX[2] <= distanceX[1] && distanceX[2] <= distanceX[0] && mHThree > 0)
 			return 3;
 		else
 			return 0;
@@ -370,7 +384,7 @@ struct Screen
 		for(int i = 0; i <= windowSize; i++)
 		{
 			if (getLine(i).length() > 0){
-				writebl(getLine(i));
+				writel(getLine(i));
 				//cout << getLine(i) << endl;
 			}
 		}
@@ -459,10 +473,20 @@ int _tmain(int argc, _TCHAR* argv[])
 	monsterThree.begin();
 	monster.setX(14);
 	monster.setY(14);
+	monster.setPX(14);
+	monster.setPY(14);
 	monsterTwo.setX(5);
 	monsterTwo.setY(8);
+	monsterTwo.setPX(5);
+	monsterTwo.setPY(8);
 	monsterThree.setX(17);
 	monsterThree.setY(100);
+	monsterThree.setPX(17);
+	monsterThree.setPY(100);
+	player.setX(6);
+	player.setY(7);
+	player.setPX(6);
+	player.setPY(7);
 
 	enum LOC {TEST,TOWN,STATS,FOREST,TAVERN,SHOP,QUIT,SHOPPE};
 	enum MON {POTATO,GOBLIN,JUSTIN,YOURSELF,SELFESTEEM,DRAGON};
