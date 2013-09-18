@@ -137,7 +137,7 @@ void fillBulletStruct()
 */
 //Update ball if its arcing
 void updateBallArc(movableObject &obj) {
-	if (arcingUp && arcStage > 0)
+	if (ball.speed.y < 0)
 	{
 		if (ball.position.x > originalArcX + 90 && arcStage == 2)
 		{
@@ -161,10 +161,8 @@ void updateBallArc(movableObject &obj) {
 		//if (ball.position.y > screenY)
 		//	ball.speed.y *= -1;
 	}
-	else
+	else if (ball.speed.y > 0)
 	{
-		if (arcStage > 0)
-		{
 		if (ball.position.x > originalArcX + 90 && arcStage == 2)
 		{
 			arcStage = 0;
@@ -183,7 +181,6 @@ void updateBallArc(movableObject &obj) {
 		{
 			ball.position.x += .5f;
 			ball.position.y += .9f;
-		}
 		}
 		//if (ball.position.y > screenY)
 		//	ball.speed.y *= -1;
@@ -366,10 +363,6 @@ void updatePlayer(movableObject &player, movableObject& ball){
 	if (IsKeyDown('E') && hitBackTimer > 0)
 	{
 		arcStage = -1;
-		if (ball.speed.y > 0)
-			arcingUp = false;
-		else
-			arcingUp = true;
 		hitBackTimer = 0;
 		ball.speed.x *= 3;
 		ball.speed.y *= 3;
