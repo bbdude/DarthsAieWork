@@ -61,6 +61,12 @@ bool disablePOne = false;
 int disableTimerOne = 500;
 bool disablePTwo = false;
 int disableTimerTwo = 500;
+//Time to hit back variables  + arcing
+int hitBackTimer = 0;
+int coolDown = 0;
+int arcStage = 0; // 0begin arc,1 raise x and y, 2 lower y raise x,3 keep its current angle of trej
+float originalArcX = 1000000;
+bool arcingUp = false;
 //Player Lives
 int lives = 4;
 int livesE= 3;
@@ -129,6 +135,60 @@ void fillBulletStruct()
 	}
 }
 */
+//Update ball if its arcing
+void updateBallArc(movableObject &obj) {
+	if (arcingUp && arcStage > 0)
+	{
+		if (ball.position.x > originalArcX + 90 && arcStage == 2)
+		{
+			arcStage = 0;
+			originalArcX = 10000;
+		}
+		else if (ball.position.x > originalArcX + 30 && arcStage == 1)
+		{
+			arcStage = 2;
+		}
+		if (arcStage == 1 && ball.position.y + 1 < screenY)
+		{
+			ball.position.x += .5f;
+			ball.position.y += .9f;
+		}
+		else if (arcStage == 2 && ball.position.y - 1 < screenY)
+		{
+			ball.position.x += .5f;
+			ball.position.y -= .9f;
+		}
+		//if (ball.position.y > screenY)
+		//	ball.speed.y *= -1;
+	}
+	else
+	{
+		if (arcStage > 0)
+		{
+		if (ball.position.x > originalArcX + 90 && arcStage == 2)
+		{
+			arcStage = 0;
+			originalArcX = 10000;
+		}
+		else if (ball.position.x > originalArcX + 30 && arcStage == 1)
+		{
+			arcStage = 2;
+		}
+		if (arcStage == 1 && ball.position.y - 1 < screenY)
+		{
+			ball.position.x += .5f;
+			ball.position.y -= .9f;
+		}
+		else if (arcStage == 2 && ball.position.y + 1 < screenY)
+		{
+			ball.position.x += .5f;
+			ball.position.y += .9f;
+		}
+		}
+		//if (ball.position.y > screenY)
+		//	ball.speed.y *= -1;
+	}
+}
 //Detect where the ball is. (score and collision)
 bool ballOnScreen(movableObject& obj){
 	if(obj.position.x > screenX) {
@@ -152,6 +212,12 @@ bool ballOnScreen(movableObject& obj){
 //Adds the ball speed to its position
 void updateBallPosition(movableObject &obj) {
 	obj.position = vectorAdd(obj.position, obj.speed);
+	if (arcStage = -1)
+	{
+		arcStage = 1;
+		originalArcX = ball.position.x;
+	}
+	updateBallArc(ball);
 }
 //Tells player 2 where he should be
 void fakeAI(movableObject &player, movableObject& ball){
@@ -202,7 +268,7 @@ void fakeAI(movableObject &player, movableObject& ball){
 		//player.position.y--;
 }
 //Detect various collisions
-void detectPaddleCollision(movableObject &player, movableObject& ball){
+bool detectPaddleCollision(movableObject &player, movableObject& ball){
 	
 	if(ball.position.x >= player.position.x - (player.width/2) && ball.position.x <= player.position.x + (player.width/2)
 		&& ball.position.y >= player.position.y - (player.width/2)&& ball.position.y <= player.position.y + (player.height/2))
@@ -210,19 +276,23 @@ void detectPaddleCollision(movableObject &player, movableObject& ball){
 		ball.speed.x *= -1;
 		updateBallPosition(ball);
 		//ball.speed.y *= -1;
+		return true;
 	}
 	else if (ball.position.x >= player.position.x - (player.width/2) && ball.position.x <= player.position.x + (player.width/2) && ball.position.y <= player.position.y - (player.width/2) + 5 && ball.position.y >= player.position.y - (player.width/2) - 5)
 	{
 		ball.speed.y *= -1;
 		ball.speed.x *= -1;
 		updateBallPosition(ball);
+		return true;
 	}
 	else if (ball.position.x >= player.position.x - (player.width/2) && ball.position.x <= player.position.x + (player.width/2) && ball.position.y >= player.position.y + (player.width/2) - 5 && ball.position.y <= player.position.y + (player.width/2) + 5)
 	{
 		ball.speed.y *= -1;
 		ball.speed.x *= -1;
 		updateBallPosition(ball);
+		return true;
 	}
+	return false;
 }
 void detectBrickCollision(stableObject &brick, movableObject& ball, movableObject& player1, movableObject& player2){
 	if(ball.position.x >= brick.position.x - (brick.width/2) && ball.position.x <= brick.position.x + (brick.width/2)
@@ -273,6 +343,15 @@ void detectBulletCollision2( BulletStruct& bullets, movableObject& player)
 //update everything
 void updatePlayer(movableObject &player, movableObject& ball){
 	float speed = sqrt(ball.speed.x*ball.speed.x + ball.speed.y*ball.speed.y);
+	if (hitBackTimer > 0)
+		hitBackTimer--;
+	if (coolDown > 0)
+		coolDown--;
+	else if ((ball.speed.x == 3 || ball.speed.x == -3) && coolDown <= 0)
+	{
+		ball.speed.x /= 3;
+		ball.speed.y /= 3;
+	}
 	if (!disablePOne)
 	{
 	if (IsKeyDown('W') && player.position.y - (player.height/2) - speed >= 0)
@@ -284,6 +363,19 @@ void updatePlayer(movableObject &player, movableObject& ball){
 		player.position.y += speed;
 	}
 	}
+	if (IsKeyDown('E') && hitBackTimer > 0)
+	{
+		arcStage = -1;
+		if (ball.speed.y > 0)
+			arcingUp = false;
+		else
+			arcingUp = true;
+		hitBackTimer = 0;
+		ball.speed.x *= 3;
+		ball.speed.y *= 3;
+		coolDown = 100;
+		std::cout << "Speed shot";
+	}
 	else
 	{
 		disableTimerOne--;
@@ -294,7 +386,10 @@ void updatePlayer(movableObject &player, movableObject& ball){
 			disablePOne = false;
 		}
 	}
-	detectPaddleCollision(player,ball);
+	if (detectPaddleCollision(player1,ball))
+	{
+		hitBackTimer = 100;
+	}
 }
 void updateBullet( BulletStruct &bullets,movableObject &paddle)
 {
@@ -537,7 +632,7 @@ void updateGame() {
 	}
 	else
 	{
-		dragBall(ball,hole);
+		//dragBall(ball,hole);
 		dragBullet(bullet,hole);
 		dragBullet(bulletTwo,hole);
 		updateBallPosition(ball);
