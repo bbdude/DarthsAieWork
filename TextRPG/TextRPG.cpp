@@ -328,6 +328,95 @@ struct Screen
 		else
 			return 0;
 	}
+	int getCloseMeleeEnemy(int x, int y, int mX,int mY, int mXTwo,int mYTwo, int mXThree, int mYThree, int mH, int mHTwo, int mHThree,int direction)
+	{
+		//1,2,3
+		//4, ,5
+		//6,7,8
+		if (mH <= 0)
+		{
+			mX = -10;
+			mY = -10;
+		}
+		if (mHTwo <= 0)
+		{
+			mXTwo = -10;
+			mYTwo = -10;
+		}
+		if (mHThree <= 0)
+		{
+			mXThree = -10;
+			mYThree = -10;
+		}
+		switch(direction)
+		{
+		case 1:
+			if (mX == x-1 && mY == y-1)
+				return 1;
+			else if (mXTwo == x-1 && mYTwo == y-1)
+				return 2;
+			else if (mXThree == x-1 && mYThree == y-1)
+				return 3;
+			break;
+		case 2:
+			if (mX == x-1 && mY == y)
+				return 1;
+			else if (mXTwo == x-1 && mYTwo == y)
+				return 2;
+			else if (mXThree == x-1 && mYThree == y)
+				return 3;
+			break;
+		case 3:
+			if (mX == x-1 && mY == y+1)
+				return 1;
+			else if (mXTwo == x-1 && mYTwo == y+1)
+				return 2;
+			else if (mXThree == x-1 && mYThree == y+1)
+				return 3;
+			break;
+		case 4:
+			if (mX == x && mY == y-1)
+				return 1;
+			else if (mXTwo == x && mYTwo == y-1)
+				return 2;
+			else if (mXThree == x && mYThree == y-1)
+				return 3;
+			break;
+		case 5:
+			if (mX == x && mY == y+1)
+				return 1;
+			else if (mXTwo == x && mYTwo == y+1)
+				return 2;
+			else if (mXThree == x && mYThree == y+1)
+				return 3;
+			break;
+		case 6:
+			if (mX == x+1 && mY == y-1)
+				return 1;
+			else if (mXTwo == +1 && mYTwo == y-1)
+				return 2;
+			else if (mXThree == x+1 && mYThree == y-1)
+				return 3;
+			break;
+		case 7:
+			if (mX == x+1 && mY == y)
+				return 1;
+			else if (mXTwo == x+1 && mYTwo == y)
+				return 2;
+			else if (mXThree == x+1 && mYThree == y)
+				return 3;
+			break;
+		case 8:
+			if (mX == x+1 && mY == y+1)
+				return 1;
+			else if (mXTwo == x+1 && mYTwo == y+1)
+				return 2;
+			else if (mXThree == x+1 && mYThree == y+1)
+				return 3;
+			break;
+		}
+		return 0;
+	}
 	void setBoarder(int x, int y, int mX,int mY, int mXTwo,int mYTwo, int mXThree, int mYThree, int mH, int mHTwo, int mHThree)
 	{
 		if (x <= 0)
@@ -483,10 +572,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	monsterThree.setY(100);
 	monsterThree.setPX(17);
 	monsterThree.setPY(100);
-	player.setX(6);
-	player.setY(7);
-	player.setPX(6);
-	player.setPY(7);
+	player.setX(2);
+	player.setY(2);
+	player.setPX(2);
+	player.setPY(2);
 
 	enum LOC {TEST,TOWN,STATS,FOREST,TAVERN,SHOP,QUIT,SHOPPE};
 	enum MON {POTATO,GOBLIN,JUSTIN,YOURSELF,SELFESTEEM,DRAGON};
@@ -568,10 +657,10 @@ int _tmain(int argc, _TCHAR* argv[])
 				//drawBar();
 				if (i == 0){
 				writel("|What would you like to do?|");
-				writel("|}}Locations:              |}}Commands:");
-				writel("|}[p]Random People[f]Forest|[v]ViewStats");
-				writel("|}[t]Tavern       [s]Shop  |[q]Quit");
-				writel("|}[4]Shoppe                |");
+				writel("|}}Locations:              |}}Commands:             ");
+				writel("|}[p]Random People[f]Forest|[v]ViewStats    [e]Melee");
+				writel("|}[t]Tavern       [s]Shop  |[q]Quit                 ");
+				writel("|}[4]Shoppe                |[r]Ranged attack        ");
 				drawBar();
 				choice = getIC();
 				switch(choice)
@@ -638,7 +727,7 @@ int _tmain(int argc, _TCHAR* argv[])
 						if (player.getY() + 1 < 119)
 							player.setPY(player.getY() + 1);
 						break;
-					case 'e':
+					case 'r':
 						{
 						int tempDamage = 0;
 						switch(player.iCharacter)
@@ -704,6 +793,85 @@ int _tmain(int argc, _TCHAR* argv[])
 							case 0:
 								write("Hitting 0");
 								Sleep(5000);
+								break;
+							default:
+								write("You miss all the enemies stupid");
+								Sleep(5000);
+								break;
+						}
+						break;
+						}
+						case 'e':
+						{
+						writel("what direction ? 1,2,3");
+						writel("                 4, ,5");
+						writel("                 6,7,8");
+						int direction = getI();
+						int tempDamage = 0;
+						switch(player.iCharacter)
+						{
+						case 1:
+							writel("You swing your staff in that direction");
+							tempDamage = 10;
+							break;
+						case 2:
+							writel("You swing your sword in that direction");
+							tempDamage = 5;
+							break;
+						case 3:
+							writel("You swing your dagger in that direction");
+							tempDamage = 8;
+							break;
+						case 4:
+							writel("You burn stuff in that direction");
+							tempDamage = 66;
+							break;
+						}
+						switch(screen.getCloseMeleeEnemy(player.columnX,player.rowY,monster.columnX,monster.rowY,monsterTwo.columnX,monsterTwo.rowY,monsterThree.columnX,monsterThree.rowY,monster.iHealth,monsterTwo.iHealth,monsterThree.iHealth,direction))
+						{
+							case 1:
+								if (monster.iHealth > 0)
+								{
+								write("You hit enemy1 for:");
+								writel(tempDamage);
+								monster.iHealth -= tempDamage;
+								if (monster.iHealth < 0)
+								{
+									writel("You have killed enemy1");
+								}
+								}
+								Sleep(5000);
+								break;
+							case 2:
+								if (monsterTwo.iHealth > 0)
+								{
+								write("You hit enemy2 for:");
+								writel(tempDamage);
+								monsterTwo.iHealth -= tempDamage;
+								if (monsterTwo.iHealth < 0)
+								{
+									writel("You have killed enemy2");
+								}
+								}
+								Sleep(5000);
+								break;
+							case 3:
+								if (monsterThree.iHealth > 0)
+								{
+								write("You hit enemy3 for:");
+								writel(tempDamage);
+								monsterThree.iHealth -= tempDamage;
+								if (monsterThree.iHealth < 0)
+								{
+									writel("You have killed enemy3");
+								}
+								}
+								Sleep(5000);
+								break;
+							case 0:
+								write("Hitting 0");
+								Sleep(5000);
+								break;
 							default:
 								write("You miss all the enemies stupid");
 								Sleep(5000);
@@ -711,6 +879,9 @@ int _tmain(int argc, _TCHAR* argv[])
 						}
 						break;
 						//Sleep(5555555555);
+						/*
+						
+						*/
 						}
 					default:
 						writecl("");
