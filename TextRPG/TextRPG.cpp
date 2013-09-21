@@ -23,39 +23,39 @@ int randomInt(int max)
 }
 void write(std::string word)
 {
-    std::cout << word;
+	std::cout << word;
 }
 void writel(std::string word)
 {
 	Console::ForegroundColor = ConsoleColor::White;
-    std::cout << word << endl;
+	std::cout << word << endl;
 }
 void writecl(std::string word)
 {
 	system("cls");
-    std::cout << word << endl;
+	std::cout << word << endl;
 }
 void write(int word)
 {
-    std::cout << word;
+	std::cout << word;
 }
 void writel(int word)
 {
-    std::cout << word << endl;
+	std::cout << word << endl;
 }
 void writebl(std::string word)
 {
 	SetConsoleTextAttribute (GetStdHandle(STD_OUTPUT_HANDLE), FOREGROUND_BLUE);
-    std::cout << word << endl;
+	std::cout << word << endl;
 }
 void writecl(int word)
 {
 	system("cls");
-    std::cout << word << endl;
+	std::cout << word << endl;
 }
 void writel(float word)
 {
-    std::cout << word << endl;
+	std::cout << word << endl;
 }
 std::string getS()
 {
@@ -103,89 +103,89 @@ int playerData[10] = {4,4,4,4,5,6,213,5,53,35};
 
 void convertCharArray()
 {
-	for(int i = 0; i < 256; i++)
-	{
-		if (isspace(playerName[i])){
-			playerName[i] = '_';
-		}
-		putchar(tolower(playerName[i]));
-		//writel(playerName);
-	}
+for(int i = 0; i < 256; i++)
+{
+if (isspace(playerName[i])){
+playerName[i] = '_';
+}
+putchar(tolower(playerName[i]));
+//writel(playerName);
+}
 }
 bool convertPasswordChar()
 {
-	int howManyIntsNeeded = 0;
-	int i = 0;
-	while (playerName[i])
-	{
-		if (isdigit(playerName[i])){
-			howManyIntsNeeded++;
-			writecl(howManyIntsNeeded);
-		}
-		i++;
-	}
-	if (howManyIntsNeeded  >= 3 && howManyIntsNeeded != i && i >= 8)
-		return true;
+int howManyIntsNeeded = 0;
+int i = 0;
+while (playerName[i])
+{
+if (isdigit(playerName[i])){
+howManyIntsNeeded++;
+writecl(howManyIntsNeeded);
+}
+i++;
+}
+if (howManyIntsNeeded  >= 3 && howManyIntsNeeded != i && i >= 8)
+return true;
 
-	return false;
+return false;
 }
 int averageArray()
 {
-	int numbToRemember = 0;
-	int i = 0;
-	//while (playerData[i])
-	for (int i = 0; i < 10; i++)
-	{
-		writel("HDFGFDG");
-		numbToRemember += playerData[i];
-	}
-	return numbToRemember/10;
+int numbToRemember = 0;
+int i = 0;
+//while (playerData[i])
+for (int i = 0; i < 10; i++)
+{
+writel("HDFGFDG");
+numbToRemember += playerData[i];
+}
+return numbToRemember/10;
 }
 
 struct Character
 {
-	string name;
-	int health;
-	int healthMax;
-	int score;
-	string direction;
-	std::vector<vector<int>> position;
-	struct Mob
-	{
-		std::vector<vector<int>> targetPos;
-		int bulletsLeft;
-		int bulletsMax;
-	};
+string name;
+int health;
+int healthMax;
+int score;
+string direction;
+std::vector<vector<int>> position;
+struct Mob
+{
+std::vector<vector<int>> targetPos;
+int bulletsLeft;
+int bulletsMax;
+};
 };
 struct Player
 {
-	string name;
-	int health;
-	int healthMax;
-	int score;
-	int chargeTime;
-	string direction;
-	std::vector<vector<int>> position;
-	std::vector<vector<int>> targetPos;
-	int bulletsLeft;
-	int bulletsMax;
+string name;
+int health;
+int healthMax;
+int score;
+int chargeTime;
+string direction;
+std::vector<vector<int>> position;
+std::vector<vector<int>> targetPos;
+int bulletsLeft;
+int bulletsMax;
 };
 struct Ship
 {
-	std::vector<vector<vector<int>>> pointsPos;
-	std::vector<vector<vector<int>>> targetPos;
-	int health;
-	int healthMax;
-	int armorCap;
-	int armorCapMax;
-	int missles[4];
-	int misslesMax[4];
-	int coolDown[6];
+std::vector<vector<vector<int>>> pointsPos;
+std::vector<vector<vector<int>>> targetPos;
+int health;
+int healthMax;
+int armorCap;
+int armorCapMax;
+int missles[4];
+int misslesMax[4];
+int coolDown[6];
 };
 struct Triangle
 {
-	std::vector<vector<vector<int>>> pointsPos;
-	std::vector<vector<vector<int>>> colorRGB;
+std::vector<vector<vector<int>>> pointsPos;
+std::vector<vector<vector<int>>> colorRGB;
 };
 */
 struct PlayerStruct
@@ -315,7 +315,7 @@ struct Screen
 		//If all the values are 0 or a perfect distance from each other choose none of them
 		//if (distanceX[0] == distanceX[1] && distanceX[0] == distanceX[2])
 		//if (distanceX[0] == 0 && distanceX[1]  == 0 && distanceX[2] == 0)
-			//return 0;
+		//return 0;
 		//choose the first one if his position distance total is less then 1 && 2
 		if ( distanceX[0] <= distanceX[1] && distanceX[0] <= distanceX[2] && mH > 0)
 			return 1;
@@ -455,7 +455,7 @@ struct Screen
 				else if (i == mXThree && ii == mYThree && mHThree > 0)
 					line[i] += "3";
 				else
-				line[i] += "-";
+					line[i] += "-";
 			}
 		}
 		for(int i = 1; i <= 18; i++)
@@ -550,13 +550,19 @@ struct Screen
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	bool partyMode = false;
 	srand((int)time(NULL));
+	
 	PlayerStruct player;
+	PlayerStruct playerTwo;
+	PlayerStruct playerThree;
 	PlayerStruct monster;
 	PlayerStruct monsterTwo;
 	PlayerStruct monsterThree;
 	Screen screen;
 	player.begin();
+	playerTwo.begin();
+	playerThree.begin();
 	monster.begin();
 	monsterTwo.begin();
 	monsterThree.begin();
@@ -576,6 +582,14 @@ int _tmain(int argc, _TCHAR* argv[])
 	player.setY(2);
 	player.setPX(2);
 	player.setPY(2);
+	playerTwo.setX(2);
+	playerTwo.setY(2);
+	playerTwo.setPX(2);
+	playerTwo.setPY(2);
+	playerThree.setX(2);
+	playerThree.setY(2);
+	playerThree.setPX(2);
+	playerThree.setPY(2);
 
 	enum LOC {TEST,TOWN,STATS,FOREST,TAVERN,SHOP,QUIT,SHOPPE};
 	enum MON {POTATO,GOBLIN,JUSTIN,YOURSELF,SELFESTEEM,DRAGON};
@@ -586,7 +600,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	bool enemyCollision;
 	char choice;
 	Console::SetWindowSize( 120, 44 );
-    Console::SetBufferSize( 120, 44 );
+	Console::SetBufferSize( 120, 44 );
 	Console::SetWindowPosition( 0, 0 );
 	//int choice = 0;
 	//writel(averageArray());
@@ -601,70 +615,93 @@ int _tmain(int argc, _TCHAR* argv[])
 	//}
 	//writel(playerName);
 	//getS();
-
+	
+	drawBar();
+	writel("|Welcome player. Will you be using party mode tonight?");
+	writel("|}[1]No");
+	writel("|}[2]Yes");
+	drawBar();
+	choice = getCC();
+	if (choice == '2')
+	{
+		player.iHealth = (rand() % 8) + 1;
+		player.iDmg = (rand() % 20) + 1;
+		player.iCharacter = 1;
+		playerTwo.iHealth = (rand() % 20) + 1;
+		playerTwo.iDmg = (rand() % 8) + 1;
+		playerTwo.iCharacter = 2;
+		playerThree.iHealth = (rand() % 12) + 1;
+		playerThree.iDmg = (rand() % 12) + 1;
+		playerThree.iCharacter = 3;
+		myLoc = TOWN;
+		screen.getLoc(TOWN);
+		player.iHealthMax = player.iHealth;
+		playerTwo.iHealthMax = player.iHealth;
+		playerThree.iHealthMax = player.iHealth;
+	}
 	while(kill){
 		switch(myLoc){
-			case TEST:
-				drawBar();
-				writel("|Welcome player. Choose your character");
-				writel("|}[1]Priest");
-				writel("|}[2]Warrior");
-				writel("|}[3]Rouge");
-				writel("|}[4]Satan");
-				drawBar();
-				choice = getIC();
-				switch(choice){
-					case '1':
-						writecl("");
-						player.iHealth = (rand() % 8) + 1;
-						player.iDmg = (rand() % 20) + 1;
-						player.iCharacter = 1;
-						writel("|Welcome to Seltreth Priest");
-						break;
-					case '2':
-						writecl("");
-						player.iHealth = (rand() % 20) + 1;
-						player.iDmg = (rand() % 8) + 1;
-						player.iCharacter = 2;
-						writel("|Welcome to Seltreth Warrior");
-						break;
-					case '3':
-						writecl("");
-						player.iHealth = (rand() % 12) + 1;
-						player.iDmg = (rand() % 12) + 1;
-						player.iCharacter = 3;
-						writel("|Welcome to Seltreth Rouge");
-						break;
-					case '4':
-						writecl("");
-						player.iHealth = (rand() % 666) + 1;
-						player.iDmg = (rand() % 666) + 1;
-						player.iCharacter = 4;
-						writel("|Welcome to Seltreth God of Pain");
-						break;
-				}
-				writel("Continue to town?");
-				getCC();
-				myLoc = TOWN;
-				screen.getLoc(TOWN);
-				player.iHealthMax = player.iHealth;
+		case TEST:
+			drawBar();
+			writel("|Welcome player. Choose your character");
+			writel("|}[1]Priest");
+			writel("|}[2]Warrior");
+			writel("|}[3]Rouge");
+			writel("|}[4]Satan");
+			drawBar();
+			choice = getIC();
+			switch(choice){
+			case '1':
+				writecl("");
+				player.iHealth = (rand() % 8) + 1;
+				player.iDmg = (rand() % 20) + 1;
+				player.iCharacter = 1;
+				writel("|Welcome to Seltreth Priest");
 				break;
-			case TOWN:
-				player.iHealth = player.iHealthMax;
-				for (int i = 0; i < 4; i++)
-				{
+			case '2':
+				writecl("");
+				player.iHealth = (rand() % 20) + 1;
+				player.iDmg = (rand() % 8) + 1;
+				player.iCharacter = 2;
+				writel("|Welcome to Seltreth Warrior");
+				break;
+			case '3':
+				writecl("");
+				player.iHealth = (rand() % 12) + 1;
+				player.iDmg = (rand() % 12) + 1;
+				player.iCharacter = 3;
+				writel("|Welcome to Seltreth Rouge");
+				break;
+			case '4':
+				writecl("");
+				player.iHealth = (rand() % 666) + 1;
+				player.iDmg = (rand() % 666) + 1;
+				player.iCharacter = 4;
+				writel("|Welcome to Seltreth God of Pain");
+				break;
+			}
+			writel("Continue to town?");
+			getCC();
+			myLoc = TOWN;
+			screen.getLoc(TOWN);
+			player.iHealthMax = player.iHealth;
+			break;
+		case TOWN:
+			player.iHealth = player.iHealthMax;
+			for (int i = 0; i < 4; i++)
+			{
 				screen.updateLines(player.columnX,player.rowY,monster.columnX,monster.rowY,monsterTwo.columnX,monsterTwo.rowY,monsterThree.columnX,monsterThree.rowY,monster.iHealth,monsterTwo.iHealth,monsterThree.iHealth);
 				//drawBar();
 				if (i == 0){
-				writel("|What would you like to do?|");
-				writel("|}}Locations:              |}}Commands:             ");
-				writel("|}[p]Random People[f]Forest|[v]ViewStats    [e]Melee");
-				writel("|}[t]Tavern       [s]Shop  |[q]Quit                 ");
-				writel("|}[4]Shoppe                |[r]Ranged attack        ");
-				drawBar();
-				choice = getIC();
-				switch(choice)
-				{
+					writel("|What would you like to do?|");
+					writel("|}}Locations:              |}}Commands:             ");
+					writel("|}[p]Random People[f]Forest|[v]ViewStats    [e]Melee");
+					writel("|}[t]Tavern       [s]Shop  |[q]Quit                 ");
+					writel("|}[4]Shoppe                |[r]Ranged attack        ");
+					drawBar();
+					choice = getIC();
+					switch(choice)
+					{
 					case 'v':
 						writecl("");
 						screen.getLoc(myLoc);
@@ -729,64 +766,64 @@ int _tmain(int argc, _TCHAR* argv[])
 						break;
 					case 'r':
 						{
-						int tempDamage = 0;
-						switch(player.iCharacter)
-						{
-						case 1:
-							writel("You fire a bolt of light at the closest enemy");
-							tempDamage = 10;
-							break;
-						case 2:
-							writel("You throw your sword at the closest enemy");
-							tempDamage = 5;
-							break;
-						case 3:
-							writel("You fire a crossbow at the closest enemy");
-							tempDamage = 8;
-							break;
-						case 4:
-							writel("You send a swarm of bats at the closest enemy");
-							tempDamage = 66;
-							break;
-						}
-						switch(screen.getCloseEnemy(player.columnX,player.rowY,monster.columnX,monster.rowY,monsterTwo.columnX,monsterTwo.rowY,monsterThree.columnX,monsterThree.rowY,monster.iHealth,monsterTwo.iHealth,monsterThree.iHealth))
-						{
+							int tempDamage = 0;
+							switch(player.iCharacter)
+							{
+							case 1:
+								writel("You fire a bolt of light at the closest enemy");
+								tempDamage = 10;
+								break;
+							case 2:
+								writel("You throw your sword at the closest enemy");
+								tempDamage = 5;
+								break;
+							case 3:
+								writel("You fire a crossbow at the closest enemy");
+								tempDamage = 8;
+								break;
+							case 4:
+								writel("You send a swarm of bats at the closest enemy");
+								tempDamage = 66;
+								break;
+							}
+							switch(screen.getCloseEnemy(player.columnX,player.rowY,monster.columnX,monster.rowY,monsterTwo.columnX,monsterTwo.rowY,monsterThree.columnX,monsterThree.rowY,monster.iHealth,monsterTwo.iHealth,monsterThree.iHealth))
+							{
 							case 1:
 								if (monster.iHealth > 0)
 								{
-								write("You hit enemy1 for:");
-								writel(tempDamage);
-								monster.iHealth -= tempDamage;
-								if (monster.iHealth < 0)
-								{
-									writel("You have killed enemy1");
-								}
+									write("You hit enemy1 for:");
+									writel(tempDamage);
+									monster.iHealth -= tempDamage;
+									if (monster.iHealth < 0)
+									{
+										writel("You have killed enemy1");
+									}
 								}
 								Sleep(5000);
 								break;
 							case 2:
 								if (monsterTwo.iHealth > 0)
 								{
-								write("You hit enemy2 for:");
-								writel(tempDamage);
-								monsterTwo.iHealth -= tempDamage;
-								if (monsterTwo.iHealth < 0)
-								{
-									writel("You have killed enemy2");
-								}
+									write("You hit enemy2 for:");
+									writel(tempDamage);
+									monsterTwo.iHealth -= tempDamage;
+									if (monsterTwo.iHealth < 0)
+									{
+										writel("You have killed enemy2");
+									}
 								}
 								Sleep(5000);
 								break;
 							case 3:
 								if (monsterThree.iHealth > 0)
 								{
-								write("You hit enemy3 for:");
-								writel(tempDamage);
-								monsterThree.iHealth -= tempDamage;
-								if (monsterThree.iHealth < 0)
-								{
-									writel("You have killed enemy3");
-								}
+									write("You hit enemy3 for:");
+									writel(tempDamage);
+									monsterThree.iHealth -= tempDamage;
+									if (monsterThree.iHealth < 0)
+									{
+										writel("You have killed enemy3");
+									}
 								}
 								Sleep(5000);
 								break;
@@ -798,73 +835,73 @@ int _tmain(int argc, _TCHAR* argv[])
 								write("You miss all the enemies stupid");
 								Sleep(5000);
 								break;
-						}
-						break;
-						}
-						case 'e':
-						{
-						writel("what direction ? 1,2,3");
-						writel("                 4, ,5");
-						writel("                 6,7,8");
-						int direction = getI();
-						int tempDamage = 0;
-						switch(player.iCharacter)
-						{
-						case 1:
-							writel("You swing your staff in that direction");
-							tempDamage = 10;
-							break;
-						case 2:
-							writel("You swing your sword in that direction");
-							tempDamage = 5;
-							break;
-						case 3:
-							writel("You swing your dagger in that direction");
-							tempDamage = 8;
-							break;
-						case 4:
-							writel("You burn stuff in that direction");
-							tempDamage = 66;
+							}
 							break;
 						}
-						switch(screen.getCloseMeleeEnemy(player.columnX,player.rowY,monster.columnX,monster.rowY,monsterTwo.columnX,monsterTwo.rowY,monsterThree.columnX,monsterThree.rowY,monster.iHealth,monsterTwo.iHealth,monsterThree.iHealth,direction))
+					case 'e':
 						{
+							writel("what direction ? 1,2,3");
+							writel("                 4, ,5");
+							writel("                 6,7,8");
+							int direction = getI();
+							int tempDamage = 0;
+							switch(player.iCharacter)
+							{
+							case 1:
+								writel("You swing your staff in that direction");
+								tempDamage = 10;
+								break;
+							case 2:
+								writel("You swing your sword in that direction");
+								tempDamage = 5;
+								break;
+							case 3:
+								writel("You swing your dagger in that direction");
+								tempDamage = 8;
+								break;
+							case 4:
+								writel("You burn stuff in that direction");
+								tempDamage = 66;
+								break;
+							}
+							switch(screen.getCloseMeleeEnemy(player.columnX,player.rowY,monster.columnX,monster.rowY,monsterTwo.columnX,monsterTwo.rowY,monsterThree.columnX,monsterThree.rowY,monster.iHealth,monsterTwo.iHealth,monsterThree.iHealth,direction))
+							{
 							case 1:
 								if (monster.iHealth > 0)
 								{
-								write("You hit enemy1 for:");
-								writel(tempDamage);
-								monster.iHealth -= tempDamage;
-								if (monster.iHealth < 0)
-								{
-									writel("You have killed enemy1");
-								}
+									write("You hit enemy1 for:");
+									writel(tempDamage);
+									monster.iHealth -= tempDamage;
+									if (monster.iHealth < 0)
+									{
+										writel("You have killed enemy1");
+									}
 								}
 								Sleep(5000);
 								break;
 							case 2:
 								if (monsterTwo.iHealth > 0)
 								{
-								write("You hit enemy2 for:");
-								writel(tempDamage);
-								monsterTwo.iHealth -= tempDamage;
-								if (monsterTwo.iHealth < 0)
-								{
-									writel("You have killed enemy2");
-								}
+									write("You hit enemy2 for:");
+									writel(tempDamage);
+									monsterTwo.iHealth -= tempDamage;
+									if (monsterTwo.iHealth < 0)
+									{
+										writel("You have killed enemy2");
+									}
 								}
 								Sleep(5000);
 								break;
 							case 3:
 								if (monsterThree.iHealth > 0)
 								{
-								write("You hit enemy3 for:");
-								writel(tempDamage);
-								monsterThree.iHealth -= tempDamage;
-								if (monsterThree.iHealth < 0)
-								{
-									writel("You have killed enemy3");
-								}
+									write("You hit enemy3 for:");
+									writel(tempDamage);
+									monsterThree.iHealth -= tempDamage;
+									if (monsterThree.iHealth < 0)
+									{
+										writel("You have killed enemy3");
+									}
 								}
 								Sleep(5000);
 								break;
@@ -876,12 +913,12 @@ int _tmain(int argc, _TCHAR* argv[])
 								write("You miss all the enemies stupid");
 								Sleep(5000);
 								break;
-						}
-						break;
-						//Sleep(5555555555);
-						/*
-						
-						*/
+							}
+							break;
+							//Sleep(5555555555);
+							/*
+
+							*/
 						}
 					default:
 						writecl("");
@@ -934,8 +971,8 @@ int _tmain(int argc, _TCHAR* argv[])
 						player.setPX(player.getX());
 						player.setPY(player.getY());
 					}
-					}
-					else if (i == 1 && monster.iHealth > 0){
+				}
+				else if (i == 1 && monster.iHealth > 0){
 					Sleep(100);
 					monster.updateMonster();
 					if ((monster.getPX() > 0 && monster.getPX() < 18 && monster.getPY() > 0 && monster.getPY() < 119) && !(player.getPX() == monster.getPX() && player.getPY() == monster.getPY()) && !screen.getWall(monster.getPX(),monster.getPY()) && !(monster.getPX() == monsterTwo.getPX() && monster.getPY() == monsterTwo.getPY()) && !(monster.getPX() == monsterThree.getPX() && monster.getPY() == monsterThree.getPY()))
@@ -948,7 +985,7 @@ int _tmain(int argc, _TCHAR* argv[])
 						monster.setPX(monster.getX());
 						monster.setPY(monster.getY());
 					}}
-					else if (i == 2 && monsterTwo.iHealth > 0){
+				else if (i == 2 && monsterTwo.iHealth > 0){
 					Sleep(100);
 					monsterTwo.updateMonster();
 					if ((monsterTwo.getPX() > 0 && monsterTwo.getPX() < 18 && monsterTwo.getPY() > 0 && monsterTwo.getPY() < 119) && !(player.getPX() == monsterTwo.getPX() && player.getPY() == monsterTwo.getPY()) && !screen.getWall(monsterTwo.getPX(),monsterTwo.getPY()) && !(monsterTwo.getPX() == monster.getPX() && monsterTwo.getPY() == monster.getPY()) && !(monsterTwo.getPX() == monsterThree.getPX() && monsterTwo.getPY() == monsterThree.getPY()))
@@ -961,7 +998,7 @@ int _tmain(int argc, _TCHAR* argv[])
 						monsterTwo.setPX(monsterTwo.getX());
 						monsterTwo.setPY(monsterTwo.getY());
 					}}
-					else if (i == 3 && monsterThree.iHealth > 0){
+				else if (i == 3 && monsterThree.iHealth > 0){
 					Sleep(100);
 					monsterThree.updateMonster();
 					if ((monsterThree.getPX() > 0 && monsterThree.getPX() < 18 && monsterThree.getPY() > 0 && monsterThree.getPY() < 119) && !(player.getPX() == monsterThree.getPX() && player.getPY() == monsterThree.getPY()) && !screen.getWall(monsterThree.getPX(),monsterThree.getPY()) && !(monsterThree.getPX() == monsterTwo.getPX() && monsterThree.getPY() == monsterTwo.getPY()) && !(monster.getPX() == monsterThree.getPX() && monster.getPY() == monsterThree.getPY()))
@@ -974,217 +1011,217 @@ int _tmain(int argc, _TCHAR* argv[])
 						monsterThree.setPX(monsterThree.getX());
 						monsterThree.setPY(monsterThree.getY());
 					}}
-					}
+			}
+			break;
+		case STATS:
+			drawBar();
+			writel("|What would you like to do?");
+			write("|Damage: ");
+			writel(player.iDmg);
+			write("|Health: ");
+			writel(player.iHealth);
+			write("|Gold: ");
+			writel(player.iGold);
+			drawBar();
+			writel("|Continue?");
+			getCC();
+			myLoc = TOWN;
+			break;
+		case FOREST:
+			drawBar();
+			//screen.updateLines(player.columnX,player.rowY,monster.columnX,monster.rowY,monsterTwo.columnX,monsterTwo.rowY,monsterThree.columnX,monsterThree.rowY);
+			writel("|You are walking through the forest.");
+			drawBar();
+			Sleep(1000);
+			drawBar();
+			writel("|All of a sudden a wild ");
+			switch((rand() % 9) + 1 )
+			{
+				//enum MON {POTATO,GOLBIN,JUSTIN,YOURSELF,SELFESTEEM,DRAGON};
+			case 1:
+			case 7:
+			case 8:
+				monster.iDmg = 1;
+				monster.iHealth = 1;
+				monster.iGold = 1;
+				myMon = POTATO;
+				writel("|Potato appears");
 				break;
-			case STATS:
-				drawBar();
-				writel("|What would you like to do?");
-				write("|Damage: ");
-				writel(player.iDmg);
-				write("|Health: ");
-				writel(player.iHealth);
-				write("|Gold: ");
-				writel(player.iGold);
-				drawBar();
-				writel("|Continue?");
-				getCC();
-				myLoc = TOWN;
+			case 2:
+			case 9:
+			case 10:
+				monster.iDmg = 5;
+				monster.iHealth = rand() % 5 + 2;
+				monster.iGold = monster.iHealth - 1;
+				myMon = GOBLIN;
+				writel("|Goblin appears");
 				break;
-			case FOREST:
-				drawBar();
-				//screen.updateLines(player.columnX,player.rowY,monster.columnX,monster.rowY,monsterTwo.columnX,monsterTwo.rowY,monsterThree.columnX,monsterThree.rowY);
-				writel("|You are walking through the forest.");
-				drawBar();
-				Sleep(1000);
-				drawBar();
-				writel("|All of a sudden a wild ");
-				switch((rand() % 9) + 1 )
-				{
-					//enum MON {POTATO,GOLBIN,JUSTIN,YOURSELF,SELFESTEEM,DRAGON};
-					case 1:
-					case 7:
-					case 8:
-						monster.iDmg = 1;
-						monster.iHealth = 1;
-						monster.iGold = 1;
-						myMon = POTATO;
-						writel("|Potato appears");
-						break;
-					case 2:
-					case 9:
-					case 10:
-						monster.iDmg = 5;
-						monster.iHealth = rand() % 5 + 2;
-						monster.iGold = monster.iHealth - 1;
-						myMon = GOBLIN;
-						writel("|Goblin appears");
-						break;
-					case 3:
-						monster.iDmg = 7;
-						monster.iHealth = rand() % 10 + 2;
-						monster.iGold = monster.iHealth - 1;
-						myMon = JUSTIN;
-						writel("|Justin appears");
-						break;
-					case 4:
-						monster.iDmg = 11;
-						monster.iHealth = rand() % 15 + 2;
-						monster.iGold = monster.iHealth - 1;
-						myMon = YOURSELF;
-						writel("|You appear");
-						break;
-					case 5:
-						monster.iDmg = 13;
-						monster.iHealth = rand() % 25 + 2;
-						monster.iGold = monster.iHealth - 1;
-						myMon = SELFESTEEM;
-						writel("|Self Esteem appears");
-						break;
-					case 6:
-						monster.iDmg = 22;
-						monster.iHealth = rand() % 30 + 2;
-						monster.iGold = monster.iHealth - 1;
-						myMon = DRAGON;
-						writel("|Dragon appears");
-						break;
-				}
-				writel("|}[1]Fight        [2]Run");
-				drawBar();
-				end = false;
-				choice = getIC();
-				if (choice == '1'){
-					while(player.iHealth > 0 && !end){
-						drawBar();
-						write("|Your Health: ");
-						writel(player.iHealth);
-						write("|Thier Health: ");
-						writel(monster.iHealth);
-						writel("|}[1]Swing     [2]Defend");
-						drawBar();
-						choice = getIC();
-						if (choice == '1'){
-							int lostHealth = player.iDmg + ((player.iWeaponLvl + 2)*player.iStoredDamage);
-							monster.iHealth -= lostHealth;
-							write("|You deal :");
-							writel(lostHealth);
-							if (monster.iHealth <= 0){
-								writel("|You have slain your oppenent");
-								write("|You loot: ");
-								writel(monster.iGold);
-								player.iGold += monster.iGold;
-								write("|Go back to town?");
-								getCC();
-								myLoc = TOWN;
-								end = true;
-								writecl("");
-							}
-							else{
+			case 3:
+				monster.iDmg = 7;
+				monster.iHealth = rand() % 10 + 2;
+				monster.iGold = monster.iHealth - 1;
+				myMon = JUSTIN;
+				writel("|Justin appears");
+				break;
+			case 4:
+				monster.iDmg = 11;
+				monster.iHealth = rand() % 15 + 2;
+				monster.iGold = monster.iHealth - 1;
+				myMon = YOURSELF;
+				writel("|You appear");
+				break;
+			case 5:
+				monster.iDmg = 13;
+				monster.iHealth = rand() % 25 + 2;
+				monster.iGold = monster.iHealth - 1;
+				myMon = SELFESTEEM;
+				writel("|Self Esteem appears");
+				break;
+			case 6:
+				monster.iDmg = 22;
+				monster.iHealth = rand() % 30 + 2;
+				monster.iGold = monster.iHealth - 1;
+				myMon = DRAGON;
+				writel("|Dragon appears");
+				break;
+			}
+			writel("|}[1]Fight        [2]Run");
+			drawBar();
+			end = false;
+			choice = getIC();
+			if (choice == '1'){
+				while(player.iHealth > 0 && !end){
+					drawBar();
+					write("|Your Health: ");
+					writel(player.iHealth);
+					write("|Thier Health: ");
+					writel(monster.iHealth);
+					writel("|}[1]Swing     [2]Defend");
+					drawBar();
+					choice = getIC();
+					if (choice == '1'){
+						int lostHealth = player.iDmg + ((player.iWeaponLvl + 2)*player.iStoredDamage);
+						monster.iHealth -= lostHealth;
+						write("|You deal :");
+						writel(lostHealth);
+						if (monster.iHealth <= 0){
+							writel("|You have slain your oppenent");
+							write("|You loot: ");
+							writel(monster.iGold);
+							player.iGold += monster.iGold;
+							write("|Go back to town?");
+							getCC();
+							myLoc = TOWN;
+							end = true;
+							writecl("");
+						}
+						else{
 							lostHealth = monster.iDmg;
 							player.iHealth -= lostHealth;
 							write("|You take :");
 							writel(lostHealth);
-							}
 						}
-						else
+					}
+					else
+					{
+						int lostHealth;
+						player.iStoredDamage++;
+						lostHealth = monster.iDmg - 2;
+						player.iHealth -= lostHealth;
+						write("|You take :");
+						writel(lostHealth);
+						if (player.iHealth <= 0)
 						{
-							int lostHealth;
-							player.iStoredDamage++;
-							lostHealth = monster.iDmg - 2;
-							player.iHealth -= lostHealth;
-							write("|You take :");
-							writel(lostHealth);
-							if (player.iHealth <= 0)
-							{
-								writel("YOU DIED");
-							}
+							writel("YOU DIED");
 						}
 					}
 				}
-				if (!end)
+			}
+			if (!end)
+			{
+				write("|Going back to town?");
+				getCC();
+			}
+			myLoc = TOWN;
+			break;
+		case SHOP:
+			drawBar();
+			write("|Your gold: ");
+			writel(player.iGold);
+			writel("|What would you like to buy?");
+			switch(player.iWeaponLvl)
+			{
+			case 0:
+				writel("|}[1]A sword: +1dmg 25g");
+			case 1:
+				writel("|}[2]Giant purple popsicle: +3dmg 50g");
+			case 2:
+				writel("|}[3]Mace of evil bunnys: +5dmg 100g");
+				break;
+			case 3:
+				writel("Nothing to buy");
+				break;
+			}
+			writel("|}[4]Leave");
+			drawBar();
+			writel("|What to do?");
+			choice = getIC();
+			switch(choice)
+			{
+			case '1':
+				if (player.iGold >= 25)
 				{
-					write("|Going back to town?");
-					getCC();
+					player.iGold -= 25;
+					player.iWeaponLvl = 1;
+					writecl("|You have a new shiny sword");
 				}
+				else
+				{
+					myLoc = SHOP;
+					writecl("|You poor fuck. Can't even aford a sword");
+				}
+				break;
+			case '2':
+				if (player.iGold >= 50)
+				{
+					player.iGold -= 50;
+					player.iWeaponLvl = 2;
+					writecl("|You have a new shiny popsicle");
+				}
+				else
+				{
+					myLoc = SHOP;
+					writecl("|You poor fuck. Can't even aford a popsicle");
+				}
+				break;
+			case '3':
+				if (player.iGold >= 100)
+				{
+					player.iGold -= 100;
+					player.iWeaponLvl = 3;
+					writecl("|You have a new shiny mace");
+				}
+				else
+				{
+					myLoc = SHOP;
+					writecl("|You poor fuck. Can't even aford a Mace");
+				}
+				break;
+			case '4':
 				myLoc = TOWN;
 				break;
-			case SHOP:
-				drawBar();
-				write("|Your gold: ");
-				writel(player.iGold);
-				writel("|What would you like to buy?");
-				switch(player.iWeaponLvl)
-				{
-					case 0:
-						writel("|}[1]A sword: +1dmg 25g");
-					case 1:
-						writel("|}[2]Giant purple popsicle: +3dmg 50g");
-					case 2:
-						writel("|}[3]Mace of evil bunnys: +5dmg 100g");
-						break;
-					case 3:
-						writel("Nothing to buy");
-						break;
-				}
-				writel("|}[4]Leave");
-				drawBar();
-				writel("|What to do?");
-				choice = getIC();
-				switch(choice)
-				{
-					case '1':
-						if (player.iGold >= 25)
-						{
-							player.iGold -= 25;
-							player.iWeaponLvl = 1;
-							writecl("|You have a new shiny sword");
-						}
-						else
-						{
-							myLoc = SHOP;
-							writecl("|You poor fuck. Can't even aford a sword");
-						}
-						break;
-					case '2':
-						if (player.iGold >= 50)
-						{
-							player.iGold -= 50;
-							player.iWeaponLvl = 2;
-							writecl("|You have a new shiny popsicle");
-						}
-						else
-						{
-							myLoc = SHOP;
-							writecl("|You poor fuck. Can't even aford a popsicle");
-						}
-						break;
-					case '3':
-						if (player.iGold >= 100)
-						{
-							player.iGold -= 100;
-							player.iWeaponLvl = 3;
-							writecl("|You have a new shiny mace");
-						}
-						else
-						{
-							myLoc = SHOP;
-							writecl("|You poor fuck. Can't even aford a Mace");
-						}
-						break;
-					case '4':
-						myLoc = TOWN;
-						break;
-					default:
-						myLoc = TOWN;
-						break;
-				}
-				break;
-			case SHOPPE:
-				writecl("|Shoppe is a stupid fucking way to say shop. Going to shop instead asshole");
-				myLoc = SHOP;
-				break;
 			default:
-				writecl("");
+				myLoc = TOWN;
 				break;
+			}
+			break;
+		case SHOPPE:
+			writecl("|Shoppe is a stupid fucking way to say shop. Going to shop instead asshole");
+			myLoc = SHOP;
+			break;
+		default:
+			writecl("");
+			break;
 		}
 	}
 	kill = true;
@@ -1195,89 +1232,89 @@ int _tmain(int argc, _TCHAR* argv[])
 ////The update stuff
 /*
 case 'w':
-	if (player.getX() - 1 > 0)
-		player.setPX(player.getX() - 1);
-	break;
+if (player.getX() - 1 > 0)
+player.setPX(player.getX() - 1);
+break;
 case 's':
-	if (player.getX() + 1 < 18)
-		player.setPX(player.getX() + 1);
-	break;
+if (player.getX() + 1 < 18)
+player.setPX(player.getX() + 1);
+break;
 case 'a':
-	if (player.getY() - 1 > 0)
-		player.setPY(player.getY() - 1);
-	break;
+if (player.getY() - 1 > 0)
+player.setPY(player.getY() - 1);
+break;
 case 'd':
-	if (player.getY() + 1 < 119)
-		player.setPY(player.getY() + 1);
-	break;
+if (player.getY() + 1 < 119)
+player.setPY(player.getY() + 1);
+break;
 case 'W':
-	if (player.getX() - 1 > 0)
-		player.setPX(player.getX() - 1);
-	break;
+if (player.getX() - 1 > 0)
+player.setPX(player.getX() - 1);
+break;
 case 'S':
-	if (player.getX() + 1 < 18)
-		player.setPX(player.getX() + 1);
-	break;
+if (player.getX() + 1 < 18)
+player.setPX(player.getX() + 1);
+break;
 case 'A':
-	if (player.getY() - 1 > 0)
-		player.setPY(player.getY() - 1);
-	break;
+if (player.getY() - 1 > 0)
+player.setPY(player.getY() - 1);
+break;
 case 'D':
-	if (player.getY() + 1 < 119)
-		player.setPY(player.getY() + 1);
-	break;
+if (player.getY() + 1 < 119)
+player.setPY(player.getY() + 1);
+break;
 default:
-	writel("|Please press a key between 1-4");
-	break;
+writel("|Please press a key between 1-4");
+break;
 }
 if (!screen.getWall(player.getPX(),player.getPY()) && !(player.getPX() == monster.getPX() && player.getPY() == monster.getPY()) && !(player.getPX() == monsterTwo.getPX() && player.getPY() == monsterTwo.getPY()) && !(player.getPX() == monsterThree.getPX() && player.getPY() == monsterThree.getPY()))
 {
-	player.setX(player.getPX());
-	player.setY(player.getPY());
+player.setX(player.getPX());
+player.setY(player.getPY());
 }
 else if ((player.getPX() == monsterTwo.getPX() && player.getPY() == monsterTwo.getPY()) || (player.getPX() == monsterThree.getPX() && player.getPY() == monsterThree.getPY()) || (player.getPX() == monster.getPX() && player.getPY() == monster.getPY()))
 {
-	myLoc = FOREST;
-	enemyCollision = true;
-	player.setPX(player.getX());
-	player.setPY(player.getY());
+myLoc = FOREST;
+enemyCollision = true;
+player.setPX(player.getX());
+player.setPY(player.getY());
 }
 else
 {
-	player.setPX(player.getX());
-	player.setPY(player.getY());
+player.setPX(player.getX());
+player.setPY(player.getY());
 }
 monster.updateMonster();
 if ((monster.getPX() > 0 && monster.getPX() < 18 && monster.getPY() > 0 && monster.getPY() < 119) && !(player.getPX() == monster.getPX() && player.getPY() == monster.getPY()) && !screen.getWall(monster.getPX(),monster.getPY()) && !(monster.getPX() == monsterTwo.getPX() && monster.getPY() == monsterTwo.getPY()) && !(monster.getPX() == monsterThree.getPX() && monster.getPY() == monsterThree.getPY()))
 {
-	monster.setX(monster.getPX());
-	monster.setY(monster.getPY());
+monster.setX(monster.getPX());
+monster.setY(monster.getPY());
 }
 else
 {
-	monster.setPX(monster.getX());
-	monster.setPY(monster.getY());
+monster.setPX(monster.getX());
+monster.setPY(monster.getY());
 }
 monsterTwo.updateMonster();
 if ((monsterTwo.getPX() > 0 && monsterTwo.getPX() < 18 && monsterTwo.getPY() > 0 && monsterTwo.getPY() < 119) && !(player.getPX() == monsterTwo.getPX() && player.getPY() == monsterTwo.getPY()) && !screen.getWall(monsterTwo.getPX(),monsterTwo.getPY()) && !(monsterTwo.getPX() == monster.getPX() && monsterTwo.getPY() == monster.getPY()) && !(monsterTwo.getPX() == monsterThree.getPX() && monsterTwo.getPY() == monsterThree.getPY()))
 {
-	monsterTwo.setX(monsterTwo.getPX());
-	monsterTwo.setY(monsterTwo.getPY());
+monsterTwo.setX(monsterTwo.getPX());
+monsterTwo.setY(monsterTwo.getPY());
 }
 else
 {
-	monsterTwo.setPX(monsterTwo.getX());
-	monsterTwo.setPY(monsterTwo.getY());
+monsterTwo.setPX(monsterTwo.getX());
+monsterTwo.setPY(monsterTwo.getY());
 }
 monsterThree.updateMonster();
 if ((monsterThree.getPX() > 0 && monsterThree.getPX() < 18 && monsterThree.getPY() > 0 && monsterThree.getPY() < 119) && !(player.getPX() == monsterThree.getPX() && player.getPY() == monsterThree.getPY()) && !screen.getWall(monsterThree.getPX(),monsterThree.getPY()) && !(monsterThree.getPX() == monsterTwo.getPX() && monsterThree.getPY() == monsterTwo.getPY()) && !(monster.getPX() == monsterThree.getPX() && monster.getPY() == monsterThree.getPY()))
 {
-	monsterThree.setX(monsterThree.getPX());
-	monsterThree.setY(monsterThree.getPY());
+monsterThree.setX(monsterThree.getPX());
+monsterThree.setY(monsterThree.getPY());
 }
 else
 {
-	monsterThree.setPX(monsterThree.getX());
-	monsterThree.setPY(monsterThree.getY());
+monsterThree.setPX(monsterThree.getX());
+monsterThree.setPY(monsterThree.getY());
 }
-						*/
+*/
