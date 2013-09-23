@@ -418,7 +418,7 @@ struct Screen
 		}
 		return 0;
 	}
-	void setBoarder(int x, int y, int mX,int mY, int mXTwo,int mYTwo, int mXThree, int mYThree, int mH, int mHTwo, int mHThree)
+	void setBoarder(int x, int y, int xTwo,int yTwo, int xThree, int yThree, int mX,int mY, int mXTwo,int mYTwo, int mXThree, int mYThree, int mH, int mHTwo, int mHThree)
 	{
 		if (x <= 0)
 			x = 1;
@@ -449,6 +449,10 @@ struct Screen
 					line[i] += "+";
 				else if (i == x && ii == y)
 					line[i] += "X";
+				else if (i == xTwo && ii == yTwo)
+					line[i] += "Y";
+				else if (i == xThree && ii == yThree)
+					line[i] += "Z";
 				else if (i == mX && ii == mY && mH > 0)
 					line[i] += "1";
 				else if (i == mXTwo && ii == mYTwo && mHTwo > 0)
@@ -466,10 +470,10 @@ struct Screen
 		//writel(line[0]);
 		line[windowSize] = "|---------------------------------------------------------------------------------------------------------------------|";
 	}
-	void updateLines(int x, int y, int mX,int mY, int mXTwo,int mYTwo, int mXThree, int mYThree, int mH, int mHTwo, int mHThree)
+	void updateLines(int x, int y, int xTwo,int yTwo, int xThree, int yThree, int mX,int mY, int mXTwo,int mYTwo, int mXThree, int mYThree, int mH, int mHTwo, int mHThree)
 	{
 		setWindowSize(18);
-		setBoarder(x,y,mX,mY,mXTwo,mYTwo,mXThree,mYThree,mH,mHTwo,mHThree);
+		setBoarder(x,y,xTwo,yTwo,xThree,yThree,mX,mY,mXTwo,mYTwo,mXThree,mYThree,mH,mHTwo,mHThree);
 		writecl("");
 		for(int i = 0; i <= windowSize; i++)
 		{
@@ -701,6 +705,7 @@ int movePlayer(PlayerStruct &player,Screen &screen,PlayerStruct &monster,PlayerS
 		}
 	case 'e':
 		{
+			writel("");
 			writel("what direction ? 1,2,3");
 			writel("                 4, ,5");
 			writel("                 6,7,8");
@@ -824,14 +829,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	player.setY(2);
 	player.setPX(2);
 	player.setPY(2);
-	playerTwo.setX(2);
-	playerTwo.setY(2);
-	playerTwo.setPX(2);
-	playerTwo.setPY(2);
-	playerThree.setX(2);
-	playerThree.setY(2);
-	playerThree.setPX(2);
-	playerThree.setPY(2);
 
 	enum LOC {TEST,TOWN,STATS,FOREST,TAVERN,SHOP,QUIT,SHOPPE};
 	enum MON {POTATO,GOBLIN,JUSTIN,YOURSELF,SELFESTEEM,DRAGON};
@@ -865,6 +862,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	choice = getCC();
 	if (choice == '2')
 	{
+		partyMode = true;
 		player.iHealth = (rand() % 8) + 1;
 		player.iDmg = (rand() % 20) + 1;
 		player.iCharacter = 1;
@@ -879,6 +877,25 @@ int _tmain(int argc, _TCHAR* argv[])
 		player.iHealthMax = player.iHealth;
 		playerTwo.iHealthMax = player.iHealth;
 		playerThree.iHealthMax = player.iHealth;
+		playerTwo.setX(3);
+		playerTwo.setY(3);
+		playerTwo.setPX(3);
+		playerTwo.setPY(3);
+		playerThree.setX(2);
+		playerThree.setY(3);
+		playerThree.setPX(2);
+		playerThree.setPY(3);
+	}
+	else
+	{
+		playerTwo.setX(-3);
+		playerTwo.setY(-3);
+		playerTwo.setPX(-3);
+		playerTwo.setPY(-3);
+		playerThree.setX(-2);
+		playerThree.setY(-3);
+		playerThree.setPX(-2);
+		playerThree.setPY(-3);
 	}
 	while(kill){
 		switch(myLoc){
@@ -931,19 +948,22 @@ int _tmain(int argc, _TCHAR* argv[])
 			player.iHealth = player.iHealthMax;
 			for (int i = 0; i < 6; i++)
 			{
-				screen.updateLines(player.columnX,player.rowY,monster.columnX,monster.rowY,monsterTwo.columnX,monsterTwo.rowY,monsterThree.columnX,monsterThree.rowY,monster.iHealth,monsterTwo.iHealth,monsterThree.iHealth);
+				screen.updateLines(player.columnX,player.rowY,playerTwo.columnX,playerTwo.rowY,playerThree.columnX,playerThree.rowY,monster.columnX,monster.rowY,monsterTwo.columnX,monsterTwo.rowY,monsterThree.columnX,monsterThree.rowY,monster.iHealth,monsterTwo.iHealth,monsterThree.iHealth);
+
+				writel("|What would you like to do?|");
+				writel("|}}Locations:              |}}Commands:             ");
+				writel("|}[p]Random People[f]Forest|[v]ViewStats    [e]Melee");
+				writel("|}[t]Tavern       [s]Shop  |[q]Quit                 ");
+				writel("|}[4]Shoppe                |[r]Ranged attack        ");
+				drawBar();
 				//drawBar();
 				if (i == 0){
-					writel("|What would you like to do?|");
-					writel("|}}Locations:              |}}Commands:             ");
-					writel("|}[p]Random People[f]Forest|[v]ViewStats    [e]Melee");
-					writel("|}[t]Tavern       [s]Shop  |[q]Quit                 ");
-					writel("|}[4]Shoppe                |[r]Ranged attack        ");
-					drawBar();
-					if (i == 0)
-					{
-						myLoc =  static_cast<LOC>(movePlayer(player,screen,monster,monsterTwo,monsterThree));
-					}
+					write("X's Turn: ");
+					myLoc =  static_cast<LOC>(movePlayer(player,screen,monster,monsterTwo,monsterThree));
+					//else if (i == 0 && player.iHealth < 0)
+						//i++;
+					//else if (i == 4 && playerThree.iHealth < 0)
+						//i++;
 					/*
 					choice = getIC();
 					switch(choice)
@@ -1216,6 +1236,35 @@ int _tmain(int argc, _TCHAR* argv[])
 						player.setPY(player.getY());
 					}
 				}
+				else if (i == 2 && playerTwo.iHealth > 0)
+				{
+					if (partyMode)
+					{
+						write("Y's Turn: ");
+						myLoc =  static_cast<LOC>(movePlayer(playerTwo,screen,monster,monsterTwo,monsterThree));
+
+						playerTwo.setX(playerTwo.getPX());
+						playerTwo.setY(playerTwo.getPY());
+					}
+					else
+						i++;					
+				}
+				//else if (i == 2 && playerTwo.iHealth < 0)
+				//i++;
+				else if (i == 4 && playerThree.iHealth > 0)
+				{
+					if (partyMode)
+					{
+						write("Z's Turn: ");
+						myLoc =  static_cast<LOC>(movePlayer(playerThree,screen,monster,monsterTwo,monsterThree));
+
+						playerThree.setX(playerThree.getPX());
+						playerThree.setY(playerThree.getPY());
+					}
+					else
+						i++;
+				
+				}
 				else if (i == 1 && monster.iHealth > 0){
 					Sleep(100);
 					monster.updateMonster();
@@ -1229,10 +1278,6 @@ int _tmain(int argc, _TCHAR* argv[])
 						monster.setPX(monster.getX());
 						monster.setPY(monster.getY());
 					}}
-				else if (i == 1 && monster.iHealth < 0)
-					i++;
-				else if (i == 2 && !partyMode)
-					i++;
 				else if (i == 3 && monsterTwo.iHealth > 0){
 					Sleep(100);
 					monsterTwo.updateMonster();
@@ -1246,12 +1291,6 @@ int _tmain(int argc, _TCHAR* argv[])
 						monsterTwo.setPX(monsterTwo.getX());
 						monsterTwo.setPY(monsterTwo.getY());
 					}}
-				else if (i == 3 && monsterTwo.iHealth < 0)
-					i++;
-				else if (i == 4 && !partyMode)
-				{
-					i++;
-				}
 				else if (i == 5 && monsterThree.iHealth > 0){
 					Sleep(100);
 					monsterThree.updateMonster();
