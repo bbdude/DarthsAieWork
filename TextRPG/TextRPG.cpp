@@ -555,7 +555,7 @@ struct Screen
 
 int movePlayer(PlayerStruct &player,Screen &screen,PlayerStruct &monster,PlayerStruct &monsterTwo,PlayerStruct &monsterThree)
 {
-	enum LOC {TEST,TOWN,STATS,FOREST,TAVERN,SHOP,QUIT,SHOPPE};
+	enum LOC {TEST,TOWN,STATS,FOREST,TAVERN,SHOP,QUIT,SHOPPE,MOUNTAINONE,MOUNTAINTWO,MOUNTAINTHREE,MOUNTAINFINALE};
 	LOC myLoc = TOWN;
 	char choice;
 	choice = getIC();
@@ -794,7 +794,47 @@ int movePlayer(PlayerStruct &player,Screen &screen,PlayerStruct &monster,PlayerS
 	}
 	return myLoc;
 }
+string getStoryLine(int location)
+{
+	enum LOC {TEST,TOWN,STATS,FOREST,TAVERN,SHOP,QUIT,SHOPPE,MOUNTAINONE,MOUNTAINTWO,MOUNTAINTHREE,MOUNTAINFINALE};
+	LOC myLoc = static_cast<LOC>(location);
 
+	switch(myLoc)
+	{
+	case TOWN:
+		return "You enter a town full of undead unicorns(3); fire balls and lighting are raining from the sky.";
+		break;
+	case FOREST:
+		return "Your enter a clearing in the forest. It seems some skeletons(3) are waiting for you.";
+		break;
+	case TAVERN:
+		return "You enter a the The Saracen's Head. Several people look pretty blootered(drunk).";
+		break;
+	case MOUNTAINONE:
+		return "You begin the harsh climb. Hopefully the \"Hammer of Glory\" is worth it";
+		break;
+	case MOUNTAINTWO:
+		return "The wind whispers in your ears and your weapons grow heavy.";
+		break;
+	case MOUNTAINTHREE:
+		return "Many fights have been won and still you travel on.";
+		break;
+	case MOUNTAINFINALE:
+		return "Zargothrax greets you. Your death awaits";
+		break;
+	default:
+		break;
+	}
+
+
+	return "";
+}
+void gotoxy(int x, int y)
+{
+	COORD c = { x, y };  
+	SetConsoleCursorPosition(  GetStdHandle(STD_OUTPUT_HANDLE) , c);
+	writecl("asdasdasdasda");
+}
 int _tmain(int argc, _TCHAR* argv[])
 {
 	bool partyMode = false;
@@ -830,7 +870,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	player.setPX(2);
 	player.setPY(2);
 
-	enum LOC {TEST,TOWN,STATS,FOREST,TAVERN,SHOP,QUIT,SHOPPE};
+	enum LOC {TEST,TOWN,STATS,FOREST,TAVERN,SHOP,QUIT,SHOPPE,MOUNTAINONE,MOUNTAINTWO,MOUNTAINTHREE,MOUNTAINFINALE};
 	enum MON {POTATO,GOBLIN,JUSTIN,YOURSELF,SELFESTEEM,DRAGON};
 	LOC myLoc = TEST;
 	MON myMon = POTATO;
@@ -914,28 +954,28 @@ int _tmain(int argc, _TCHAR* argv[])
 				player.iHealth = (rand() % 8) + 1;
 				player.iDmg = (rand() % 20) + 1;
 				player.iCharacter = 1;
-				writel("|Welcome to Seltreth Priest");
+				writel("|Welcome to Dundee Priest");
 				break;
 			case '2':
 				writecl("");
 				player.iHealth = (rand() % 20) + 1;
 				player.iDmg = (rand() % 8) + 1;
 				player.iCharacter = 2;
-				writel("|Welcome to Seltreth Warrior");
+				writel("|Welcome to Dundee Warrior");
 				break;
 			case '3':
 				writecl("");
 				player.iHealth = (rand() % 12) + 1;
 				player.iDmg = (rand() % 12) + 1;
 				player.iCharacter = 3;
-				writel("|Welcome to Seltreth Rouge");
+				writel("|Welcome to Dundee Rouge");
 				break;
 			case '4':
 				writecl("");
 				player.iHealth = (rand() % 666) + 1;
 				player.iDmg = (rand() % 666) + 1;
 				player.iCharacter = 4;
-				writel("|Welcome to Seltreth God of Pain");
+				writel("|Welcome to Dundee God of Pain");
 				break;
 			}
 			writel("Continue to town?");
@@ -946,15 +986,18 @@ int _tmain(int argc, _TCHAR* argv[])
 			break;
 		case TOWN:
 			player.iHealth = player.iHealthMax;
+			//writecl(getStoryLine(TOWN));
+			//Sleep(5000);
 			for (int i = 0; i < 6; i++)
 			{
 				screen.updateLines(player.columnX,player.rowY,playerTwo.columnX,playerTwo.rowY,playerThree.columnX,playerThree.rowY,monster.columnX,monster.rowY,monsterTwo.columnX,monsterTwo.rowY,monsterThree.columnX,monsterThree.rowY,monster.iHealth,monsterTwo.iHealth,monsterThree.iHealth);
 
+				gotoxy(100,300);
 				writel("|What would you like to do?|");
-				writel("|}}Locations:              |}}Commands:             ");
-				writel("|}[p]Random People[f]Forest|[v]ViewStats    [e]Melee");
-				writel("|}[t]Tavern       [s]Shop  |[q]Quit                 ");
-				writel("|}[4]Shoppe                |[r]Ranged attack        ");
+				writel("|}}Locations:                |}}Commands:             ");
+				writel("|}[p]Undead Unicorns[f]Forest|[v]ViewStats    [e]Melee");
+				writel("|}[t]Tavern         [s]Shop  |[q]Quit                 ");
+				writel("|}[4]Shoppe                  |[r]Ranged attack        ");
 				drawBar();
 				//drawBar();
 				if (i == 0){
