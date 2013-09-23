@@ -17,6 +17,7 @@ using namespace System;
 using namespace System::Text;
 using namespace System::IO;
 
+bool kill = true;
 int randomInt(int max)
 {
 	return (rand() % max) + 1;
@@ -548,6 +549,247 @@ struct Screen
 	int getPortalY(int which) { return portalLocY[which]; }
 };
 
+int movePlayer(PlayerStruct &player,Screen &screen,PlayerStruct &monster,PlayerStruct &monsterTwo,PlayerStruct &monsterThree)
+{
+	enum LOC {TEST,TOWN,STATS,FOREST,TAVERN,SHOP,QUIT,SHOPPE};
+	LOC myLoc = TOWN;
+	char choice;
+	choice = getIC();
+	switch(choice)
+	{
+	case 'v':
+		writecl("");
+		myLoc = STATS;
+		screen.getLoc(myLoc);
+		return myLoc;
+		break;
+	case '2':
+		//{TEST,TOWN,STATS,FOREST,TAVERN,SHOP,QUIT,SHOPPE};
+		writecl("");
+		myLoc = FOREST;
+		screen.getLoc(myLoc);
+		return myLoc;
+		break;
+	case '3':
+		writecl("");
+		myLoc = TAVERN;
+		screen.getLoc(myLoc);
+		return myLoc;
+		break;
+	case '4':
+		writecl("");
+		myLoc = SHOP;
+		screen.getLoc(myLoc);
+		return myLoc;
+		break;
+	case 'q':
+		writecl("");
+		//screen.getLoc();
+		kill = false;
+		break;
+	case '6':
+		writecl("");
+		myLoc = SHOPPE;
+		screen.getLoc(myLoc);
+		return myLoc;
+		break;
+	case 'w':
+		if (player.getX() - 1 > 0)
+			player.setPX(player.getX() - 1);
+		break;
+	case 's':
+		if (player.getX() + 1 < 18)
+			player.setPX(player.getX() + 1);
+		break;
+	case 'a':
+		if (player.getY() - 1 > 0)
+			player.setPY(player.getY() - 1);
+		break;
+	case 'd':
+		if (player.getY() + 1 < 119)
+			player.setPY(player.getY() + 1);
+		break;
+	case 'W':
+		if (player.getX() - 1 > 0)
+			player.setPX(player.getX() - 1);
+		break;
+	case 'S':
+		if (player.getX() + 1 < 18)
+			player.setPX(player.getX() + 1);
+		break;
+	case 'A':
+		if (player.getY() - 1 > 0)
+			player.setPY(player.getY() - 1);
+		break;
+	case 'D':
+		if (player.getY() + 1 < 119)
+			player.setPY(player.getY() + 1);
+		break;
+	case 'r':
+		{
+			int tempDamage = 0;
+			switch(player.iCharacter)
+			{
+			case 1:
+				writel("You fire a bolt of light at the closest enemy");
+				tempDamage = 10;
+				break;
+			case 2:
+				writel("You throw your sword at the closest enemy");
+				tempDamage = 5;
+				break;
+			case 3:
+				writel("You fire a crossbow at the closest enemy");
+				tempDamage = 8;
+				break;
+			case 4:
+				writel("You send a swarm of bats at the closest enemy");
+				tempDamage = 66;
+				break;
+			}
+			switch(screen.getCloseEnemy(player.columnX,player.rowY,monster.columnX,monster.rowY,monsterTwo.columnX,monsterTwo.rowY,monsterThree.columnX,monsterThree.rowY,monster.iHealth,monsterTwo.iHealth,monsterThree.iHealth))
+			{
+			case 1:
+				if (monster.iHealth > 0)
+				{
+					write("You hit enemy1 for:");
+					writel(tempDamage);
+					monster.iHealth -= tempDamage;
+					if (monster.iHealth < 0)
+					{
+						writel("You have killed enemy1");
+					}
+				}
+				Sleep(5000);
+				break;
+			case 2:
+				if (monsterTwo.iHealth > 0)
+				{
+					write("You hit enemy2 for:");
+					writel(tempDamage);
+					monsterTwo.iHealth -= tempDamage;
+					if (monsterTwo.iHealth < 0)
+					{
+						writel("You have killed enemy2");
+					}
+				}
+				Sleep(5000);
+				break;
+			case 3:
+				if (monsterThree.iHealth > 0)
+				{
+					write("You hit enemy3 for:");
+					writel(tempDamage);
+					monsterThree.iHealth -= tempDamage;
+					if (monsterThree.iHealth < 0)
+					{
+						writel("You have killed enemy3");
+					}
+				}
+				Sleep(5000);
+				break;
+			case 0:
+				write("Hitting 0");
+				Sleep(5000);
+				break;
+			default:
+				write("You miss all the enemies stupid");
+				Sleep(5000);
+				break;
+			}
+			break;
+		}
+	case 'e':
+		{
+			writel("what direction ? 1,2,3");
+			writel("                 4, ,5");
+			writel("                 6,7,8");
+			int direction = getI();
+			int tempDamage = 0;
+			switch(player.iCharacter)
+			{
+			case 1:
+				writel("You swing your staff in that direction");
+				tempDamage = 10;
+				break;
+			case 2:
+				writel("You swing your sword in that direction");
+				tempDamage = 5;
+				break;
+			case 3:
+				writel("You swing your dagger in that direction");
+				tempDamage = 8;
+				break;
+			case 4:
+				writel("You burn stuff in that direction");
+				tempDamage = 66;
+				break;
+			}
+			switch(screen.getCloseMeleeEnemy(player.columnX,player.rowY,monster.columnX,monster.rowY,monsterTwo.columnX,monsterTwo.rowY,monsterThree.columnX,monsterThree.rowY,monster.iHealth,monsterTwo.iHealth,monsterThree.iHealth,direction))
+			{
+			case 1:
+				if (monster.iHealth > 0)
+				{
+					write("You hit enemy1 for:");
+					writel(tempDamage);
+					monster.iHealth -= tempDamage;
+					if (monster.iHealth < 0)
+					{
+						writel("You have killed enemy1");
+					}
+				}
+				Sleep(5000);
+				break;
+			case 2:
+				if (monsterTwo.iHealth > 0)
+				{
+					write("You hit enemy2 for:");
+					writel(tempDamage);
+					monsterTwo.iHealth -= tempDamage;
+					if (monsterTwo.iHealth < 0)
+					{
+						writel("You have killed enemy2");
+					}
+				}
+				Sleep(5000);
+				break;
+			case 3:
+				if (monsterThree.iHealth > 0)
+				{
+					write("You hit enemy3 for:");
+					writel(tempDamage);
+					monsterThree.iHealth -= tempDamage;
+					if (monsterThree.iHealth < 0)
+					{
+						writel("You have killed enemy3");
+					}
+				}
+				Sleep(5000);
+				break;
+			case 0:
+				write("Hitting 0");
+				Sleep(5000);
+				break;
+			default:
+				write("You miss all the enemies stupid");
+				Sleep(5000);
+				break;
+			}
+			break;
+			//Sleep(5555555555);
+			/*
+
+			*/
+		}
+	default:
+		writecl("");
+		screen.getLoc(myLoc);
+		return myLoc;
+		break;
+	}
+	return myLoc;
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	bool partyMode = false;
@@ -595,7 +837,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	enum MON {POTATO,GOBLIN,JUSTIN,YOURSELF,SELFESTEEM,DRAGON};
 	LOC myLoc = TEST;
 	MON myMon = POTATO;
-	bool kill = true;
 	bool end = false;
 	bool enemyCollision;
 	char choice;
@@ -688,7 +929,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			break;
 		case TOWN:
 			player.iHealth = player.iHealthMax;
-			for (int i = 0; i < 4; i++)
+			for (int i = 0; i < 6; i++)
 			{
 				screen.updateLines(player.columnX,player.rowY,monster.columnX,monster.rowY,monsterTwo.columnX,monsterTwo.rowY,monsterThree.columnX,monsterThree.rowY,monster.iHealth,monsterTwo.iHealth,monsterThree.iHealth);
 				//drawBar();
@@ -699,6 +940,11 @@ int _tmain(int argc, _TCHAR* argv[])
 					writel("|}[t]Tavern       [s]Shop  |[q]Quit                 ");
 					writel("|}[4]Shoppe                |[r]Ranged attack        ");
 					drawBar();
+					if (i == 0)
+					{
+						myLoc =  static_cast<LOC>(movePlayer(player,screen,monster,monsterTwo,monsterThree));
+					}
+					/*
 					choice = getIC();
 					switch(choice)
 					{
@@ -916,9 +1162,6 @@ int _tmain(int argc, _TCHAR* argv[])
 							}
 							break;
 							//Sleep(5555555555);
-							/*
-
-							*/
 						}
 					default:
 						writecl("");
@@ -926,6 +1169,7 @@ int _tmain(int argc, _TCHAR* argv[])
 						myLoc = TOWN;
 						break;
 					}
+					*/
 					if (player.getPX() == screen.getPortalX(0) && player.getPY() == screen.getPortalY(0))
 					{
 						myLoc = FOREST;
@@ -985,7 +1229,11 @@ int _tmain(int argc, _TCHAR* argv[])
 						monster.setPX(monster.getX());
 						monster.setPY(monster.getY());
 					}}
-				else if (i == 2 && monsterTwo.iHealth > 0){
+				else if (i == 1 && monster.iHealth < 0)
+					i++;
+				else if (i == 2 && !partyMode)
+					i++;
+				else if (i == 3 && monsterTwo.iHealth > 0){
 					Sleep(100);
 					monsterTwo.updateMonster();
 					if ((monsterTwo.getPX() > 0 && monsterTwo.getPX() < 18 && monsterTwo.getPY() > 0 && monsterTwo.getPY() < 119) && !(player.getPX() == monsterTwo.getPX() && player.getPY() == monsterTwo.getPY()) && !screen.getWall(monsterTwo.getPX(),monsterTwo.getPY()) && !(monsterTwo.getPX() == monster.getPX() && monsterTwo.getPY() == monster.getPY()) && !(monsterTwo.getPX() == monsterThree.getPX() && monsterTwo.getPY() == monsterThree.getPY()))
@@ -998,7 +1246,13 @@ int _tmain(int argc, _TCHAR* argv[])
 						monsterTwo.setPX(monsterTwo.getX());
 						monsterTwo.setPY(monsterTwo.getY());
 					}}
-				else if (i == 3 && monsterThree.iHealth > 0){
+				else if (i == 3 && monsterTwo.iHealth < 0)
+					i++;
+				else if (i == 4 && !partyMode)
+				{
+					i++;
+				}
+				else if (i == 5 && monsterThree.iHealth > 0){
 					Sleep(100);
 					monsterThree.updateMonster();
 					if ((monsterThree.getPX() > 0 && monsterThree.getPX() < 18 && monsterThree.getPY() > 0 && monsterThree.getPY() < 119) && !(player.getPX() == monsterThree.getPX() && player.getPY() == monsterThree.getPY()) && !screen.getWall(monsterThree.getPX(),monsterThree.getPY()) && !(monsterThree.getPX() == monsterTwo.getPX() && monsterThree.getPY() == monsterTwo.getPY()) && !(monster.getPX() == monsterThree.getPX() && monster.getPY() == monsterThree.getPY()))
@@ -1224,9 +1478,9 @@ int _tmain(int argc, _TCHAR* argv[])
 			break;
 		}
 	}
-	kill = true;
-	while(kill){
-	}
+	//kill = true;
+	//while(kill){
+	//}
 	return 0;
 }
 ////The update stuff
