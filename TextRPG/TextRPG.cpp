@@ -12,6 +12,7 @@
 #include <vector>
 #include <time.h>
 #include "misc.h"
+#include <cmath>
 using namespace std;
 using namespace System;
 using namespace System::Text;
@@ -221,6 +222,73 @@ struct PlayerStruct
 	}
 	void updatePlayer()
 	{
+	}
+	int moveMonster(PlayerStruct monster, PlayerStruct player,PlayerStruct playerTwo,PlayerStruct playerThree)
+	{
+		int distanceX[3] = {0,0,0};
+		int distanceY[3] = {0,0,0};
+
+		distanceX[0] = columnPX - player.columnX;
+		distanceX[1] = columnPX - player.columnX;
+		distanceX[2] = columnPX - player.columnX;
+		distanceY[0] = rowPY - player.rowY;
+		distanceY[1] = rowPY - player.rowY;
+		distanceY[2] = rowPY - player.rowY;
+		if (player.iHealth <= 0)
+		{
+			distanceX[0] = -100;
+			distanceY[0] = -100;
+		}
+		if (playerTwo.iHealth <= 0)
+		{
+			distanceX[1] = -100;
+			distanceY[1] = -100;
+		}
+		if (playerThree.iHealth <= 0)
+		{
+			distanceX[2] = -100;
+			distanceY[2] = -100;
+		}
+		if ( distanceX[0] <= distanceX[1] && distanceX[0] <= distanceX[2] && player.iHealth > 0 && distanceX[0] <= 11 && distanceY[0] <= 11)
+		{
+			if (distanceX[0] > 0)
+				columnPX--;
+			else if (distanceX[0] < 0)
+				columnPX++;
+			if (distanceY[0] > 0)
+				rowPY--;
+			else if (distanceY[0] < 0)
+				rowPY++;
+		}
+		//choose the second one if his position distance total is less then 0 && 2
+		else if ( distanceX[1] <= distanceX[0] && distanceX[1] <= distanceX[2] && playerTwo.iHealth > 0 && distanceX[1] <= 11 && distanceY[1] <= 11)
+		{
+			if (distanceX[1] > 0)
+				columnPX--;
+			else if (distanceX[1] < 0)
+				columnPX++;
+			if (distanceY[1] > 0)
+				rowPY--;
+			else if (distanceY[1] < 0)
+				rowPY++;
+			//return;
+		}
+		//choose the third one if his position distance total is less then 1 && 0
+		else if ( distanceX[2] <= distanceX[1] && distanceX[2] <= distanceX[0] && playerThree.iHealth > 0 && distanceX[2] <= 11 && distanceY[2] <= 11)
+		{
+
+			if (distanceX[2] > 0)
+				columnPX--;
+			else if (distanceX[2] < 0)
+				columnPX++;
+			if (distanceY[2] > 0)
+				rowPY--;
+			else if (distanceY[2] < 0)
+				rowPY++;
+		}
+		else
+			return 0;
+			//return;
 	}
 	void updateMonster()
 	{
@@ -835,6 +903,7 @@ void gotoxy(int x, int y)
 	SetConsoleCursorPosition(  GetStdHandle(STD_OUTPUT_HANDLE) , c);
 	writecl("asdasdasdasda");
 }
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	bool partyMode = false;
@@ -992,7 +1061,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			{
 				screen.updateLines(player.columnX,player.rowY,playerTwo.columnX,playerTwo.rowY,playerThree.columnX,playerThree.rowY,monster.columnX,monster.rowY,monsterTwo.columnX,monsterTwo.rowY,monsterThree.columnX,monsterThree.rowY,monster.iHealth,monsterTwo.iHealth,monsterThree.iHealth);
 
-				gotoxy(100,300);
+				//gotoxy(100,300);
 				writel("|What would you like to do?|");
 				writel("|}}Locations:                |}}Commands:             ");
 				writel("|}[p]Undead Unicorns[f]Forest|[v]ViewStats    [e]Melee");
@@ -1310,7 +1379,15 @@ int _tmain(int argc, _TCHAR* argv[])
 				}
 				else if (i == 1 && monster.iHealth > 0){
 					Sleep(100);
-					monster.updateMonster();
+					//monster.updateMonster();
+					//monster.setPX(monster.getX());
+					//monster.setPY(monster.getY());
+					monster.moveMonster(monster,player,playerTwo,playerThree);
+					
+					//write(monster.getPX());
+					//write(",");
+					//write(monster.getPY());
+
 					if ((monster.getPX() > 0 && monster.getPX() < 18 && monster.getPY() > 0 && monster.getPY() < 119) && !(player.getPX() == monster.getPX() && player.getPY() == monster.getPY()) && !screen.getWall(monster.getPX(),monster.getPY()) && !(monster.getPX() == monsterTwo.getPX() && monster.getPY() == monsterTwo.getPY()) && !(monster.getPX() == monsterThree.getPX() && monster.getPY() == monsterThree.getPY()))
 					{
 						monster.setX(monster.getPX());
@@ -1318,9 +1395,58 @@ int _tmain(int argc, _TCHAR* argv[])
 					}
 					else
 					{
+						for (int a = 0; a <= 8; a++)
+						{
+							switch(screen.getCloseMeleeEnemy(monster.getX(),monster.getY(),player.getX(),player.getY(),playerTwo.getX(),playerTwo.getY(),playerThree.getX(),playerThree.getY(),player.iHealth,playerTwo.iHealth,playerThree.iHealth,a))
+							{
+							case 1:
+								if (player.iHealth > 0)
+								{
+									a += 20;
+									write("Enemy hits player1 for:");
+									writel(5);
+									player.iHealth -= 5;
+									if (player.iHealth < 0)
+									{
+										writel("Player1 dies");
+									}
+								}
+								Sleep(5000);
+								break;
+							case 2:
+								if (playerTwo.iHealth > 0)
+								{
+									a += 20;
+									write("Enemy hits player2 for:");
+									writel(5);
+									playerTwo.iHealth -= 5;
+									if (playerTwo.iHealth < 0)
+									{
+										writel("Player2 dies");
+									}
+								}
+								Sleep(5000);
+								break;
+							case 3:
+								if (playerThree.iHealth > 0)
+								{
+									a += 20;
+									write("Enemy hits player3 for:");
+									writel(5);
+									playerThree.iHealth -= 5;
+									if (playerThree.iHealth < 0)
+									{
+										writel("Player3 dies");
+									}
+								}
+								Sleep(5000);
+								break;
+							}
+						}
 						monster.setPX(monster.getX());
 						monster.setPY(monster.getY());
-					}}
+					}
+				}
 				else if (i == 3 && monsterTwo.iHealth > 0){
 					Sleep(100);
 					monsterTwo.updateMonster();
