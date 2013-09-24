@@ -14,12 +14,13 @@
 #include <ctime>
 #include <iostream>
 //////////////////////////////////////////////////////////////////////////
+
 //creates 2 variables that act as coords
 struct vector2{
 	float x;
 	float y;
 };
-//creates a set of varaibles assigned to a movable object
+//creates a set of variables assigned to a movable object
 struct movableObject{
 	vector2 position;
 	vector2 speed;
@@ -27,7 +28,7 @@ struct movableObject{
 	int width;
 	int height;
 };
-//createsa set of variables designed to fire a bullet and reload it
+//creates a set of variables designed to fire a bullet and reload it
 struct BulletStruct{
 	vector2 position;
 	vector2 speed;
@@ -36,7 +37,7 @@ struct BulletStruct{
 	int height;
 	bool out;
 };
-//creates a set of varaibles assigned to a object that does not move
+//creates a set of variables assigned to a object that does not move
 struct stableObject{
 	vector2 position;
 	int sprite;
@@ -46,7 +47,6 @@ struct stableObject{
 	int time;
 };
 //Declarations
-const int speed = 2;
 //screen size
 const int screenX = 1280;
 const int screenY = 780;
@@ -64,7 +64,7 @@ int disableTimerTwo = 500;
 //Time to hit back variables  + arcing
 int hitBackTimer = 0;
 int coolDown = 0;
-int arcStage = 0; // 0begin arc,1 raise x and y, 2 lower y raise x,3 keep its current angle of trej
+int arcStage = 0; // 0begin arc,1 raise x and y, 2 lower y raise x,3 keep its current angle
 float originalArcX = 1000000;
 bool arcingUp = false;
 //Player Lives
@@ -79,6 +79,7 @@ int play = -1;
 int mouseX = 0;
 int mouseY = 0;
 //Game objects
+////////////////////////////Objects that will never move///////////////////
 stableObject hole = {640,390,-1,52,52,true,8000};
 stableObject scoreIcon = {200,50,-1,52,52,true,8000};
 stableObject scoreIcon2 = {230,50,-1,52,52,true,8000};
@@ -89,53 +90,115 @@ stableObject scoreIconE3 = {screenX - 260,50,-1,52,52,true,8000};
 stableObject brick = {200,50,-1,52,52,true,8000};
 stableObject brick2 = {230,50,-1,52,52,true,8000};
 stableObject brick3 = {260,50,-1,52,52,true,8000};
+////////////////////////////The bullets for each paddle///////////////////
 BulletStruct bullet = {-5, -5, 1, 0, -1, 20, 20,false};
 BulletStruct bulletTwo = {-5, -5, 1, 0, -1, 20, 20,false};
+//////////////////////////////////////////////////////////////////////////
+////////////////////////////Objects that will be moving///////////////////
 movableObject player1 = {100, 100, 0, 0, -1 , 20, 120};
 movableObject player2 = {1200, 100, 0, 0, -1, 20, 120};
 movableObject ball = {500, 500, 1,1, -1, 64, 92};
-//Vector math functions
+//////////////////////////////////////////////////////////////////////////
+
+/*  vectorSubtract
+
+    input:    Vector 2, Float
+
+    output:   Vector 2
+
+    remarks:  Subtracts a float value from the chosen Vector 2
+*/
 vector2 vectorSubtract(vector2 &v, float s){
 	vector2 result = {v.x - s, v.y - s};
 	return result;
 }
+
+/*  vectorAdd
+
+    input:    Vector 2, Float
+
+    output:   Vector 2
+
+    remarks:  Adds a float value to the chosen Vector 2
+*/
 vector2 vectorAdd(vector2 &v, float s){
 	vector2 result = {v.x + s, v.y + s};
 	return result;
 }
+
+/*  multiplyScalar
+
+    input:    Vector 2, Float
+
+    output:   Vector 2
+
+    remarks:  Scales a Vector2 by the chosen float
+*/
 vector2 multiplyScalar(vector2 &v, float s){
 	vector2 result = {v.x * s, v.y * s};
 	return result;
 }
+
+/*  vectorSubtract
+
+    input:    Vector 2, Vector 2
+
+    output:   Vector 2
+
+    remarks:  Subtracts one float from the other
+*/
 vector2 vectorSubtract(vector2 &v, vector2 &v2){
 	vector2 result = {v.x - v2.x, v.y - v2.y};
 	return result;
 }
+
+/*  vectorAdd
+
+    input:    Vector 2, Vector 2
+
+    output:   Vector 2
+
+    remarks:  Subtracts one Vector 2 from another
+*/
 vector2 vectorAdd(vector2 &v, vector2 &v2){
 	vector2 result = {v.x + v2.x, v.y + v2.y};
 	return result;
 }
+
+/*  getNormal
+
+    input:    Vector 2
+
+    output:   Vector 2
+
+    remarks:  Gets the normal of a Vector2 by getting the magnitude and then dividing the x and y by the magnitude.
+*/
 vector2 getNormal(vector2 &v){
 	float mag = sqrt(v.x*v.x + v.y*v.y);
 	vector2 result = {v.x/mag, v.y/mag};
 	return result;
 }
+
+/*  getMagnitude
+
+    input:    Vector 2
+
+    output:   Vector 2
+
+    remarks:  Gets the Magnitude of a Vector2
+*/
 float getMagnitude(vector2 &v){
 	return sqrt(v.x*v.x + v.y*v.y);
 }
-//Fill bullet array
-/*
-void fillBulletStruct()
-{
-	int i = 0;
-	while(i != 2)
-	{
-		bullet[i] = {-5, -5, 1, 0, -1, 20, 20};
-		i++;
-	}
-}
+
+/*  updateBallArc
+
+    input:    movableObject
+
+    output:   void
+
+    remarks:  Arcs the ball in the direction in was going when the arc was activated.
 */
-//Update ball if its arcing
 void updateBallArc(movableObject &obj) {
 	if (ball.speed.y < 0)
 	{
@@ -158,8 +221,6 @@ void updateBallArc(movableObject &obj) {
 			ball.position.x += .5f;
 			ball.position.y -= .9f;
 		}
-		//if (ball.position.y > screenY)
-		//	ball.speed.y *= -1;
 	}
 	else if (ball.speed.y > 0)
 	{
@@ -182,12 +243,18 @@ void updateBallArc(movableObject &obj) {
 			ball.position.x += .5f;
 			ball.position.y += .9f;
 		}
-		//if (ball.position.y > screenY)
-		//	ball.speed.y *= -1;
 	}
 }
-//Detect where the ball is. (score and collision)
-bool ballOnScreen(movableObject& obj){
+
+/*  ballOnScreen
+
+    input:    movableObject
+
+    output:   void
+
+    remarks:  Detect where the ball is so that players can score and reset the balls position
+*/
+void ballOnScreen(movableObject& obj){
 	if(obj.position.x > screenX) {
 		obj.position.x = screenX/2;
 		obj.speed.x *= -1;
@@ -204,9 +271,16 @@ bool ballOnScreen(movableObject& obj){
 	if(obj.position.y < 0) {
 		obj.speed.y *= -1;
 	}
-	return false;
 }
-//Adds the ball speed to its position
+
+/*  updateBallPosition
+
+    input:    movableObject
+
+    output:   void
+
+    remarks:  Adds the balls speed to its position. Also checks whether the ball is about to arc or not
+*/
 void updateBallPosition(movableObject &obj) {
 	obj.position = vectorAdd(obj.position, obj.speed);
 	if (arcStage = -1)
@@ -216,8 +290,16 @@ void updateBallPosition(movableObject &obj) {
 	}
 	updateBallArc(ball);
 }
-//Tells player 2 where he should be
-void fakeAI(movableObject &player, movableObject& ball){
+
+/*  updateAi
+
+    input:    movableObject, movableObject
+
+    output:   void
+
+    remarks:  Tells the 2nd paddle to adjust his Y position when the ball is close to him and to fire the bullets
+*/
+void updateAi(movableObject &player, movableObject& ball){
 	float speed = sqrt(ball.speed.x*ball.speed.x + ball.speed.y*ball.speed.y);
 	//player.position.y = ball.position.y;
 	if (!disablePTwo)
@@ -264,7 +346,15 @@ void fakeAI(movableObject &player, movableObject& ball){
 	//else
 		//player.position.y--;
 }
-//Detect various collisions
+
+/*  detectPaddleCollision
+
+    input:    movableObject, movableObject
+
+    output:   bool
+
+    remarks:  Determines if the ball has collided with the paddle or not. if so then bounce the ball backwards
+*/
 bool detectPaddleCollision(movableObject &player, movableObject& ball){
 	
 	if(ball.position.x >= player.position.x - (player.width/2) && ball.position.x <= player.position.x + (player.width/2)
@@ -291,6 +381,16 @@ bool detectPaddleCollision(movableObject &player, movableObject& ball){
 	}
 	return false;
 }
+
+/*  detectBrickCollision
+
+    input:    stableObject, movableObject, movableObject, movableObject
+
+    output:   void
+
+    remarks:  Determines if a brick has collided with a bullet or a ball. if it collides with a bullet then destroy it.
+			  if it collides with a ball then move all players forward and reverse the balls direction.
+*/
 void detectBrickCollision(stableObject &brick, movableObject& ball, movableObject& player1, movableObject& player2){
 	if(ball.position.x >= brick.position.x - (brick.width/2) && ball.position.x <= brick.position.x + (brick.width/2)
 		&& ball.position.y >= brick.position.y - (brick.width/2)&& ball.position.y <= brick.position.y + (brick.height/2)
@@ -317,27 +417,53 @@ void detectBrickCollision(stableObject &brick, movableObject& ball, movableObjec
 		brick.alive = false;
 	}
 }
+
+/*  detectBulletCollision
+
+    input:    BulletStruct, movableObject
+
+    output:   void
+
+    remarks:  Determines if a player2 has been hit with a bullet. if so the stun that player
+*/
 void detectBulletCollision( BulletStruct& bullets, movableObject& player)
 {
 	if(player.position.x >= bullets.position.x - (bullets.width/2) && player.position.x <= bullets.position.x + (bullets.width/2)
 		&& player.position.y >= bullets.position.y - (bullets.width/2)&& player.position.y <= bullets.position.y + (bullets.height/2))
 	{
-		std::cout << "colide 1 function";
+		std::cout << "collide 1 function";
 		disablePTwo = true;
 		bullet.out = false;
 	}
 }
+
+/*  detectBulletCollision2
+
+    input:    BulletStruct, movableObject
+
+    output:   void
+
+    remarks:  Determines if a player has been hit with a bullet. if so the stun that player
+*/
 void detectBulletCollision2( BulletStruct& bullets, movableObject& player)
 {
 	if(player.position.x >= bullets.position.x - (bullets.width/2) && player.position.x <= bullets.position.x + (bullets.width/2)
 		&& player.position.y >= bullets.position.y - (bullets.width/2)&& player.position.y <= bullets.position.y + (bullets.height/2))
 	{
-		std::cout << "colide 2 function";
+		std::cout << "collide 2 function";
 		disablePOne = true;
 		bulletTwo.out = false;
 	}
 }
-//update everything
+
+/*  updatePlayer
+
+    input:    movableObject, movableObject
+
+    output:   void
+
+    remarks:  Allows players to use the controls, be stunned, recover from stuns, shoot, and move.
+*/
 void updatePlayer(movableObject &player, movableObject& ball){
 	float speed = sqrt(ball.speed.x*ball.speed.x + ball.speed.y*ball.speed.y);
 	if (hitBackTimer > 0)
@@ -384,6 +510,15 @@ void updatePlayer(movableObject &player, movableObject& ball){
 		hitBackTimer = 100;
 	}
 }
+
+/*  updateBullet
+
+    input:    BulletStruct, movableObject
+
+    output:   void
+
+    remarks:  Fires a bullet, determines whether said bullet is still alive, and reloads the ammo over time.(For player1)
+*/
 void updateBullet( BulletStruct &bullets,movableObject &paddle)
 {
 	if (!bullet.out)
@@ -405,6 +540,15 @@ void updateBullet( BulletStruct &bullets,movableObject &paddle)
 	if (bullets.position.x >= screenX)
 		bullet.out= false;
 }
+
+/*  updateBullet2
+
+    input:    BulletStruct, movableObject
+
+    output:   void
+
+    remarks:  Fires a bullet, determines whether said bullet is still alive, and reloads the ammo over time.(For player2)
+*/
 void updateBullet2( BulletStruct &bullets,movableObject &paddle)
 {
 	if (!bulletTwo.out)
@@ -426,6 +570,15 @@ void updateBullet2( BulletStruct &bullets,movableObject &paddle)
 	if (bullets.position.x <= 0)
 		bulletTwo.out = false;
 }
+
+/*  updatePlayer2
+
+    input:    movableObject, movableObject
+
+    output:   void
+
+    remarks:  Allows the 2nd player to use the controls, be stunned, recover from stuns, shoot, and move.
+*/
 void updatePlayer2(movableObject &player, movableObject& ball){
 	float speed = sqrt(ball.speed.x*ball.speed.x + ball.speed.y*ball.speed.y);
 	if (!disablePTwo)
@@ -450,6 +603,15 @@ void updatePlayer2(movableObject &player, movableObject& ball){
 	}
 	detectPaddleCollision(player,ball);
 }
+
+/*  updateBricks
+
+    input:    
+
+    output:   void
+
+    remarks:  destroys the bricks, brings them back to life, and checks on their collision
+*/
 void updateBricks()
 {
 	if (!brick.alive)
@@ -489,12 +651,29 @@ void updateBricks()
 	detectBrickCollision(brick2,ball,player1,player2);
 	detectBrickCollision(brick3,ball,player1,player2);
 }
+
+/*  updateMouseMode
+
+    input:    movableObject
+
+    output:   void
+
+    remarks:  if mouseMode is on then the players position goes off the mouse.
+*/
 void updateMouseMode(movableObject &player)
 {
 	if (!(mouseY + (player.height/2) >= screenY) && !(mouseY - (player.height/2) <= 0))
 		player.position.y = (float)mouseY;// - (player.height/2);
 }
-//drags the player into the black hole or repels him
+
+/*  dragBall
+
+    input:    movableObject, stableObject
+
+    output:   void
+
+    remarks:  drags the player into the black hole or repels him when he reaches a certain area around the black hole. When the ball is sucked in it respawns it later.
+*/
 void dragBall(movableObject &ball, stableObject& hole)
 {
 	if (ball.position.x >= (screenX/2)-100 && ball.position.x <= (screenX/2)+100 && ball.position.y >= (screenY/2)-100 && ball.position.y <= (screenY/2)+100 )
@@ -512,6 +691,15 @@ void dragBall(movableObject &ball, stableObject& hole)
 		}
 	}
 }
+
+/*  dragBullet
+
+    input:    BulletStruct, stableObject
+
+    output:   void
+
+    remarks:  drags bullets into the black hole or repels them when they reach a certain area around the black hole.
+*/
 void dragBullet(BulletStruct &bullets, stableObject& hole)
 {
 	if (bullets.position.x >= (screenX/2)-100 && bullets.position.x <= (screenX/2)+100 && bullets.position.y >= (screenY/2)-100 && bullets.position.y <= (screenY/2)+100 )
@@ -529,7 +717,15 @@ void dragBullet(BulletStruct &bullets, stableObject& hole)
 		}
 	}
 }
-//loads all the images for the game
+
+/*  loadGame
+
+    input:    
+
+    output:   void
+
+    remarks:  Creates the sprites for each object
+*/
 void loadGame() {
 	srand((int)time(0));
 	//fillBulletStruct();
@@ -562,7 +758,15 @@ void loadGame() {
 	brick2.position.y = (float)(200+(rand()%400));
 	brick3.position.y = (float)(200+(rand()%400));
 }
-//delets all the sprites and used memory
+
+/*  endGame
+
+    input:    
+
+    output:   void
+
+    remarks:  Destroys all the sprites when they game has ended
+*/
 void endGame() {
 	DestroySprite(bgImage);
 	DestroySprite(player1.sprite);
@@ -584,7 +788,15 @@ void endGame() {
 	DestroySprite(bullet.sprite);
 	DestroySprite(bulletTwo.sprite);
 }
-//update the game
+
+/*  updateGame
+
+    input:    
+
+    output:   void
+
+    remarks:  Runs each of the update functions, runs cheat codes, determines how much life each player has.
+*/
 void updateGame() {
 	GetMouseLocation(mouseX,mouseY);
 	if (IsKeyDown(GLFW_KEY_KP_7))
@@ -639,7 +851,7 @@ void updateGame() {
 		if (twoPlayerMode)
 			updatePlayer2(player2, ball);
 		else
-			fakeAI(player2, ball);
+			updateAi(player2, ball);
 
 		detectPaddleCollision(player2,ball);
 		detectBulletCollision(bullet,player2);
@@ -666,7 +878,15 @@ void updateGame() {
 		MoveSprite(hole.sprite,(int)screenX/2,(int)screenY/2);
 	}
 }
-//draws the game
+
+/*  drawGame
+
+    input:    
+
+    output:   void
+
+    remarks:  Draws the sprites of every object in layers. the last line being the last one drawn ; the first line being drawn first
+*/
 void drawGame() {
 	if (lives == 4)
 	{
@@ -708,8 +928,24 @@ void drawGame() {
 	}
 	DrawSprite(bgImage);
 }
-//game loop
-int main( int arc, char* argv[] )
+
+
+/*  main
+
+    input:    
+
+    output:   int
+
+    remarks:  Runs the game loop until you run out of lives or the framework crashes.
+				1st it Initializes,
+				2nd it loads all the sprites,
+				3rd it clears the screen,
+				4th it updates the game,
+				5th it draws the game,
+				6th it repeats until said otherwise,
+				7th it destroys the sprites and shuts down the game
+*/
+int main()
 {
 	// First we need to create our Game Framework
 	Initialise(screenX, screenY, false );

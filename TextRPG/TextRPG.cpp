@@ -223,7 +223,7 @@ struct PlayerStruct
 	void updatePlayer()
 	{
 	}
-	int moveMonster(PlayerStruct monster, PlayerStruct player,PlayerStruct playerTwo,PlayerStruct playerThree)
+	int moveMonster(PlayerStruct& player,PlayerStruct &playerTwo,PlayerStruct &playerThree)
 	{
 		int distanceX[3] = {0,0,0};
 		int distanceY[3] = {0,0,0};
@@ -1055,6 +1055,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			break;
 		case TOWN:
 			player.iHealth = player.iHealthMax;
+			screen.getLoc(TOWN);
 			//writecl(getStoryLine(TOWN));
 			//Sleep(5000);
 			for (int i = 0; i < 6; i++)
@@ -1382,7 +1383,7 @@ int _tmain(int argc, _TCHAR* argv[])
 					//monster.updateMonster();
 					//monster.setPX(monster.getX());
 					//monster.setPY(monster.getY());
-					monster.moveMonster(monster,player,playerTwo,playerThree);
+					monster.moveMonster(player,playerTwo,playerThree);
 					
 					//write(monster.getPX());
 					//write(",");
@@ -1449,33 +1450,148 @@ int _tmain(int argc, _TCHAR* argv[])
 				}
 				else if (i == 3 && monsterTwo.iHealth > 0){
 					Sleep(100);
-					monsterTwo.updateMonster();
-					if ((monsterTwo.getPX() > 0 && monsterTwo.getPX() < 18 && monsterTwo.getPY() > 0 && monsterTwo.getPY() < 119) && !(player.getPX() == monsterTwo.getPX() && player.getPY() == monsterTwo.getPY()) && !screen.getWall(monsterTwo.getPX(),monsterTwo.getPY()) && !(monsterTwo.getPX() == monster.getPX() && monsterTwo.getPY() == monster.getPY()) && !(monsterTwo.getPX() == monsterThree.getPX() && monsterTwo.getPY() == monsterThree.getPY()))
+					//monsterTwo.updateMonster();
+					//monsterTwo.setPX(monsterTwo.getX());
+					//monsterTwo.setPY(monsterTwo.getY());
+					monsterTwo.moveMonster(player,playerTwo,playerThree);
+
+					//write(monsterTwo.getPX());
+					//write(",");
+					//write(monsterTwo.getPY());
+
+					if ((monsterTwo.getPX() > 0 && monsterTwo.getPX() < 18 && monsterTwo.getPY() > 0 && monsterTwo.getPY() < 119) && !(player.getPX() == monsterTwo.getPX() && player.getPY() == monsterTwo.getPY()) && !screen.getWall(monsterTwo.getPX(),monsterTwo.getPY()) && !(monsterTwo.getPX() == monsterTwo.getPX() && monsterTwo.getPY() == monsterTwo.getPY()) && !(monsterTwo.getPX() == monsterThree.getPX() && monsterTwo.getPY() == monsterThree.getPY()))
 					{
 						monsterTwo.setX(monsterTwo.getPX());
 						monsterTwo.setY(monsterTwo.getPY());
 					}
 					else
 					{
+						for (int a = 0; a <= 8; a++)
+						{
+							switch(screen.getCloseMeleeEnemy(monsterTwo.getX(),monsterTwo.getY(),player.getX(),player.getY(),playerTwo.getX(),playerTwo.getY(),playerThree.getX(),playerThree.getY(),player.iHealth,playerTwo.iHealth,playerThree.iHealth,a))
+							{
+							case 1:
+								if (player.iHealth > 0)
+								{
+									a += 20;
+									write("Enemy hits player1 for:");
+									writel(5);
+									player.iHealth -= 5;
+									if (player.iHealth < 0)
+									{
+										writel("Player1 dies");
+									}
+								}
+								Sleep(5000);
+								break;
+							case 2:
+								if (playerTwo.iHealth > 0)
+								{
+									a += 20;
+									write("Enemy hits player2 for:");
+									writel(5);
+									playerTwo.iHealth -= 5;
+									if (playerTwo.iHealth < 0)
+									{
+										writel("Player2 dies");
+									}
+								}
+								Sleep(5000);
+								break;
+							case 3:
+								if (playerThree.iHealth > 0)
+								{
+									a += 20;
+									write("Enemy hits player3 for:");
+									writel(5);
+									playerThree.iHealth -= 5;
+									if (playerThree.iHealth < 0)
+									{
+										writel("Player3 dies");
+									}
+								}
+								Sleep(5000);
+								break;
+							}
+						}
 						monsterTwo.setPX(monsterTwo.getX());
 						monsterTwo.setPY(monsterTwo.getY());
-					}}
+					}
+				}
 				else if (i == 5 && monsterThree.iHealth > 0){
 					Sleep(100);
-					monsterThree.updateMonster();
-					if ((monsterThree.getPX() > 0 && monsterThree.getPX() < 18 && monsterThree.getPY() > 0 && monsterThree.getPY() < 119) && !(player.getPX() == monsterThree.getPX() && player.getPY() == monsterThree.getPY()) && !screen.getWall(monsterThree.getPX(),monsterThree.getPY()) && !(monsterThree.getPX() == monsterTwo.getPX() && monsterThree.getPY() == monsterTwo.getPY()) && !(monster.getPX() == monsterThree.getPX() && monster.getPY() == monsterThree.getPY()))
+					//monsterThree.updateMonster();
+					//monsterThree.setPX(monsterThree.getX());
+					//monsterThree.setPY(monsterThree.getY());
+					monsterThree.moveMonster(player,playerTwo,playerThree);
+
+					//write(monsterThree.getPX());
+					//write(",");
+					//write(monsterThree.getPY());
+
+					if ((monsterThree.getPX() > 0 && monsterThree.getPX() < 18 && monsterThree.getPY() > 0 && monsterThree.getPY() < 119) && !(player.getPX() == monsterThree.getPX() && player.getPY() == monsterThree.getPY()) && !screen.getWall(monsterThree.getPX(),monsterThree.getPY()) && !(monsterThree.getPX() == monsterThree.getPX() && monsterThree.getPY() == monsterThree.getPY()) && !(monsterThree.getPX() == monsterThree.getPX() && monsterThree.getPY() == monsterThree.getPY()))
 					{
 						monsterThree.setX(monsterThree.getPX());
 						monsterThree.setY(monsterThree.getPY());
 					}
 					else
 					{
+						for (int a = 0; a <= 8; a++)
+						{
+							switch(screen.getCloseMeleeEnemy(monsterThree.getX(),monsterThree.getY(),player.getX(),player.getY(),playerTwo.getX(),playerTwo.getY(),playerThree.getX(),playerThree.getY(),player.iHealth,playerTwo.iHealth,playerThree.iHealth,a))
+							{
+							case 1:
+								if (player.iHealth > 0)
+								{
+									a += 20;
+									write("Enemy hits player1 for:");
+									writel(5);
+									player.iHealth -= 5;
+									if (player.iHealth < 0)
+									{
+										writel("Player1 dies");
+									}
+								}
+								Sleep(5000);
+								break;
+							case 2:
+								if (playerTwo.iHealth > 0)
+								{
+									a += 20;
+									write("Enemy hits player2 for:");
+									writel(5);
+									playerTwo.iHealth -= 5;
+									if (playerTwo.iHealth < 0)
+									{
+										writel("Player2 dies");
+									}
+								}
+								Sleep(5000);
+								break;
+							case 3:
+								if (playerThree.iHealth > 0)
+								{
+									a += 20;
+									write("Enemy hits player3 for:");
+									writel(5);
+									playerThree.iHealth -= 5;
+									if (playerThree.iHealth < 0)
+									{
+										writel("Player3 dies");
+									}
+								}
+								Sleep(5000);
+								break;
+							}
+						}
 						monsterThree.setPX(monsterThree.getX());
 						monsterThree.setPY(monsterThree.getY());
-					}}
+					}
+				}
 			}
 			break;
 		case STATS:
+			writecl("");
 			drawBar();
 			writel("|What would you like to do?");
 			write("|Damage: ");
