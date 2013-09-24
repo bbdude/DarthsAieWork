@@ -214,8 +214,8 @@ struct PlayerStruct
 		columnPX = 2;
 		iCharacter = 0;
 		iDmg = 0;
-		iHealth = 1;
-		iHealthMax = 1;
+		iHealth = 5;
+		iHealthMax = 5;
 		iGold = 10;
 		iWeaponLvl = 0;
 		iStoredDamage = 1;
@@ -223,7 +223,7 @@ struct PlayerStruct
 	void updatePlayer()
 	{
 	}
-	int moveMonster(PlayerStruct& player,PlayerStruct &playerTwo,PlayerStruct &playerThree)
+	bool moveMonster(PlayerStruct& player,PlayerStruct &playerTwo,PlayerStruct &playerThree)
 	{
 		int distanceX[3] = {0,0,0};
 		int distanceY[3] = {0,0,0};
@@ -287,8 +287,8 @@ struct PlayerStruct
 				rowPY++;
 		}
 		else
-			return 0;
-			//return;
+			return true;
+		return false;
 	}
 	void updateMonster()
 	{
@@ -1336,13 +1336,6 @@ int _tmain(int argc, _TCHAR* argv[])
 						player.setX(player.getPX());
 						player.setY(player.getPY());
 					}
-					else if ((player.getPX() == monsterTwo.getPX() && player.getPY() == monsterTwo.getPY()) || (player.getPX() == monsterThree.getPX() && player.getPY() == monsterThree.getPY()) || (player.getPX() == monster.getPX() && player.getPY() == monster.getPY()))
-					{
-						myLoc = FOREST;
-						enemyCollision = true;
-						player.setPX(player.getX());
-						player.setPY(player.getY());
-					}
 					else
 					{
 						player.setPX(player.getX());
@@ -1383,7 +1376,8 @@ int _tmain(int argc, _TCHAR* argv[])
 					//monster.updateMonster();
 					//monster.setPX(monster.getX());
 					//monster.setPY(monster.getY());
-					monster.moveMonster(player,playerTwo,playerThree);
+					if (monster.moveMonster(player,playerTwo,playerThree))
+						monster.updateMonster();
 					
 					//write(monster.getPX());
 					//write(",");
@@ -1448,21 +1442,28 @@ int _tmain(int argc, _TCHAR* argv[])
 						monster.setPY(monster.getY());
 					}
 				}
-				else if (i == 3 && monsterTwo.iHealth > 0){
+				if (i == 3 && monsterTwo.iHealth > 0){
 					Sleep(100);
 					//monsterTwo.updateMonster();
 					//monsterTwo.setPX(monsterTwo.getX());
 					//monsterTwo.setPY(monsterTwo.getY());
-					monsterTwo.moveMonster(player,playerTwo,playerThree);
+					//writel("Running Monster 2");
+					if (monsterTwo.moveMonster(player,playerTwo,playerThree))
+					{
+						monsterTwo.updateMonster();
+						//Sleep(100);
+					}
 
 					//write(monsterTwo.getPX());
 					//write(",");
 					//write(monsterTwo.getPY());
-
-					if ((monsterTwo.getPX() > 0 && monsterTwo.getPX() < 18 && monsterTwo.getPY() > 0 && monsterTwo.getPY() < 119) && !(player.getPX() == monsterTwo.getPX() && player.getPY() == monsterTwo.getPY()) && !screen.getWall(monsterTwo.getPX(),monsterTwo.getPY()) && !(monsterTwo.getPX() == monsterTwo.getPX() && monsterTwo.getPY() == monsterTwo.getPY()) && !(monsterTwo.getPX() == monsterThree.getPX() && monsterTwo.getPY() == monsterThree.getPY()))
+					//if ((monster.getPX() > 0 && monster.getPX() < 18 && monster.getPY() > 0 && monster.getPY() < 119) && !(player.getPX() == monster.getPX() && player.getPY() == monster.getPY()) && !screen.getWall(monster.getPX(),monster.getPY()) && !(monster.getPX() == monsterTwo.getPX() && monster.getPY() == monsterTwo.getPY()) && !(monster.getPX() == monsterThree.getPX() && monster.getPY() == monsterThree.getPY()))
+					if ((monsterTwo.getPX() > 0 && monsterTwo.getPX() < 18 && monsterTwo.getPY() > 0 && monsterTwo.getPY() < 119) && !(player.getPX() == monsterTwo.getPX() && player.getPY() == monsterTwo.getPY()) && !screen.getWall(monsterTwo.getPX(),monsterTwo.getPY()) && !(monsterTwo.getPX() == monster.getPX() && monsterTwo.getPY() == monster.getPY()) && !(monsterTwo.getPX() == monsterThree.getPX() && monsterTwo.getPY() == monsterThree.getPY()))
 					{
 						monsterTwo.setX(monsterTwo.getPX());
 						monsterTwo.setY(monsterTwo.getPY());
+						//writel("Running Monster 2");
+						//Sleep(100);
 					}
 					else
 					{
@@ -1518,19 +1519,25 @@ int _tmain(int argc, _TCHAR* argv[])
 						monsterTwo.setPY(monsterTwo.getY());
 					}
 				}
-				else if (i == 5 && monsterThree.iHealth > 0){
+				if (i == 5 && monsterThree.iHealth > 0){
 					Sleep(100);
 					//monsterThree.updateMonster();
 					//monsterThree.setPX(monsterThree.getX());
 					//monsterThree.setPY(monsterThree.getY());
-					monsterThree.moveMonster(player,playerTwo,playerThree);
-
+					if (monsterThree.moveMonster(player,playerTwo,playerThree))
+					{
+						monsterThree.updateMonster();
+						//writel("Running Monster 3");
+						//Sleep(9000);
+					}
 					//write(monsterThree.getPX());
 					//write(",");
 					//write(monsterThree.getPY());
 
-					if ((monsterThree.getPX() > 0 && monsterThree.getPX() < 18 && monsterThree.getPY() > 0 && monsterThree.getPY() < 119) && !(player.getPX() == monsterThree.getPX() && player.getPY() == monsterThree.getPY()) && !screen.getWall(monsterThree.getPX(),monsterThree.getPY()) && !(monsterThree.getPX() == monsterThree.getPX() && monsterThree.getPY() == monsterThree.getPY()) && !(monsterThree.getPX() == monsterThree.getPX() && monsterThree.getPY() == monsterThree.getPY()))
+					if ((monsterThree.getPX() > 0 && monsterThree.getPX() < 18 && monsterThree.getPY() > 0 && monsterThree.getPY() < 119) && !(player.getPX() == monsterThree.getPX() && player.getPY() == monsterThree.getPY()) && !screen.getWall(monsterThree.getPX(),monsterThree.getPY()) && !(monsterThree.getPX() == monsterTwo.getPX() && monsterThree.getPY() == monsterTwo.getPY()) && !(monsterThree.getPX() == monster.getPX() && monsterThree.getPY() == monster.getPY()))
 					{
+						//writel("Running Monster 3");
+						//Sleep(9000);
 						monsterThree.setX(monsterThree.getPX());
 						monsterThree.setY(monsterThree.getPY());
 					}
