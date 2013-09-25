@@ -508,9 +508,9 @@ struct Screen
 				if (i == portalLocX[0] && ii == portalLocY[0])
 					line[i] += "F";
 				else if (i == portalLocX[1] && ii == portalLocY[1])
-					line[i] += "T";
-				else if (i == portalLocX[2] && ii == portalLocY[2])
 					line[i] += "S";
+				else if (i == portalLocX[2] && ii == portalLocY[2])
+					line[i] += "T";
 				else if (i == portalLocX[3] && ii == portalLocY[3])
 					line[i] += "s";
 				else if (wall[i][ii])
@@ -593,14 +593,51 @@ struct Screen
 			wall[11][12] = true;
 			wall[12][13] = true;
 			break;
-		case 2:
-			location = "STATS";
-			break;
 		case 3:
 			location = "FOREST";
 			break;
 		case 4:
 			location = "TAVERN";
+			wall[2][1] = true;
+			wall[2][2] = true;
+			wall[2][3] = true;
+			wall[2][4] = true;
+			wall[2][5] = true;
+			wall[2][6] = true;
+			wall[2][7] = true;
+			wall[2][8] = true;
+			wall[2][9] = true;
+			wall[2][10] = true;
+			wall[10][1] = true;
+			wall[10][2] = true;
+			wall[10][3] = true;
+			wall[10][4] = true;
+			wall[10][5] = true;
+			wall[10][6] = true;
+			wall[10][7] = true;
+			wall[10][8] = true;
+			wall[10][9] = true;
+			wall[10][10] = true;
+			wall[1][2] = true;
+			wall[2][2] = true;
+			wall[3][2] = true;
+			wall[4][2] = true;
+			wall[5][2] = true;
+			wall[6][2] = true;
+			wall[7][2] = true;
+			wall[8][2] = true;
+			wall[9][2] = true;
+			wall[10][2] = true;
+			wall[1][10] = true;
+			wall[2][10] = true;
+			wall[3][10] = true;
+			wall[4][10] = true;
+			wall[5][10] = true;
+			wall[6][10] = true;
+			wall[7][10] = true;
+			wall[8][10] = true;
+			wall[9][10] = true;
+			wall[10][10] = true;
 			break;
 		case 5:
 			location = "SHOP";
@@ -934,10 +971,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	monsterThree.setY(100);
 	monsterThree.setPX(17);
 	monsterThree.setPY(100);
-	player.setX(2);
-	player.setY(2);
-	player.setPX(2);
-	player.setPY(2);
+	player.setX(15);
+	player.setY(100);
+	player.setPX(15);
+	player.setPY(100);
 
 	enum LOC {TEST,TOWN,STATS,FOREST,TAVERN,SHOP,QUIT,SHOPPE,MOUNTAINONE,MOUNTAINTWO,MOUNTAINTHREE,MOUNTAINFINALE};
 	enum MON {POTATO,GOBLIN,JUSTIN,YOURSELF,SELFESTEEM,DRAGON};
@@ -1803,6 +1840,16 @@ int _tmain(int argc, _TCHAR* argv[])
 		case SHOPPE:
 			writecl("|Shoppe is a stupid fucking way to say shop. Going to shop instead asshole");
 			myLoc = SHOP;
+			break;
+		case TAVERN:
+			screen.getLoc(TAVERN);
+			//writecl(getStoryLine(TOWN));
+			//Sleep(5000);
+			for (int i = 0; i < 6; i++)
+			{
+				screen.updateLines(player.columnX,player.rowY,playerTwo.columnX,playerTwo.rowY,playerThree.columnX,playerThree.rowY,monster.columnX,monster.rowY,monsterTwo.columnX,monsterTwo.rowY,monsterThree.columnX,monsterThree.rowY,monster.iHealth,monsterTwo.iHealth,monsterThree.iHealth);
+				getCC();
+			}
 			break;
 		default:
 			writecl("");
