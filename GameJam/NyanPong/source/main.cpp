@@ -166,6 +166,76 @@ float getMagnitude(vector2 &v){
 	return sqrt(v.x*v.x + v.y*v.y);
 }
 
+void loadBrick()
+{
+	for(int x = 0; x < 25; x++)
+	{
+		for(int y = 0; y < 15; y++)
+		{
+			bricks[x][y].sprite = -1;
+			bricks[x][y].width = 50;
+			bricks[x][y].height = 50;
+			bricks[x][y].tag = "WALL";
+			//bricks[x][y].time = 1000000000000000000;
+		}
+	}
+	for(int x = 0; x < 25; x++)
+	{
+		for(int y = 0; y < 15; y++)
+		{
+			bricks[x][y].position.x = (float)(x*bricks[x][y].width) + bricks[x][y].width - 10;
+			bricks[x][y].position.y = (float)(y*bricks[x][y].height) + bricks[x][y].height - 9;
+		}
+	}
+}
+void loadLevel(int level)
+{
+	switch (level)
+	{
+	case 1:
+		for (int x = 1; x < 23; x++)
+			bricks[x][1].tag = "FLOOR";
+		bricks[2][2].tag = "FLOOR";
+		bricks[2][4].tag = "FLOOR";
+		for (int x = 1; x < 24; x++)
+			bricks[x][5].tag = "FLOOR";
+		bricks[22][6].tag = "FLOOR";
+		bricks[22][8].tag = "FLOOR";
+		for (int x = 1; x < 24; x++)
+			bricks[x][9].tag = "FLOOR";
+		bricks[2][10].tag = "FLOOR";
+		bricks[2][12].tag = "FLOOR";
+		for (int x = 1; x < 24; x++)
+			bricks[x][13].tag = "FLOOR";
+		bricks[23][1].tag = "FLAG";
+		bricks[2][3].tag = "BREAK";
+		bricks[22][7].tag = "BREAK";
+		bricks[2][11].tag = "BREAK";
+
+		monster[0].position.x = bricks[1][1].position.x;// + 25;
+		monster[0].position.y = bricks[1][1].position.y;// + 25;
+		monster[1].position.x = bricks[23][5].position.x;// + 25;
+		monster[1].position.y = bricks[23][5].position.y;// + 25;
+		monster[2].position.x = bricks[1][9].position.x;// + 25;
+		monster[2].position.y = bricks[1][9].position.y;// + 25;
+		player1.position.x = bricks[23][13].position.x;// + 25;
+		player1.position.y = bricks[23][13].position.y;// + 25;
+
+		for (int i = 0; i <= 2; i++)
+		{
+			monster[i].alive = true;
+			monster[i].height = 20;
+			monster[i].sprite = -1;
+			monster[i].width = 20;
+			monster[i].speed.x = -1;
+			monster[i].speed.y = 0;
+		}
+		break;
+	default:
+		break;
+	}
+
+}
 bool detectCollisionBricks(movableObject &player,stableObject brick,vector2 plannedMovement)
 {
 	if(player.position.x + plannedMovement.x >= brick.position.x - (brick.width/2) && player.position.x  + plannedMovement.x <= brick.position.x + (brick.width/2)
@@ -179,6 +249,15 @@ bool detectCollisionBricks(movableObject &player,tempObject brick,vector2 planne
 {
 	if(player.position.x + plannedMovement.x >= brick.position.x - (brick.width/2) && player.position.x  + plannedMovement.x <= brick.position.x + (brick.width/2)
 		&& player.position.y  + plannedMovement.y >= brick.position.y - (brick.width/2)&& player.position.y + plannedMovement.y <= brick.position.y + (brick.height/2) && brick.time != 1000)
+	{
+		return false;
+	}
+	return true;
+}
+bool detectCollision(movableObject &objOne,movableObject &objTwo)
+{
+	if(objOne.position.x >= objTwo.position.x - (objTwo.width/2) && objOne.position.x <= objTwo.position.x + (objTwo.width/2)
+		&& objOne.position.y >= objTwo.position.y - (objTwo.width/2)&& objOne.position.y <= objTwo.position.y + (objTwo.height/2))
 	{
 		return false;
 	}
@@ -232,10 +311,22 @@ void updatePlayer(movableObject &player){
 	}
 	if (moving && !stopIt)
 		player.position = vectorAdd(player.position,plannedMovement);
+	for (int i = 0; i <= 2; i++)
+	{
+		if (!detectCollision(player,monster[i]))
+		{
+			//loadLevel(1);
+			player1.position.x = bricks[23][13].position.x;// + 25;
+			player1.position.y = bricks[23][13].position.y;// + 25;
+			iLives--;
+		}
+	}
 
 }
 
 void updateAi(movableObject &monster){
+	if (monster.alive)
+	{
 	vector2 plannedMovement = {0,0};
 	plannedMovement = vectorAdd(plannedMovement,monster.speed);
 	bool moving = true;
@@ -257,7 +348,7 @@ void updateAi(movableObject &monster){
 		monster.position = vectorAdd(monster.position,plannedMovement);
 	else 
 		monster.speed = multiplyScalar(monster.speed,-1);
-
+	}
 }
 
 /*  updateBricks
@@ -270,7 +361,6 @@ void updateAi(movableObject &monster){
 */
 void updateBricks()
 {
-	object
 	/*
 	if (!bricks[0].alive)
 	{
@@ -375,76 +465,6 @@ void updateCloud(tempObject &clouds, tempObject bombs)
 
 	clouds.position.x = bombs.position.x;
 	clouds.position.y = bombs.position.y;
-}
-void loadBrick()
-{
-	for(int x = 0; x < 25; x++)
-	{
-		for(int y = 0; y < 15; y++)
-		{
-			bricks[x][y].sprite = -1;
-			bricks[x][y].width = 50;
-			bricks[x][y].height = 50;
-			bricks[x][y].tag = "WALL";
-			//bricks[x][y].time = 1000000000000000000;
-		}
-	}
-	for(int x = 0; x < 25; x++)
-	{
-		for(int y = 0; y < 15; y++)
-		{
-			bricks[x][y].position.x = (float)(x*bricks[x][y].width) + bricks[x][y].width - 10;
-			bricks[x][y].position.y = (float)(y*bricks[x][y].height) + bricks[x][y].height - 9;
-		}
-	}
-}
-void loadLevel(int level)
-{
-	switch (level)
-	{
-	case 1:
-		for (int x = 1; x < 23; x++)
-			bricks[x][1].tag = "FLOOR";
-		bricks[2][2].tag = "FLOOR";
-		bricks[2][4].tag = "FLOOR";
-		for (int x = 1; x < 24; x++)
-			bricks[x][5].tag = "FLOOR";
-		bricks[22][6].tag = "FLOOR";
-		bricks[22][8].tag = "FLOOR";
-		for (int x = 1; x < 24; x++)
-			bricks[x][9].tag = "FLOOR";
-		bricks[2][10].tag = "FLOOR";
-		bricks[2][12].tag = "FLOOR";
-		for (int x = 1; x < 24; x++)
-			bricks[x][13].tag = "FLOOR";
-		bricks[23][1].tag = "FLAG";
-		bricks[2][3].tag = "BREAK";
-		bricks[22][7].tag = "BREAK";
-		bricks[2][11].tag = "BREAK";
-
-		monster[0].position.x = bricks[1][1].position.x;// + 25;
-		monster[0].position.y = bricks[1][1].position.y;// + 25;
-		monster[1].position.x = bricks[23][5].position.x;// + 25;
-		monster[1].position.y = bricks[23][5].position.y;// + 25;
-		monster[2].position.x = bricks[1][9].position.x;// + 25;
-		monster[2].position.y = bricks[1][9].position.y;// + 25;
-		player1.position.x = bricks[23][13].position.x;// + 25;
-		player1.position.y = bricks[23][13].position.y;// + 25;
-		
-		for (int i = 0; i <= 2; i++)
-		{
-			monster[i].alive = true;
-			monster[i].height = 20;
-			monster[i].sprite = -1;
-			monster[i].width = 20;
-			monster[i].speed.x = -1;
-			monster[i].speed.y = 0;
-		}
-		break;
-	default:
-		break;
-	}
-
 }
 /*  loadGame
 
@@ -594,7 +614,7 @@ void drawGame() {
 	}
 	////else if (iLiveE <= 0)
 	//	DrawSprite(iWin);
-	if (iLives <= 0)
+	else if (iLives <= 0)
 	{
 		DrawSprite(iLose);
 	}
@@ -609,12 +629,17 @@ void drawGame() {
 			DrawSprite(cloud.sprite);
 		if (bomb.time != 1000)
 			DrawSprite(bomb.sprite);
-		if (iLives == 3)
+		switch(iLives)
+		{
+		case 3:
 			DrawSprite(scoreIcon3.sprite);
-		if (iLives >= 2)
+		case 2:
 			DrawSprite(scoreIcon2.sprite);
-		if (iLives >= 1)
+		case 1:
 			DrawSprite(scoreIcon.sprite);
+			break;
+		}
+
 		for (int x = 0; x < 25; x++)
 			for (int y = 0; y < 15; y++)
 			if (bricks[x][y].tag != "DEAD")
