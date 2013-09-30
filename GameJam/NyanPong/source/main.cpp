@@ -64,12 +64,13 @@ int iMouseY = 0;
 tempObject scoreIcon = {200,50,-1,52,52,true,8000};
 tempObject scoreIcon2 = {230,50,-1,52,52,true,8000};
 tempObject scoreIcon3 = {260,50,-1,52,52,true,8000};
-stableObject bricks[26][15];
+stableObject bricks[20][15];
 tempObject bomb = {-100,-100,-1,50,50,false,1000};
-tempObject cloud = {-100,-100,-1,130,130,false,500};
+tempObject cloud = {-100,-100,-1,130,130,false,0};
 //////////////////////////////////////////////////////////////////////////
 ////////////////////////////Objects that will be moving///////////////////
 movableObject player1 = {500, 300, 1, 1, -1 , 5, 5};
+movableObject monster = {500, 300, 1, 1, -1 , 5, 5};
 //////////////////////////////////////////////////////////////////////////
 
 /*  vectorSubtract
@@ -166,7 +167,7 @@ float getMagnitude(vector2 &v){
 bool detectCollisionBricks(movableObject &player,stableObject brick,vector2 plannedMovement)
 {
 	if(player.position.x + plannedMovement.x >= brick.position.x - (brick.width/2) && player.position.x  + plannedMovement.x <= brick.position.x + (brick.width/2)
-		&& player.position.y  + plannedMovement.y >= brick.position.y - (brick.width/2)&& player.position.y + plannedMovement.y <= brick.position.y + (brick.height/2) && brick.tag == "WALL")
+		&& player.position.y  + plannedMovement.y >= brick.position.y - (brick.width/2)&& player.position.y + plannedMovement.y <= brick.position.y + (brick.height/2) && (brick.tag == "WALL" || brick.tag == "BREAK") )
 	{
 		return false;
 	}
@@ -175,7 +176,7 @@ bool detectCollisionBricks(movableObject &player,stableObject brick,vector2 plan
 bool detectCollisionBricks(movableObject &player,tempObject brick,vector2 plannedMovement)
 {
 	if(player.position.x + plannedMovement.x >= brick.position.x - (brick.width/2) && player.position.x  + plannedMovement.x <= brick.position.x + (brick.width/2)
-		&& player.position.y  + plannedMovement.y >= brick.position.y - (brick.width/2)&& player.position.y + plannedMovement.y <= brick.position.y + (brick.height/2))
+		&& player.position.y  + plannedMovement.y >= brick.position.y - (brick.width/2)&& player.position.y + plannedMovement.y <= brick.position.y + (brick.height/2) && brick.time != 1000)
 	{
 		return false;
 	}
@@ -229,6 +230,31 @@ void updatePlayer(movableObject &player){
 	}
 	if (moving && !stopIt)
 		player.position = vectorAdd(player.position,plannedMovement);
+
+}
+
+void updateAi(movableObject &monster){
+	vector2 plannedMovement = {0,0};
+	plannedMovement = vectorAdd(plannedMovement,monster.speed);
+	bool moving = true;
+	bool stopIt = false;
+	for (int x = 0; x < 25; x++)
+	{
+		for (int y = 0; y < 15; y++)
+		{
+			moving = detectCollisionBricks(monster,bricks[x][y],plannedMovement);
+			if (!moving)
+			{
+				stopIt = true;
+				//std::cout << "Stopping\n" << i;
+			}
+		}
+		moving = detectCollisionBricks(monster,bomb,plannedMovement);
+	}
+	if (moving && !stopIt)
+		monster.position = vectorAdd(monster.position,plannedMovement);
+	else 
+		monster.speed = multiplyScalar(monster.speed,-1);
 
 }
 
@@ -286,12 +312,19 @@ void updateBomb(tempObject &bombs,movableObject player)
 	//bombs.time = 1000;
 	if (bombs.time == 0)
 	{
+		//std::cout << "Killing a brick";
 		bombs.time = 1000;
 		for (int x = 0; x < 25; x++)
 		{
 			for (int y = 0; y < 19; y++)
 			{
-				if (bricks[x][y].position.x == bombs.position.x - (bombs.width/2) && (bricks[x][y].position.y == bombs.position.y - (bombs.height/2) - 61 || bricks[x][y].position.y == bombs.position.y - (bombs.height/2) + 61))
+				if (bricks[x][y].tag == "BREAK")
+					if (bricks[x][y].position.x >= bombs.position.x - (bombs.width/2) - 50 && bricks[x][y].position.x <= bombs.position.x + (bombs.width/2) + 50 && bricks[x][y].position.y >= bombs.position.y - (bombs.width/2) - 50 && bricks[x][y].position.y <= bombs.position.y + (bombs.width/2) + 50)
+					{
+						bricks[x][y].tag = "DEAD";
+						std::cout << "Killing a brick";
+					}
+				//if (bricks[x][y].position.x == bombs.position.x - (bombs.width/2) && (bricks[x][y].position.y == bombs.position.y - (bombs.height/2) - 61 || bricks[x][y].position.y == bombs.position.y - (bombs.height/2) + 61))
 			}
 		}
 	}
@@ -309,11 +342,11 @@ void updateBomb(tempObject &bombs,movableObject player)
 			{
 				for (int y = 0; y < 19; y++)
 				{
-					bombs.position.y = (int)(y*bombs.height) + bombs.height - 9;
+					bombs.position.y = (float)((y*bombs.height) + bombs.height - 9);
 					if (bombs.position.y - (52/2) <= player.position.y - 10 && bombs.position.y  + (52/2) >= player.position.y + 10)
 						return;
 				}
-				bombs.position.x = (int)(x*bombs.width) + bombs.width - 10;
+				bombs.position.x = (float)((x*bombs.width) + bombs.width - 10);
 				if (bombs.position.x - (52/2) <= player.position.x - 10 && bombs.position.x  + (52/2) >= player.position.x + 10)
 					return;
 			}
@@ -323,8 +356,11 @@ void updateBomb(tempObject &bombs,movableObject player)
 void updateCloud(tempObject &clouds, tempObject bombs)
 {
 	if (bombs.time == 0)
-		clouds.time == 200;
-	if (clouds.time != 200)
+	{
+		clouds.time = 200;
+		std::cout << "Showing cloud";
+	}
+	if (clouds.time > 0)
 		clouds.time--;
 
 	clouds.position.x = bombs.position.x;
@@ -332,23 +368,23 @@ void updateCloud(tempObject &clouds, tempObject bombs)
 }
 void loadBrick()
 {
-	for(int x = 0; x < 25; x++)
+	for(int x = 0; x < 24; x++)
 	{
 		for(int y = 0; y < 15; y++)
 		{
 			bricks[x][y].sprite = -1;
-			bricks[x][y].width = 50;
+			bricks[x][y].width = 52;
 			bricks[x][y].height = 50;
 			bricks[x][y].tag = "WALL";
 			//bricks[x][y].time = 1000000000000000000;
 		}
 	}
-	for(int x = 0; x < 25; x++)
+	for(int x = 0; x < 24; x++)
 	{
 		for(int y = 0; y < 15; y++)
 		{
-			bricks[x][y].position.x = (int)(x*bricks[x][y].width) + bricks[x][y].width - 10;
-			bricks[x][y].position.y = (int)(y*bricks[x][y].height) + bricks[x][y].height - 9;
+			bricks[x][y].position.x = (float)(x*bricks[x][y].width) + bricks[x][y].width - 10;
+			bricks[x][y].position.y = (float)(y*bricks[x][y].height) + bricks[x][y].height - 9;
 		}
 	}
 }
@@ -499,7 +535,7 @@ void updateGame() {
 			for (int y = 0; y < 15; y++)
 				MoveSprite(bricks[x][y].sprite,(int)bricks[x][y].position.x,(int)bricks[x][y].position.y);
 
-		MoveSprite(cloud.sprite,(int)cloud.position.x,(int)cloud.position.x);
+		MoveSprite(cloud.sprite,(int)cloud.position.x,(int)cloud.position.y);
 		MoveSprite(iLose,(int)iScreenX/2,(int)iScreenY/2);
 		MoveSprite(bomb.sprite,(int)bomb.position.x,(int)bomb.position.y);
 	}
@@ -528,7 +564,7 @@ void drawGame() {
 	{
 
 		DrawSprite(player1.sprite);
-		if (cloud.time <= 200 && cloud.time != 0)
+		if (cloud.time > 0)
 			DrawSprite(cloud.sprite);
 		if (bomb.time != 1000)
 			DrawSprite(bomb.sprite);
