@@ -27,6 +27,7 @@ struct movableObject{
 	int sprite;
 	int width;
 	int height;
+	bool alive;
 };
 //creates a set of variables assigned to a object that does not move
 struct stableObject{
@@ -69,8 +70,9 @@ tempObject bomb = {-100,-100,-1,50,50,false,1000};
 tempObject cloud = {-100,-100,-1,130,130,false,0};
 //////////////////////////////////////////////////////////////////////////
 ////////////////////////////Objects that will be moving///////////////////
-movableObject player1 = {500, 300, 1, 1, -1 , 5, 5};
-movableObject monster = {500, 300, 1, 1, -1 , 5, 5};
+movableObject player1 = {500, 300, 1, 1, -1 , 5, 5,true};
+movableObject monster[3];
+//movableObject monster = {500, 300, 1, 0, -1 , 5, 5,true};
 //////////////////////////////////////////////////////////////////////////
 
 /*  vectorSubtract
@@ -226,7 +228,7 @@ void updatePlayer(movableObject &player){
 				//std::cout << "Stopping\n" << i;
 			}
 		}
-		moving = detectCollisionBricks(player,bomb,plannedMovement);
+		//moving = detectCollisionBricks(player,bomb,plannedMovement);
 	}
 	if (moving && !stopIt)
 		player.position = vectorAdd(player.position,plannedMovement);
@@ -268,6 +270,7 @@ void updateAi(movableObject &monster){
 */
 void updateBricks()
 {
+	object
 	/*
 	if (!bricks[0].alive)
 	{
@@ -322,10 +325,17 @@ void updateBomb(tempObject &bombs,movableObject player)
 					if (bricks[x][y].position.x >= bombs.position.x - (bombs.width/2) - 50 && bricks[x][y].position.x <= bombs.position.x + (bombs.width/2) + 50 && bricks[x][y].position.y >= bombs.position.y - (bombs.width/2) - 50 && bricks[x][y].position.y <= bombs.position.y + (bombs.width/2) + 50)
 					{
 						bricks[x][y].tag = "DEAD";
-						std::cout << "Killing a brick";
+						//std::cout << "Killing a brick";
 					}
 				//if (bricks[x][y].position.x == bombs.position.x - (bombs.width/2) && (bricks[x][y].position.y == bombs.position.y - (bombs.height/2) - 61 || bricks[x][y].position.y == bombs.position.y - (bombs.height/2) + 61))
 			}
+		}
+		for (int i = 0; i <= 2; i++)
+		{
+		if (monster[i].position.x >= bombs.position.x - (bombs.width/2) - 50 && monster[i].position.x <= bombs.position.x + (bombs.width/2) + 50 && monster[i].position.y >= bombs.position.y - (bombs.width/2) - 50 && monster[i].position.y <= bombs.position.y + (bombs.width/2) + 50)
+		{
+			monster[i].alive = false;
+		}
 		}
 	}
 	if (bombs.time < 1000 && bombs.time > 0)
@@ -334,7 +344,7 @@ void updateBomb(tempObject &bombs,movableObject player)
 	{
 		if (bombs.time == 1000)
 		{
-			std::cout << "Placing Bomb";
+			//std::cout << "Placing Bomb";
 			bombs.time--;
 			bombs.position.x = player.position.x - (bombs.width/2);
 			bombs.position.y = player.position.y - (bombs.height/2);
@@ -358,7 +368,7 @@ void updateCloud(tempObject &clouds, tempObject bombs)
 	if (bombs.time == 0)
 	{
 		clouds.time = 200;
-		std::cout << "Showing cloud";
+		//std::cout << "Showing cloud";
 	}
 	if (clouds.time > 0)
 		clouds.time--;
@@ -368,18 +378,18 @@ void updateCloud(tempObject &clouds, tempObject bombs)
 }
 void loadBrick()
 {
-	for(int x = 0; x < 24; x++)
+	for(int x = 0; x < 25; x++)
 	{
 		for(int y = 0; y < 15; y++)
 		{
 			bricks[x][y].sprite = -1;
-			bricks[x][y].width = 52;
+			bricks[x][y].width = 50;
 			bricks[x][y].height = 50;
 			bricks[x][y].tag = "WALL";
 			//bricks[x][y].time = 1000000000000000000;
 		}
 	}
-	for(int x = 0; x < 24; x++)
+	for(int x = 0; x < 25; x++)
 	{
 		for(int y = 0; y < 15; y++)
 		{
@@ -411,6 +421,25 @@ void loadLevel(int level)
 		bricks[2][3].tag = "BREAK";
 		bricks[22][7].tag = "BREAK";
 		bricks[2][11].tag = "BREAK";
+
+		monster[0].position.x = bricks[1][1].position.x;// + 25;
+		monster[0].position.y = bricks[1][1].position.y;// + 25;
+		monster[1].position.x = bricks[23][5].position.x;// + 25;
+		monster[1].position.y = bricks[23][5].position.y;// + 25;
+		monster[2].position.x = bricks[1][9].position.x;// + 25;
+		monster[2].position.y = bricks[1][9].position.y;// + 25;
+		player1.position.x = bricks[23][13].position.x;// + 25;
+		player1.position.y = bricks[23][13].position.y;// + 25;
+		
+		for (int i = 0; i <= 2; i++)
+		{
+			monster[i].alive = true;
+			monster[i].height = 20;
+			monster[i].sprite = -1;
+			monster[i].width = 20;
+			monster[i].speed.x = -1;
+			monster[i].speed.y = 0;
+		}
 		break;
 	default:
 		break;
@@ -452,7 +481,9 @@ void loadGame() {
 			else
 				bricks[x][y].sprite = CreateSprite( "./images/floor.png", 52, 52, true );
 		}
-		player1.sprite = CreateSprite( "./images/cat1.png", 20, 20, true );
+		player1.sprite = CreateSprite( "./images/player.png", 20, 20, true );
+		for (int i = 0; i <= 2; i++)
+			monster[i].sprite = CreateSprite( "./images/enemy.png", 20, 20, true );
 		bomb.sprite = CreateSprite( "./images/bomb.png", 52, 52, true );
 		cloud.sprite = CreateSprite( "./images/cloud.png", 130, 130, true );
 	/*
@@ -476,6 +507,9 @@ void loadGame() {
 void endGame() {
 	DestroySprite(iBgImage);
 	DestroySprite(player1.sprite);
+	DestroySprite(monster[0].sprite);
+	DestroySprite(monster[1].sprite);
+	DestroySprite(monster[2].sprite);
 	DestroySprite(scoreIcon3.sprite);
 	DestroySprite(scoreIcon2.sprite);
 	DestroySprite(scoreIcon.sprite);
@@ -500,8 +534,6 @@ void endGame() {
 */
 void updateGame() {
 	GetMouseLocation(iMouseX,iMouseY);
-	updateBomb(bomb,player1);
-	updateCloud(cloud,bomb);
 	if (iLives == 4)
 	{
 		if ((IsKeyDown(GLFW_KEY_ENTER)) ||(iMouseX >= 100 && iMouseX <= 500 && iMouseY >= 50 && iMouseY <= 350 && GetMouseButtonDown(0)))
@@ -523,9 +555,15 @@ void updateGame() {
 	else
 	{
 		updateBricks();
+		updateBomb(bomb,player1);
+		updateCloud(cloud,bomb);
 		updatePlayer(player1);
+		for (int i = 0; i <= 2; i++)
+			updateAi(monster[i]);
 
 		MoveSprite(player1.sprite, (int)player1.position.x, (int)player1.position.y);
+		for (int i = 0; i <= 2; i++)
+			MoveSprite(monster[i].sprite, (int)monster[i].position.x, (int)monster[i].position.y);
 
 		MoveSprite(scoreIcon.sprite,(int)scoreIcon.position.x,(int)scoreIcon.position.y);
 		MoveSprite(scoreIcon2.sprite,(int)scoreIcon2.position.x,(int)scoreIcon2.position.y);
@@ -564,6 +602,9 @@ void drawGame() {
 	{
 
 		DrawSprite(player1.sprite);
+		for (int i = 0; i <= 2; i++)
+			if (monster[i].alive)
+				DrawSprite(monster[i].sprite);
 		if (cloud.time > 0)
 			DrawSprite(cloud.sprite);
 		if (bomb.time != 1000)

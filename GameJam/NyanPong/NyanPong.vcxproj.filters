@@ -18,21 +18,18 @@
     <None Include="resources\images\Arial_00.png" />
     <None Include="resources\images\arial_0.png" />
     <None Include="resources\images\bg.png" />
-    <None Include="resources\images\cat1.png" />
-    <None Include="resources\images\cat2.png" />
-    <None Include="resources\images\icecream.png" />
     <None Include="resources\images\cherry.png" />
     <None Include="resources\images\lose.png" />
     <None Include="resources\images\exit.png" />
     <None Include="resources\images\play.png" />
     <None Include="resources\images\brick.png" />
-    <None Include="resources\images\cherrye.png" />
-    <None Include="resources\images\hole.png" />
     <None Include="resources\images\floor.png" />
     <None Include="resources\images\flag.png" />
     <None Include="resources\images\bomb.png" />
     <None Include="resources\images\cloud.png" />
     <None Include="resources\images\breakable.png" />
+    <None Include="resources\images\enemy.png" />
+    <None Include="resources\images\player.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\main.cpp">
