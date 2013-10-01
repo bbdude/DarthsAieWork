@@ -313,7 +313,7 @@ void updatePlayer(movableObject &player){
 		player.position = vectorAdd(player.position,plannedMovement);
 	for (int i = 0; i <= 2; i++)
 	{
-		if (!detectCollision(player,monster[i]))
+		if (!detectCollision(player,monster[i]) && monster[i].alive)
 		{
 			//loadLevel(1);
 			player1.position.x = bricks[23][13].position.x;// + 25;
@@ -442,12 +442,12 @@ void updateBomb(tempObject &bombs,movableObject player)
 			{
 				for (int y = 0; y < 19; y++)
 				{
-					bombs.position.y = (float)((y*bombs.height) + bombs.height - 9);
-					if (bombs.position.y - (52/2) <= player.position.y - 10 && bombs.position.y  + (52/2) >= player.position.y + 10)
+					bombs.position.y = (float)((y*50) + 41);
+					if (bombs.position.y - (50/2) <= player.position.y - 10 && bombs.position.y  + (50/2) >= player.position.y + 10)
 						return;
 				}
 				bombs.position.x = (float)((x*bombs.width) + bombs.width - 10);
-				if (bombs.position.x - (52/2) <= player.position.x - 10 && bombs.position.x  + (52/2) >= player.position.x + 10)
+				if (bombs.position.x - (50/2) <= player.position.x - 10 && bombs.position.x  + (50/2) >= player.position.x + 10)
 					return;
 			}
 		}
