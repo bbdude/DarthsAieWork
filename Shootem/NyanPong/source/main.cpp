@@ -86,6 +86,7 @@ movableObject player1 = {500, 300, 1, 1, -1 , 5, 5,true};
 movableObject monster[3];
 movableObject target = {0,0,0,0,-1,50,50,true};
 movableObject screen = {0,0,0,.05f,-1,780,3840,true};
+movableObject screenTwo = {0,0,0,.05f,-1,780,3840,true};
 //movableObject monster = {500, 300, 1, 0, -1 , 5, 5,true};
 //////////////////////////////////////////////////////////////////////////
 
@@ -321,7 +322,7 @@ void updatePlayer(movableObject &player){
 
 float getPlayerAngle(movableObject &player)
 {
-	return std::tan((player.position.y-iMouseY)/(player.position.x-iMouseX));
+	return std::tan((iMouseY-player.position.y)/(iMouseX-player.position.x));
 }
 
 void updateAi(movableObject &monster){
@@ -347,7 +348,13 @@ void updateAi(movableObject &monster){
 void updateScreen()
 {
 	screen.position = vectorAdd(screen.position,screen.speed);
-	MoveSprite(screen.sprite, screen.position.x, screen.position.y);
+	MoveSprite(screen.sprite, (int)screen.position.x, (int)screen.position.y);
+	if (screen.position.y >= iScreenY)
+		screen.position.y = -iScreenY*2;
+	screenTwo.position = vectorAdd(screenTwo.position,screenTwo.speed);
+	MoveSprite(screenTwo.sprite, (int)screenTwo.position.x, (int)screenTwo.position.y);
+	if (screenTwo.position.y >= iScreenY)
+		screenTwo.position.y = (int)(-iScreenY*2);
 }
 void loadGame() {
 	srand((int)time(0));
@@ -358,7 +365,12 @@ void loadGame() {
 	screen.position.y = -iScreenY*2;
 	screen.sprite = CreateSprite( "./images/bg2.png", iScreenX, iScreenY*3,false );
 	//MoveSprite(screen.sprite, iScreenX>>1, iScreenY>>1);
-	MoveSprite(screen.sprite, screen.position.x, screen.position.y);
+	MoveSprite(screen.sprite, (int)screen.position.x, (int)screen.position.y);
+	screenTwo.position.x = 0;
+	screenTwo.position.y = -iScreenY*2;
+	screenTwo.sprite = CreateSprite( "./images/bg2.png", iScreenX, iScreenY*6,false );
+	//MoveSprite(screenTwo.sprite, iscreenTwoX>>1, iscreenTwoY>>1);
+	MoveSprite(screenTwo.sprite, (int)screenTwo.position.x, (int)screenTwo.position.y);
 	iLose = CreateSprite( "./images/lose.png", 400, 300, true );
 	iLeave = CreateSprite( "./images/exit.png", 400, 300, true );
 	iPlay = CreateSprite( "./images/play.png", 400, 300, true );
@@ -401,6 +413,8 @@ void endGame() {
 	DestroySprite(scoreIcon3.sprite);
 	DestroySprite(scoreIcon2.sprite);
 	DestroySprite(scoreIcon.sprite);
+	DestroySprite(screen.sprite);
+	DestroySprite(screenTwo.sprite);
 
 	for (int i = 0; i < 50; i++)
 	DestroySprite(bullet[i].sprite);
@@ -448,7 +462,7 @@ void updateGame() {
 			updateAi(monster[i]);
 
 		MoveSprite(target.sprite, (int)iMouseX, (int)iMouseY);
-		RotateSprite(player1.sprite,getPlayerAngle(player1));
+		RotateSprite(player1.sprite,(int)getPlayerAngle(player1));
 		MoveSprite(player1.sprite, (int)player1.position.x, (int)player1.position.y);
 		
 		for (int i = 0; i <= 2; i++)
@@ -506,7 +520,8 @@ void drawGame() {
 			break;
 		}
 	}
-	//DrawSprite(screen.sprite);
+	DrawSprite(screen.sprite);
+	DrawSprite(screenTwo.sprite);
 }
 
 /*  main
