@@ -31,6 +31,9 @@
     <None Include="resources\images\enemy.png" />
     <None Include="resources\images\player.png" />
     <None Include="resources\images\bg2.png" />
+    <None Include="resources\images\enemyB.png" />
+    <None Include="resources\images\enemyG.png" />
+    <None Include="resources\images\enemyR.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\main.cpp">

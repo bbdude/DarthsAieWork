@@ -110,6 +110,9 @@
     <None Include="resources\images\cherry.png" />
     <None Include="resources\images\cloud.png" />
     <None Include="resources\images\enemy.png" />
+    <None Include="resources\images\enemyB.png" />
+    <None Include="resources\images\enemyG.png" />
+    <None Include="resources\images\enemyR.png" />
     <None Include="resources\images\exit.png" />
     <None Include="resources\images\flag.png" />
     <None Include="resources\images\floor.png" />

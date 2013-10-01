@@ -67,6 +67,8 @@ tempObject scoreIcon = {200,50,-1,52,52,true,8000};
 tempObject scoreIcon2 = {230,50,-1,52,52,true,8000};
 tempObject scoreIcon3 = {260,50,-1,52,52,true,8000};
 stableObject bricks[20][15];
+stableObject** bric = new stableObject*[30];
+
 tempObject bomb = {-100,-100,-1,50,50,false,1000};
 tempObject cloud = {-100,-100,-1,130,130,false,0};
 //////////////////////////////////////////////////////////////////////////
@@ -169,6 +171,27 @@ float getMagnitude(vector2 &v){
 
 void loadBrick()
 {
+	for (int i = 0; i < 30; i++)
+		bric[i] = new stableObject[30];
+	for(int x = 0; x < 25; x++)
+	{
+		for(int y = 0; y < 15; y++)
+		{
+			bric[x][y].sprite = -1;
+			bric[x][y].width = 50;
+			bric[x][y].height = 50;
+			bric[x][y].tag = "WALL";
+			//bricks[x][y].time = 1000000000000000000;
+		}
+	}
+	for(int x = 0; x < 25; x++)
+	{
+		for(int y = 0; y < 15; y++)
+		{
+			bric[x][y].position.x = (float)(x*bric[x][y].width) + bric[x][y].width - 10;
+			bric[x][y].position.y = (float)(y*bric[x][y].height) + bric[x][y].height - 9;
+		}
+	}
 	for(int x = 0; x < 25; x++)
 	{
 		for(int y = 0; y < 15; y++)
@@ -212,7 +235,26 @@ void loadLevel(int level)
 		bricks[2][3].tag = "BREAK";
 		bricks[22][7].tag = "BREAK";
 		bricks[2][11].tag = "BREAK";
-
+		////////////////////////
+		for (int x = 1; x < 23; x++)
+			bric[x][1].tag = "FLOOR";
+		bric[2][2].tag = "FLOOR";
+		bric[2][4].tag = "FLOOR";
+		for (int x = 1; x < 24; x++)
+			bric[x][5].tag = "FLOOR";
+		bric[22][6].tag = "FLOOR";
+		bric[22][8].tag = "FLOOR";
+		for (int x = 1; x < 24; x++)
+			bric[x][9].tag = "FLOOR";
+		bric[2][10].tag = "FLOOR";
+		bric[2][12].tag = "FLOOR";
+		for (int x = 1; x < 24; x++)
+			bric[x][13].tag = "FLOOR";
+		bric[23][1].tag = "FLAG";
+		bric[2][3].tag = "BREAK";
+		bric[22][7].tag = "BREAK";
+		bric[2][11].tag = "BREAK";
+		//////////////////////////////
 		monster[0].position.x = bricks[1][1].position.x;// + 25;
 		monster[0].position.y = bricks[1][1].position.y;// + 25;
 		monster[1].position.x = bricks[23][5].position.x;// + 25;
@@ -502,6 +544,20 @@ void loadGame() {
 			else
 				bricks[x][y].sprite = CreateSprite( "./images/floor.png", 52, 52, true );
 		}
+		/////////////////////////////////////////////
+	for (int x = 0; x <= 25; x++)
+		for (int y = 0; y <= 15; y++)
+		{
+			if (bric[x][y].tag == "WALL")
+				bric[x][y].sprite = CreateSprite( "./images/brick.png", 52, 52, true );
+			else if (bric[x][y].tag == "FLAG")
+				bric[x][y].sprite = CreateSprite( "./images/flag.png", 52, 52, true );
+			else if (bric[x][y].tag == "BREAK")
+				bric[x][y].sprite = CreateSprite( "./images/breakable.png", 52, 52, true );
+			else
+				bric[x][y].sprite = CreateSprite( "./images/floor.png", 52, 52, true );
+		}
+		///////////////////////////////////////////////////
 		player1.sprite = CreateSprite( "./images/player.png", 20, 20, true );
 		for (int i = 0; i <= 2; i++)
 			monster[i].sprite = CreateSprite( "./images/enemy.png", 20, 20, true );
@@ -593,6 +649,9 @@ void updateGame() {
 		for (int x = 0; x < 25; x++)
 			for (int y = 0; y < 15; y++)
 				MoveSprite(bricks[x][y].sprite,(int)bricks[x][y].position.x,(int)bricks[x][y].position.y);
+		for (int x = 0; x < 25; x++)
+			for (int y = 0; y < 15; y++)
+				MoveSprite(bric[x][y].sprite,(int)bric[x][y].position.x,(int)bric[x][y].position.y);
 
 		MoveSprite(cloud.sprite,(int)cloud.position.x,(int)cloud.position.y);
 		MoveSprite(iLose,(int)iScreenX/2,(int)iScreenY/2);
@@ -643,8 +702,14 @@ void drawGame() {
 
 		for (int x = 0; x < 25; x++)
 			for (int y = 0; y < 15; y++)
-			if (bricks[x][y].tag != "DEAD")
-				DrawSprite(bricks[x][y].sprite);
+				if (bricks[x][y].tag == "DEAD")
+					DrawSprite(bricks[x][y].sprite);
+		/////////////////////////////
+		for (int x = 0; x < 25; x++)
+			for (int y = 0; y < 15; y++)
+				if (bric[x][y].tag != "DEAD")
+					DrawSprite(bric[x][y].sprite);
+		///////////////////////////
 	}
 	DrawSprite(iBgImage);
 }
@@ -681,6 +746,8 @@ int main()
 	};
 	endGame();
 	Shutdown();
-
+	for (int i = 0; i < 20; i++)
+		delete [] bric[i];
+	delete bric;
 	return 0;
 }

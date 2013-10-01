@@ -69,6 +69,7 @@ int iLeave = -1;
 int iPlay = -1;
 int iMouseX = 0;
 int iMouseY = 0;
+float wave = 0;
 float playerAngle = 0;
 bool pressTrigger = false;
 //Game objects
@@ -83,7 +84,7 @@ bulletStruct bullet[50];// = {-100,-100,0,0,false,-1,10,20};
 //////////////////////////////////////////////////////////////////////////
 ////////////////////////////Objects that will be moving///////////////////
 movableObject player1 = {500, 300, 1, 1, -1 , 5, 5,true};
-movableObject monster[3];
+movableObject monster[20];
 movableObject target = {0,0,0,0,-1,50,50,true};
 movableObject screen = {0,0,0,.05f,-1,780,3840,true};
 movableObject screenTwo = {0,0,0,.05f,-1,780,3840,true};
@@ -187,12 +188,6 @@ void loadLevel(int level)
 	{
 	case 1:
 		
-		monster[0].position.x = 50;// + 25;
-		monster[0].position.y = 50;// + 25;
-		monster[1].position.x = 100;// + 25;
-		monster[1].position.y = 100;// + 25;
-		monster[2].position.x = 150;// + 25;
-		monster[2].position.y = 150;// + 25;
 		
 		//player1.position.x = bricks[23][13].position.x;// + 25;
 		//player1.position.y = bricks[23][13].position.y;// + 25;
@@ -201,26 +196,109 @@ void loadLevel(int level)
 			bullet[i].alive = true;
 			bullet[i].angle.x = 0;
 			bullet[i].angle.y = 0;
+			bullet[i].position.x = -200;
+			bullet[i].position.y = -200;
 			bullet[i].height = 20;
 			bullet[i].width = 10;
 			bullet[i].sprite = -1;
 		}
-		for (int i = 0; i <= 2; i++)
+		for (int i = 0; i <= 19; i++)
 		{
 			monster[i].alive = true;
 			monster[i].height = 20;
 			monster[i].sprite = -1;
 			monster[i].width = 20;
-			monster[i].speed.x = -1;
-			monster[i].speed.y = 0.05f;
+			monster[i].speed.x = -2.5f;
+			monster[i].speed.y = 0.7f;
+			monster[i].position.x = -200;
+			monster[i].position.y = -200;
 		}
+		monster[0].position.x = 50;// + 25;
+		monster[0].position.y = 50;// + 25;
+		monster[1].position.x = 100;// + 25;
+		monster[1].position.y = 100;// + 25;
+		monster[2].position.x = 150;// + 25;
+		monster[2].position.y = 150;// + 25;
+		break;
+	case 2:
+		std::cout << "Wave 2";
+		
+		monster[3].position.x = 200;// + 25;
+		monster[3].position.y = -20;// + 25;
+	
+		monster[3].alive = true;
+		monster[3].height = 20;
+		//DestroySprite(monster[3].sprite);
+		monster[3].sprite = -1;
+		monster[3].width = 20;
+		monster[3].speed.y = 0.25f;
+		monster[3].speed.x = -2.0f;
+		monster[3].sprite = CreateSprite( "./images/enemyB.png", 40, 40, true );
 		break;
 	default:
 		break;
 	}
 
 }
+void loadWave(movableObject &obj,int wave)
+{
+	switch(wave)
+	{
+	case 1:
+		
+		//player1.position.x = bricks[23][13].position.x;// + 25;
+		//player1.position.y = bricks[23][13].position.y;// + 25;
 
+		//DestroySprite(obj.sprite);
+		obj.position.x = 400;
+		obj.position.y = -20;
+		obj.alive = true;
+		obj.height = 40;
+		obj.sprite = -1;
+		obj.width = 40;
+		//if (i == 1 || i == 2){
+		obj.speed.y = 0.25f;
+		obj.speed.x = 2.5f;
+		obj.sprite = CreateSprite( "./images/enemyB.png", 40, 40, true );
+		break;
+	case 2:
+		std::cout << "Spawning a green one";
+		//DestroySprite(obj.sprite);
+		obj.position.x = 400;
+		obj.position.y = -20;
+		obj.alive = true;
+		obj.height = 35;
+		obj.sprite = -1;
+		obj.width = 20;
+		//if (i == 1 || i == 2){
+		obj.speed.y = 0.25f;
+		obj.speed.x = 0.0f;
+		obj.sprite = CreateSprite( "./images/enemyG.png", 20, 35, true );
+		break;
+	case 3:
+		std::cout << "Spawning a red one";
+		//DestroySprite(obj.sprite);
+		obj.position.x = 400;
+		obj.position.y = -20;
+		obj.alive = true;
+		obj.height = 10;
+		obj.sprite = -1;
+		obj.width = 10;
+		//if (i == 1 || i == 2){
+		obj.speed.y = 0.28f;
+		obj.speed.x = 0.1f;
+		obj.sprite = CreateSprite( "./images/enemyR.png", 10, 10, true );
+		break;
+	case 4:
+	case 5:
+	case 6:
+		break;
+	}
+}
+void updateWave(movableObject &obj)
+{
+
+}
 bool detectCollision(movableObject &objOne,movableObject &objTwo)
 {
 	if(objOne.position.x >= objTwo.position.x - (objTwo.width/2) && objOne.position.x <= objTwo.position.x + (objTwo.width/2)
@@ -263,9 +341,29 @@ void fireBullet(movableObject &player)
 		//bullets.angle.x = (target.position.x-bullets.position.x)/distance;
 		//bullets.angle.y = (target.position.y-bullets.position.y)/distance;
 		//float a = std::atan2(target.position.x - bullets.position.x,target.position.y - bullets.position.y);
-		bullet[whatBullet].angle.y = -1;
+		//bullet[whatBullet].angle.y = -1;
 		//bullets.angle.x = std::cos(a);
 		//bullets.angle.y = std::sin(a);
+		vector2 angle = {0,0};
+		angle.x = (iMouseX-player.position.x)/10;
+		angle.y = (iMouseY-player.position.y)/10;
+		bullet[whatBullet].angle = angle;
+		bullet[whatBullet].angle.x = std::sqrt(std::pow(angle.x,2))/5;
+		if (angle.x < 0)
+			bullet[whatBullet].angle.x *= -1;
+		bullet[whatBullet].angle.y = std::sqrt(std::pow(angle.y,2))/5;
+		if (angle.y < 0)
+			bullet[whatBullet].angle.y *= -1;
+
+		if (angle.x < 4 && angle.x > 0)
+			bullet[whatBullet].angle.x = 4;
+		if (angle.x > -4 && angle.x < 0)
+			bullet[whatBullet].angle.x = -4;
+		if (angle.y < 4 && angle.y > 0)
+			bullet[whatBullet].angle.y = 4;
+		if (angle.y > -4 && angle.y < 0)
+			bullet[whatBullet].angle.y = -4;
+
 		whatBullet++;
 		if (whatBullet == 50)
 			whatBullet = 0;
@@ -314,7 +412,7 @@ void updatePlayer(movableObject &player){
 		if (!detectCollision(player,monster[i]) && monster[i].alive)
 		{
 			//loadLevel(1);
-			iLives--;
+			//iLives--;
 		}
 	}
 
@@ -338,7 +436,10 @@ void updateAi(movableObject &monster){
 		moving = false;
 	for (int i = 0; i < 49; i++)
 		if (!detectCollision(bullet[i],monster))
+		{
 			monster.alive = false;
+			loadWave(monster,(int)wave);
+		}
 	if (moving && !stopIt)
 		monster.position = vectorAdd(monster.position,plannedMovement);
 	else 
@@ -381,7 +482,7 @@ void loadGame() {
 
 	player1.sprite = CreateSprite( "./images/player.png", 20, 20, true );
 	target.sprite = CreateSprite( "./images/flag.png", 50, 50, true );
-	for (int i = 0; i <= 2; i++)
+	for (int i = 0; i <= 19; i++)
 		monster[i].sprite = CreateSprite( "./images/enemy.png", 20, 20, true );
 	for (int i = 0; i < 50; i++)
 	bullet[i].sprite = CreateSprite( "./images/bomb.png", 10, 20, true );
@@ -407,9 +508,8 @@ void endGame() {
 	DestroySprite(screen.sprite);
 	DestroySprite(player1.sprite);
 	DestroySprite(target.sprite);
-	DestroySprite(monster[0].sprite);
-	DestroySprite(monster[1].sprite);
-	DestroySprite(monster[2].sprite);
+	for (int i = 0; i <= 19; i++)
+	DestroySprite(monster[i].sprite);
 	DestroySprite(scoreIcon3.sprite);
 	DestroySprite(scoreIcon2.sprite);
 	DestroySprite(scoreIcon.sprite);
@@ -435,10 +535,14 @@ void updateGame() {
 	GetMouseLocation(iMouseX,iMouseY);
 	if (iLives == 4)
 	{
-		if ((IsKeyDown(GLFW_KEY_ENTER)) ||(iMouseX >= 100 && iMouseX <= 500 && iMouseY >= 50 && iMouseY <= 350 && GetMouseButtonDown(0)))
+		if ((IsKeyDown(GLFW_KEY_ENTER)) ||(iMouseX >= 100 && iMouseX <= 500 && iMouseY >= 50 && iMouseY <= 350 && GetMouseButtonDown(0))){
 			iLives--;
-		if ((IsKeyDown(GLFW_KEY_BACKSPACE)) ||(iMouseX >= 300 && iMouseX <= 700 && iMouseY >= 350 && iMouseY <= 650 && GetMouseButtonDown(0)))
+			wave++;
+		}
+		if ((IsKeyDown(GLFW_KEY_BACKSPACE)) ||(iMouseX >= 300 && iMouseX <= 700 && iMouseY >= 350 && iMouseY <= 650 && GetMouseButtonDown(0))){
 			iLives = -1;
+			wave++;
+		}
 		MoveSprite(iPlay,(int)300,(int)200);
 		MoveSprite(iLeave,(int)500,(int)500);
 		//GetMouseLocation(0,0);
@@ -446,26 +550,27 @@ void updateGame() {
 	}
 	else if (iLives <= 0)
 	{
+		MoveSprite(iLose,(int)iScreenX/2,(int)iScreenY/2);
 		MoveSprite(iWin,(int)500,(int)500);
-		MoveSprite(iLose,(int)500,(int)500);
 		if (IsKeyDown(' '))
 			iLives = -1;
 	}
 	else
 	{
+		
 		for (int i = 0; i < 50; i++)
 		updateBullet(bullet[i],player1);
 		fireBullet(player1);
 		updatePlayer(player1);
 		updateScreen();
-		for (int i = 0; i <= 2; i++)
+		for (int i = 0; i <= 19; i++)
 			updateAi(monster[i]);
 
 		MoveSprite(target.sprite, (int)iMouseX, (int)iMouseY);
 		RotateSprite(player1.sprite,(int)getPlayerAngle(player1));
 		MoveSprite(player1.sprite, (int)player1.position.x, (int)player1.position.y);
 		
-		for (int i = 0; i <= 2; i++)
+		for (int i = 0; i <= 19; i++)
 			MoveSprite(monster[i].sprite, (int)monster[i].position.x, (int)monster[i].position.y);
 
 		MoveSprite(scoreIcon.sprite,(int)scoreIcon.position.x,(int)scoreIcon.position.y);
@@ -473,9 +578,17 @@ void updateGame() {
 		MoveSprite(scoreIcon3.sprite,(int)scoreIcon3.position.x,(int)scoreIcon3.position.y);
 
 
-		MoveSprite(iLose,(int)iScreenX/2,(int)iScreenY/2);
 		for (int i = 0; i < 50; i++)
 		MoveSprite(bullet[i].sprite,(int)bullet[i].position.x,(int)bullet[i].position.y);
+		for (int i = 0; i <= 19; i++)
+			if (monster[i].position.y > iScreenY && monster[i].alive)
+			{
+				std::cout << "Colliding";
+				wave += 0.1;
+				loadWave(monster[i],(int)wave);
+			}
+		//if ((int)wave != 1)
+			//loadLevel(wave);
 	}
 }
 /*  drawGame
@@ -503,7 +616,7 @@ void drawGame() {
 
 		DrawSprite(target.sprite);
 		DrawSprite(player1.sprite);
-		for (int i = 0; i <= 2; i++)
+		for (int i = 0; i <= 19; i++)
 			if (monster[i].alive)
 				DrawSprite(monster[i].sprite);
 		for (int i = 0; i < 50; i++)
