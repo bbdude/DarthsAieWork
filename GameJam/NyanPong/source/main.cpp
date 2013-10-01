@@ -21,6 +21,7 @@ struct vector2{
 	float y;
 };
 //creates a set of variables assigned to a movable object
+
 struct movableObject{
 	vector2 position;
 	vector2 speed;
