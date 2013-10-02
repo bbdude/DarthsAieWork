@@ -29,6 +29,7 @@ struct movableObject{
 	int width;
 	int height;
 	bool alive;
+	std::string tag;
 };
 //creates a set of variables assigned to a object that does not move
 struct stableObject{
@@ -83,11 +84,11 @@ bulletStruct bullet[50];// = {-100,-100,0,0,false,-1,10,20};
 
 //////////////////////////////////////////////////////////////////////////
 ////////////////////////////Objects that will be moving///////////////////
-movableObject player1 = {500, 300, 1, 1, -1 , 5, 5,true};
+movableObject player1 = {500, 300, 1, 1, -1 , 5, 5,true,"BLANK"};
 movableObject monster[20];
-movableObject target = {0,0,0,0,-1,50,50,true};
-movableObject screen = {0,0,0,.05f,-1,780,3840,true};
-movableObject screenTwo = {0,0,0,.05f,-1,780,3840,true};
+movableObject target = {0,0,0,0,-1,50,50,true,"BLANK"};
+movableObject screen = {0,0,0,.05f,-1,780,3840,true,"BLANK"};
+movableObject screenTwo = {0,0,0,.05f,-1,780,3840,true,"BLANK"};
 //movableObject monster = {500, 300, 1, 0, -1 , 5, 5,true};
 //////////////////////////////////////////////////////////////////////////
 
@@ -212,6 +213,7 @@ void loadLevel(int level)
 			monster[i].speed.y = 0.7f;
 			monster[i].position.x = -200;
 			monster[i].position.y = -200;
+			monster[i].tag = "PINK";
 		}
 		monster[0].position.x = 50;// + 25;
 		monster[0].position.y = 50;// + 25;
@@ -259,6 +261,7 @@ void loadWave(movableObject &obj,int wave)
 		//if (i == 1 || i == 2){
 		obj.speed.y = 0.25f;
 		obj.speed.x = 2.5f;
+		obj.tag = "BLUE";
 		obj.sprite = CreateSprite( "./images/enemyB.png", 40, 40, true );
 		break;
 	case 2:
@@ -273,6 +276,7 @@ void loadWave(movableObject &obj,int wave)
 		//if (i == 1 || i == 2){
 		obj.speed.y = 0.25f;
 		obj.speed.x = 0.0f;
+		obj.tag = "GREEN";
 		obj.sprite = CreateSprite( "./images/enemyG.png", 20, 35, true );
 		break;
 	case 3:
@@ -287,6 +291,7 @@ void loadWave(movableObject &obj,int wave)
 		//if (i == 1 || i == 2){
 		obj.speed.y = 0.28f;
 		obj.speed.x = 0.1f;
+		obj.tag = "RED";
 		obj.sprite = CreateSprite( "./images/enemyR.png", 10, 10, true );
 		break;
 	case 4:
@@ -320,7 +325,11 @@ bool detectCollision(bulletStruct &objOne,movableObject &objTwo)
 void updateBullet(bulletStruct &bullets,movableObject &player)
 {
 	if (bullets.position.x < 0 || bullets.position.x  > 1280 || bullets.position.y  < 0 || bullets.position.y > 780)
+	{
 		bullets.alive = false;
+		bullets.position.x = -1000;
+		bullets.position.y = -1000;
+	}
 	if (bullets.alive)
 		bullets.position = vectorAdd(bullets.position,bullets.angle);
 }
@@ -355,14 +364,14 @@ void fireBullet(movableObject &player)
 		if (angle.y < 0)
 			bullet[whatBullet].angle.y *= -1;
 
-		if (angle.x < 4 && angle.x > 0)
+		/*if (angle.x < 4 && angle.x > 0)
 			bullet[whatBullet].angle.x = 4;
 		if (angle.x > -4 && angle.x < 0)
 			bullet[whatBullet].angle.x = -4;
 		if (angle.y < 4 && angle.y > 0)
 			bullet[whatBullet].angle.y = 4;
 		if (angle.y > -4 && angle.y < 0)
-			bullet[whatBullet].angle.y = -4;
+			bullet[whatBullet].angle.y = -4;*/
 
 		whatBullet++;
 		if (whatBullet == 50)
@@ -412,7 +421,8 @@ void updatePlayer(movableObject &player){
 		if (!detectCollision(player,monster[i]) && monster[i].alive)
 		{
 			//loadLevel(1);
-			//iLives--;
+			iLives--;
+			monster[i].alive = false;
 		}
 	}
 
@@ -430,7 +440,20 @@ void updateAi(movableObject &monster){
 	plannedMovement = vectorAdd(plannedMovement,monster.speed);
 	bool moving = true;
 	bool stopIt = false;
-
+	if (monster.tag == "RED" && rand()%300 == 2)
+	{
+		if (monster.speed.y < 0)
+			monster.speed.y = -20;
+		else
+			monster.speed.y = 20;
+	}
+	else if (monster.tag == "RED")
+	{
+		if (monster.speed.y < 0)
+			monster.speed.y = 0.0f;
+		else 
+			monster.speed.y = 0.0f;
+	}
 
 	if (monster.position.x + plannedMovement.x < 20 || monster.position.x + plannedMovement.x > 1260)
 		moving = false;
