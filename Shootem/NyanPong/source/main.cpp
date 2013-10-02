@@ -316,7 +316,7 @@ bool detectCollision(movableObject &objOne,movableObject &objTwo)
 bool detectCollision(bulletStruct &objOne,movableObject &objTwo)
 {
 	if(objOne.position.x >= objTwo.position.x - (objTwo.width/2) && objOne.position.x <= objTwo.position.x + (objTwo.width/2)
-		&& objOne.position.y >= objTwo.position.y - (objTwo.width/2)&& objOne.position.y <= objTwo.position.y + (objTwo.height/2))
+		&& objOne.position.y >= objTwo.position.y - (objTwo.width/2)&& objOne.position.y <= objTwo.position.y + (objTwo.height/2) && objOne.alive)
 	{
 		return false;
 	}
@@ -432,7 +432,13 @@ float getPlayerAngle(movableObject &player)
 {
 	return std::tan((iMouseY-player.position.y)/(iMouseX-player.position.x));
 }
-
+void explodeAi(movableObject &monster)
+{
+	std::cout << "Explode AI";
+	DestroySprite(monster.sprite);
+	monster.sprite = -1;
+	monster.sprite = CreateSprite( "./images/explosion.png", monster.width, monster.height, true );
+}
 void updateAi(movableObject &monster){
 	if (monster.alive)
 	{
@@ -461,6 +467,7 @@ void updateAi(movableObject &monster){
 		if (!detectCollision(bullet[i],monster))
 		{
 			monster.alive = false;
+			bullet[i].alive = false;
 			loadWave(monster,(int)wave);
 		}
 	if (moving && !stopIt)
@@ -468,6 +475,8 @@ void updateAi(movableObject &monster){
 	else 
 		monster.speed.x = multiplyScalar(monster.speed,-1).x;
 	}
+	if (!monster.alive)
+		explodeAi(monster);
 }
 void updateScreen()
 {
@@ -592,9 +601,6 @@ void updateGame() {
 		MoveSprite(target.sprite, (int)iMouseX, (int)iMouseY);
 		RotateSprite(player1.sprite,(int)getPlayerAngle(player1));
 		MoveSprite(player1.sprite, (int)player1.position.x, (int)player1.position.y);
-		
-		for (int i = 0; i <= 19; i++)
-			MoveSprite(monster[i].sprite, (int)monster[i].position.x, (int)monster[i].position.y);
 
 		MoveSprite(scoreIcon.sprite,(int)scoreIcon.position.x,(int)scoreIcon.position.y);
 		MoveSprite(scoreIcon2.sprite,(int)scoreIcon2.position.x,(int)scoreIcon2.position.y);
@@ -604,12 +610,17 @@ void updateGame() {
 		for (int i = 0; i < 50; i++)
 		MoveSprite(bullet[i].sprite,(int)bullet[i].position.x,(int)bullet[i].position.y);
 		for (int i = 0; i <= 19; i++)
+		{
+			if (monster[i].alive)
+				MoveSprite(monster[i].sprite, (int)monster[i].position.x, (int)monster[i].position.y);
 			if (monster[i].position.y > iScreenY && monster[i].alive)
 			{
 				std::cout << "Colliding";
 				wave += 0.1;
 				loadWave(monster[i],(int)wave);
 			}
+			
+		}
 		//if ((int)wave != 1)
 			//loadLevel(wave);
 	}
@@ -640,8 +651,10 @@ void drawGame() {
 		DrawSprite(target.sprite);
 		DrawSprite(player1.sprite);
 		for (int i = 0; i <= 19; i++)
-			if (monster[i].alive)
+		{
+			//if (monster[i].alive)
 				DrawSprite(monster[i].sprite);
+		}
 		for (int i = 0; i < 50; i++)
 		if (bullet[i].alive)
 			DrawSprite(bullet[i].sprite);

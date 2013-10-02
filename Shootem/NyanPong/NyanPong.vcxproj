@@ -114,6 +114,7 @@
     <None Include="resources\images\enemyG.png" />
     <None Include="resources\images\enemyR.png" />
     <None Include="resources\images\exit.png" />
+    <None Include="resources\images\explosion.png" />
     <None Include="resources\images\flag.png" />
     <None Include="resources\images\floor.png" />
     <None Include="resources\images\lose.png" />
