@@ -40,7 +40,7 @@
     <ClCompile Include="source\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\MainMenu.cpp">
+    <ClCompile Include="source\MenuItems.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

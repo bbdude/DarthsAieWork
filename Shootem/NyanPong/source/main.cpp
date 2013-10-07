@@ -17,44 +17,6 @@
 #include <list>
 //////////////////////////////////////////////////////////////////////////
 
-struct vector2{
-	float x;
-	float y;
-};
-struct movableObject{
-	vector2 position;
-	vector2 speed;
-	int sprite;
-	int width;
-	int height;
-	bool alive;
-	std::string tag;
-};
-struct stableObject{
-	vector2 position;
-	int sprite;
-	int width;
-	int height;
-	std::string tag;
-	int time;
-};
-struct tempObject{
-	vector2 position;
-	int sprite;
-	int width;
-	int height;
-	bool alive;
-	int time;
-};
-struct bulletStruct
-{
-	vector2 position;
-	vector2 angle;
-	bool alive;
-	int sprite;
-	int width;
-	int height;
-};
 class Vector
 {
 public:
@@ -66,6 +28,11 @@ public:
 	~Vector()
 	{
 	}
+	
+	void vectorSet(Vector &v2){
+		x = v2.getVectorX();
+		y = v2.getVectorY();
+	}
 	float getVectorX()
 	{
 		return x;
@@ -73,6 +40,19 @@ public:
 	float getVectorY()
 	{
 		return y;
+	}
+	void vectorSetX(float c)
+	{
+		x = c;
+	}
+	void vectorSetY(float c)
+	{
+		y = c;
+	}
+	void vectorSet(float c,float v)
+	{
+		x = c;
+		y = v;
 	}
 	void vectorSubtract(float s){
 		x -= s;
@@ -86,13 +66,19 @@ public:
 		x *= s;
 		y *= s;
 	}
-	void vectorSubtract(vector2 &v2){
-		x -= v2.x;
-		y -= v2.y;
+	void multiplyScalarX(float s){
+		x *= s;
 	}
-	void vectorAdd(vector2 &v2){
-		x += v2.x;
-		y += v2.y;
+	void multiplyScalarY(float s){
+		y *= s;
+	}
+	void vectorSubtract(Vector &v2){
+		x -= v2.getVectorX();
+		y -= v2.getVectorY();
+	}
+	void vectorAdd(Vector &v2){
+		x += v2.getVectorX();
+		y += v2.getVectorY();
 	}
 	void getNormal(){
 		float mag = sqrt(x*x + y*y);
@@ -106,7 +92,40 @@ public:
 	private:
 		float x,y;
 	};
-
+struct stableObject{
+	Vector position;
+	int sprite;
+	int width;
+	int height;
+	std::string tag;
+	int time;
+};
+struct tempObject{
+	Vector position;
+	int sprite;
+	int width;
+	int height;
+	bool alive;
+	int time;
+};
+struct bulletStruct
+{
+	Vector position;
+	Vector angle;
+	bool alive;
+	int sprite;
+	int width;
+	int height;
+};
+struct movableObject{
+	Vector position;
+	Vector speed;
+	int sprite;
+	int width;
+	int height;
+	bool alive;
+	std::string tag;
+};
 //Declarations
 //Player Lives
 int iLives = 4;
@@ -115,53 +134,21 @@ int whatExplosion = 0;
 float wave = 0;
 float playerAngle = 0;
 bool pressTrigger = false;
-vector2 vScreen = {1280,780};
-vector2 vMouse = {0,0};
-tempObject scoreIcon = {200,50,-1,52,52,true,8000};
-tempObject scoreIcon2 = {230,50,-1,52,52,true,8000};
-tempObject scoreIcon3 = {260,50,-1,52,52,true,8000};
+Vector vScreen;
+Vector vMouse;
+//200,50,{-1,52,52,true,8000}
+tempObject scoreIcon;
+//230,50, = {-1,52,52,true,8000}
+tempObject scoreIcon2;
+//260,50, = {-1,52,52,true,8000}
+tempObject scoreIcon3;
 bulletStruct bullet[50];
 movableObject monster[20];
 movableObject explosion[20];
-movableObject player1 = {500, 300, 1, 1, -1 , 5, 5,true,"BLANK"};
-movableObject target = {0,0,0,0,-1,50,50,true,"BLANK"};
-movableObject screen = {0,0,0,.05f,-1,780,3840,true,"BLANK"};
-movableObject screenTwo = {0,0,0,.05f,-1,780,3840,true,"BLANK"};
-
-vector2 vectorSubtract(vector2 &v, float s){
-	vector2 result = {v.x - s, v.y - s};
-	return result;
-}
-
-vector2 vectorAdd(vector2 &v, float s){
-	vector2 result = {v.x + s, v.y + s};
-	return result;
-}
-
-vector2 multiplyScalar(vector2 &v, float s){
-	vector2 result = {v.x * s, v.y * s};
-	return result;
-}
-
-vector2 vectorSubtract(vector2 &v, vector2 &v2){
-	vector2 result = {v.x - v2.x, v.y - v2.y};
-	return result;
-}
-
-vector2 vectorAdd(vector2 &v, vector2 &v2){
-	vector2 result = {v.x + v2.x, v.y + v2.y};
-	return result;
-}
-
-vector2 getNormal(vector2 &v){
-	float mag = sqrt(v.x*v.x + v.y*v.y);
-	vector2 result = {v.x/mag, v.y/mag};
-	return result;
-}
-
-float getMagnitude(vector2 &v){
-	return sqrt(v.x*v.x + v.y*v.y);
-}
+movableObject player1;
+movableObject target;
+movableObject screen;
+movableObject screenTwo;
 
 void loadLevel(int level)
 {
@@ -175,10 +162,10 @@ void loadLevel(int level)
 		for (int i = 0; i < 50; i++)
 		{
 			bullet[i].alive = true;
-			bullet[i].angle.x = 0;
-			bullet[i].angle.y = 0;
-			bullet[i].position.x = -200;
-			bullet[i].position.y = -200;
+			bullet[i].angle.vectorSetX(0);
+			bullet[i].angle.vectorSetY(0);
+			bullet[i].position.vectorSetX(-200);
+			bullet[i].position.vectorSetY(-200);
 			bullet[i].height = 20;
 			bullet[i].width = 10;
 			bullet[i].sprite = -1;
@@ -189,32 +176,32 @@ void loadLevel(int level)
 			monster[i].height = 20;
 			monster[i].sprite = -1;
 			monster[i].width = 20;
-			monster[i].speed.x = (rand() % 5) - 2.5f;
-			monster[i].speed.y = 0.7f;
-			monster[i].position.x = -200;
-			monster[i].position.y = -200;
+			monster[i].speed.vectorSetX((rand() % 5) - 2.5f);
+			monster[i].speed.vectorSetY(0.7f);
+			monster[i].position.vectorSetX(-200);
+			monster[i].position.vectorSetY(-200);
 			monster[i].tag = "PINK";
 		}
-		monster[0].position.x = 50;// + 25;
-		monster[0].position.y = 50;// + 25;
-		monster[1].position.x = 100;// + 25;
-		monster[1].position.y = 100;// + 25;
-		monster[2].position.x = 150;// + 25;
-		monster[2].position.y = 150;// + 25;
+		monster[0].position.vectorSetX(50);// + 25;
+		monster[0].position.vectorSetY(50);// + 25;
+		monster[1].position.vectorSetX(100);// + 25;
+		monster[1].position.vectorSetY(100);// + 25;
+		monster[2].position.vectorSetX(150);// + 25;
+		monster[2].position.vectorSetY(150);// + 25;
 		break;
 	case 2:
 		std::cout << "Wave 2";
 		
-		monster[3].position.x = 200;// + 25;
-		monster[3].position.y = -20;// + 25;
+		monster[3].position.vectorSetX(200);// + 25;
+		monster[3].position.vectorSetY(-20);// + 25;
 	
 		monster[3].alive = true;
 		monster[3].height = 20;
 		//DestroySprite(monster[3].sprite);
 		monster[3].sprite = -1;
 		monster[3].width = 20;
-		monster[3].speed.y = 0.25f;
-		monster[3].speed.x = (rand() % 5) - 2.5f;
+		monster[3].speed.vectorSetY(0.25f);
+		monster[3].speed.vectorSetX((rand() % 5) - 2.5f);
 		monster[3].sprite = CreateSprite( "./images/enemyB.png", 40, 40, true );
 		break;
 	default:
@@ -233,45 +220,45 @@ void loadWave(movableObject &obj,int wave)
 		//player1.position.y = bricks[23][13].position.y;// + 25;
 
 		//DestroySprite(obj.sprite);
-		obj.position.x = (rand() % (int)(vScreen.x - 40)) + 20;
-		obj.position.y = -20;
+		obj.position.vectorSetX((rand() % (int)(vScreen.getVectorX() - 40)) + 20);
+		obj.position.vectorSetY(-20);
 		obj.alive = true;
 		obj.height = 40;
 		obj.sprite = -1;
 		obj.width = 40;
 		//if (i == 1 || i == 2){
-		obj.speed.y = 0.25f;
-		obj.speed.x = (rand() % 5) - 2.5f;
+		obj.speed.vectorSetY(0.25f);
+		obj.speed.vectorSetX((rand() % 5) - 2.5f);
 		obj.tag = "BLUE";
 		obj.sprite = CreateSprite( "./images/enemyB.png", 40, 40, true );
 		break;
 	case 2:
 		std::cout << "Spawning a green one";
 		//DestroySprite(obj.sprite);
-		obj.position.x = (rand() % (int)(vScreen.x - 40)) + 20;
-		obj.position.y = -20;
+		obj.position.vectorSetX((rand() % (int)(vScreen.getVectorX() - 40)) + 20);
+		obj.position.vectorSetY(-20);
 		obj.alive = true;
 		obj.height = 35;
 		obj.sprite = -1;
 		obj.width = 20;
 		//if (i == 1 || i == 2){
-		obj.speed.y = 0.25f;
-		obj.speed.x = 0.0f;
+		obj.speed.vectorSetY(0.25f);
+		obj.speed.vectorSetX(0.0f);
 		obj.tag = "GREEN";
 		obj.sprite = CreateSprite( "./images/enemyG.png", 20, 35, true );
 		break;
 	case 3:
 		std::cout << "Spawning a red one";
 		//DestroySprite(obj.sprite);
-		obj.position.x = (rand() % (int)(vScreen.x - 40)) + 20;
-		obj.position.y = -20;
+		obj.position.vectorSetX((rand() % (int)(vScreen.getVectorX() - 40)) + 20);
+		obj.position.vectorSetY(-20);
 		obj.alive = true;
 		obj.height = 10;
 		obj.sprite = -1;
 		obj.width = 10;
 		//if (i == 1 || i == 2){
-		obj.speed.y = 0.28f;
-		obj.speed.x = 0.1f;
+		obj.speed.vectorSetY(0.28f);
+		obj.speed.vectorSetX(0.1f);
 		obj.tag = "RED";
 		obj.sprite = CreateSprite( "./images/enemyR.png", 10, 10, true );
 		break;
@@ -287,8 +274,8 @@ void updateWave(movableObject &obj)
 }
 bool detectCollision(movableObject &objOne,movableObject &objTwo)
 {
-	if(objOne.position.x >= objTwo.position.x - (objTwo.width/2) && objOne.position.x <= objTwo.position.x + (objTwo.width/2)
-		&& objOne.position.y >= objTwo.position.y - (objTwo.width/2)&& objOne.position.y <= objTwo.position.y + (objTwo.height/2))
+	if(objOne.position.getVectorX() >= objTwo.position.getVectorX() - (objTwo.width/2) && objOne.position.getVectorX() <= objTwo.position.getVectorX() + (objTwo.width/2)
+		&& objOne.position.getVectorY() >= objTwo.position.getVectorY() - (objTwo.width/2)&& objOne.position.getVectorY() <= objTwo.position.getVectorY() + (objTwo.height/2))
 	{
 		return false;
 	}
@@ -296,8 +283,8 @@ bool detectCollision(movableObject &objOne,movableObject &objTwo)
 }
 bool detectCollision(bulletStruct &objOne,movableObject &objTwo)
 {
-	if(objOne.position.x >= objTwo.position.x - (objTwo.width/2) && objOne.position.x <= objTwo.position.x + (objTwo.width/2)
-		&& objOne.position.y >= objTwo.position.y - (objTwo.width/2)&& objOne.position.y <= objTwo.position.y + (objTwo.height/2) && objOne.alive)
+	if(objOne.position.getVectorX() >= objTwo.position.getVectorX() - (objTwo.width/2) && objOne.position.getVectorX() <= objTwo.position.getVectorX() + (objTwo.width/2)
+		&& objOne.position.getVectorY() >= objTwo.position.getVectorY() - (objTwo.width/2)&& objOne.position.getVectorY() <= objTwo.position.getVectorY() + (objTwo.height/2) && objOne.alive)
 	{
 		return false;
 	}
@@ -305,14 +292,14 @@ bool detectCollision(bulletStruct &objOne,movableObject &objTwo)
 }
 void updateBullet(bulletStruct &bullets,movableObject &player)
 {
-	if (bullets.position.x < 0 || bullets.position.x  > 1280 || bullets.position.y  < 0 || bullets.position.y > 780)
+	if (bullets.position.getVectorX() < 0 || bullets.position.getVectorX()  > 1280 || bullets.position.getVectorY()  < 0 || bullets.position.getVectorY() > 780)
 	{
 		bullets.alive = false;
-		bullets.position.x = -1000;
-		bullets.position.y = -1000;
+		bullets.position.vectorSetX(-1000);
+		bullets.position.vectorSetY(-1000);
 	}
 	if (bullets.alive)
-		bullets.position = vectorAdd(bullets.position,bullets.angle);
+		bullets.position.vectorAdd(bullets.angle);
 }
 void fireBullet(movableObject &player)
 {
@@ -322,8 +309,8 @@ void fireBullet(movableObject &player)
 	}
 	else if (pressTrigger)
 	{
-		bullet[whatBullet].position.x = player.position.x;
-		bullet[whatBullet].position.y = player.position.y;
+		bullet[whatBullet].position.vectorSetX(player.position.getVectorX());
+		bullet[whatBullet].position.vectorSetY(player.position.getVectorY());
 		bullet[whatBullet].alive = true;
 		//int distance = (int)sqrt((target.position.x-bullets.position.x)*(target.position.x-bullets.position.x) + (target.position.y-bullets.position.y)*(target.position.y-bullets.position.y));
 		//int distance = (int)sqrt(std::pow(target.position.x-bullets.position.x,2) + std::pow(target.position.y-bullets.position.y,2));
@@ -334,16 +321,16 @@ void fireBullet(movableObject &player)
 		//bullet[whatBullet].angle.y = -1;
 		//bullets.angle.x = std::cos(a);
 		//bullets.angle.y = std::sin(a);
-		vector2 angle = {0,0};
-		angle.x = (vMouse.x-player.position.x)/10;
-		angle.y = (vMouse.y-player.position.y)/10;
+		Vector angle;
+		angle.vectorSetX((vMouse.getVectorX()-player.position.getVectorX())/10);
+		angle.vectorSetY((vMouse.getVectorY()-player.position.getVectorY())/10);
 		bullet[whatBullet].angle = angle;
-		bullet[whatBullet].angle.x = std::sqrt(std::pow(angle.x,2))/5;
-		if (angle.x < 0)
-			bullet[whatBullet].angle.x *= -1;
-		bullet[whatBullet].angle.y = std::sqrt(std::pow(angle.y,2))/5;
-		if (angle.y < 0)
-			bullet[whatBullet].angle.y *= -1;
+		bullet[whatBullet].angle.vectorSetX(std::sqrt(std::pow(angle.getVectorX(),2))/5);
+		bullet[whatBullet].angle.vectorSetY(std::sqrt(std::pow(angle.getVectorY(),2))/5);
+		if (angle.getVectorX() < 0)
+			bullet[whatBullet].angle.vectorSetX(bullet[whatBullet].angle.getVectorX() * -1);
+		if (angle.getVectorY() < 0)
+			bullet[whatBullet].angle.vectorSetY(bullet[whatBullet].angle.getVectorY() * -1);
 
 		whatBullet++;
 		if (whatBullet == 50)
@@ -353,46 +340,49 @@ void fireBullet(movableObject &player)
 }
 void updatePlayer(movableObject &player){
 
-	vector2 plannedMovement = {0,0};
-	if (IsKeyDown('W') && player.position.y - (player.height/2) - player.speed.y >= 0)
+	Vector plannedMovement;
+	if (IsKeyDown('W') && player.position.getVectorY() - (player.height/2) - player.speed.getVectorY() >= 0)
 	{
-		plannedMovement.y -= player.speed.y;
+		plannedMovement.vectorSetY(plannedMovement.getVectorY() - player.speed.getVectorY());
 		//player.position.y -= player.speed.y;
 	}
-	if (IsKeyDown('S') && player.position.y + (player.height/2) + player.speed.y <= vScreen.y)
+	if (IsKeyDown('S') && player.position.getVectorY() + (player.height/2) + player.speed.getVectorY() <= vScreen.getVectorY())
 	{
-		plannedMovement.y += player.speed.y;
+		plannedMovement.vectorSetY(plannedMovement.getVectorY() + player.speed.getVectorY());
 		//player.position.y += player.speed.y;
 	}
-	if (IsKeyDown('A') && player.position.x - (player.width/2) - player.speed.x >= 0)
+	if (IsKeyDown('A') && player.position.getVectorX() - (player.width/2) - player.speed.getVectorX() >= 0)
 	{
-		plannedMovement.x -= player.speed.x;
+		plannedMovement.vectorSetX(plannedMovement.getVectorX() - player.speed.getVectorX());
 		//player.position.x -= player.speed.x;
 	}
-	if (IsKeyDown('D') && player.position.x + (player.width/2) + player.speed.x <= vScreen.x)
+	if (IsKeyDown('D') && player.position.getVectorX() + (player.width/2) + player.speed.getVectorX() <= vScreen.getVectorX())
 	{
-		plannedMovement.x += player.speed.x;
+		plannedMovement.vectorSetX(plannedMovement.getVectorX() + player.speed.getVectorX());
 		//player.position.x += player.speed.x;
 	}
 	bool moving = true;
 	bool stopIt = false;
 
-	if (player.position.x + plannedMovement.x < 20)
-		plannedMovement.x = 0;
-	if (player.position.x + plannedMovement.x > 1260)
-		plannedMovement.x = 0;
-	if (player.position.y + plannedMovement.y < 20)
-		plannedMovement.y = 0;
-	if (player.position.y + plannedMovement.y > 760)
-		plannedMovement.y = 0;
+	if (player.position.getVectorX() + plannedMovement.getVectorX() < 20)
+		plannedMovement.vectorSetX(0);
+	if (player.position.getVectorX() + plannedMovement.getVectorX() > 1260)
+		plannedMovement.vectorSetX(0);
+	if (player.position.getVectorY() + plannedMovement.getVectorY() < 20)
+		plannedMovement.vectorSetY(0);
+	if (player.position.getVectorY() + plannedMovement.getVectorY() > 760)
+		plannedMovement.vectorSetY(0);
 
 	if (moving && !stopIt)
-		player.position = vectorAdd(player.position,plannedMovement);
+		player.position.vectorAdd(plannedMovement);
 }
 
 float getPlayerAngle(movableObject &player)
 {
-	return std::tan((vMouse.y-player.position.y)/(vMouse.x-player.position.x));
+	float angle = std::atan2 ( (vScreen.getVectorY() - vMouse.getVectorY()) - player.position.getVectorY(), vMouse.getVectorX() - player.position.getVectorX()) * 57.2957795f; //57... is 180/pi
+
+	return angle;
+	//return std::tan((vMouse.getVectorY()-player.position.getVectorY())/(vMouse.getVectorX()-player.position.getVectorX()))*57.2957795f;
 }
 void explodeAi(movableObject &monster)
 {
@@ -402,34 +392,30 @@ void explodeAi(movableObject &monster)
 	if (whatExplosion >= 20)
 		whatExplosion = 0;
 	explosion[whatExplosion].sprite = -1;
-	explosion[whatExplosion].position.x = monster.position.x;
-	explosion[whatExplosion].position.y = monster.position.y;
-	explosion[whatExplosion].speed.x = 0;
-	explosion[whatExplosion].speed.y = monster.speed.y/1.2f;//0.25f;
+	explosion[whatExplosion].position.vectorSet(monster.position);
+	explosion[whatExplosion].speed.vectorSetX(0);
+	explosion[whatExplosion].speed.vectorSetY(monster.speed.getVectorY()/1.2f);
 	explosion[whatExplosion].sprite = CreateSprite( "./images/explosion.png", monster.width, monster.height, true );
 }
 void updateAi(movableObject &monster){
 	if (monster.alive)
 	{
-		vector2 plannedMovement = {0,0};
-		plannedMovement = vectorAdd(plannedMovement,monster.speed);
+		Vector plannedMovement;
+		plannedMovement.vectorAdd(monster.speed);
 		bool moving = true;
 		bool stopIt = false;
 		if (monster.tag == "RED" && rand()%300 == 2)
 		{
-			if (monster.speed.y < 0)
-				monster.speed.y = -20;
+			if (monster.speed.getVectorY() < 0)
+				monster.speed.vectorSetY(-20);
 			else
-				monster.speed.y = 20;
+				monster.speed.vectorSetY(-20);
 		}
 		else if (monster.tag == "RED")
 		{
-			if (monster.speed.y < 0)
-				monster.speed.y = 0.0f;
-			else 
-				monster.speed.y = 0.0f;
+			monster.speed.vectorSetY(0);
 		}
-		if (monster.position.y > vScreen.y)
+		if (monster.position.getVectorY() > vScreen.getVectorY())
 		{
 			wave += 0.1f;
 			loadWave(monster,(int)wave);
@@ -439,7 +425,7 @@ void updateAi(movableObject &monster){
 			iLives--;
 			loadWave(monster,(int)wave);
 		}
-		if (monster.position.x + plannedMovement.x < 20 || monster.position.x + plannedMovement.x > 1260)
+		if (monster.position.getVectorX() + plannedMovement.getVectorX() < 20 || monster.position.getVectorX() + plannedMovement.getVectorX() > 1260)
 			moving = false;
 		for (int i = 0; i < 49; i++)
 			if (!detectCollision(bullet[i],monster))
@@ -451,41 +437,41 @@ void updateAi(movableObject &monster){
 
 			}
 		if (moving && !stopIt)
-			monster.position = vectorAdd(monster.position,plannedMovement);
+			monster.position.vectorAdd(plannedMovement);
 		else 
-			monster.speed.x = multiplyScalar(monster.speed,-1).x;
+			monster.speed.multiplyScalarX(-1);
 	}
 	
 }
 void updateExplosion(movableObject &explosion)
 {
-	explosion.position = vectorAdd(explosion.position,explosion.speed);
+	explosion.position.vectorAdd(explosion.speed);
 }
 void updateScreen()
 {
-	screen.position = vectorAdd(screen.position,screen.speed);
-	MoveSprite(screen.sprite, (int)screen.position.x, (int)screen.position.y);
-	if (screen.position.y >= vScreen.y)
-		screen.position.y = -vScreen.y*2;
-	screenTwo.position = vectorAdd(screenTwo.position,screenTwo.speed);
-	MoveSprite(screenTwo.sprite, (int)screenTwo.position.x, (int)screenTwo.position.y);
-	if (screenTwo.position.y >= vScreen.y)
-		screenTwo.position.y = -vScreen.y*2;
+	screen.position.vectorAdd(screen.speed);
+	MoveSprite(screen.sprite, (int)screen.position.getVectorX(), (int)screen.position.getVectorY());
+	if (screen.position.getVectorY() >= vScreen.getVectorY())
+		screen.position.vectorSetY(-vScreen.getVectorY()*2);
+	screenTwo.position.vectorAdd(screenTwo.speed);
+	MoveSprite(screenTwo.sprite, (int)screenTwo.position.getVectorX(), (int)screenTwo.position.getVectorY());
+	if (screenTwo.position.getVectorY() >= vScreen.getVectorY())
+		screenTwo.position.vectorSetY(-vScreen.getVectorY()*2);
 }
 void loadGame() {
 	srand((int)time(0));
 	//fillBulletStruct();
 	// Now load some sprites
 	loadLevel(1);
-	screen.position.x = 0;
-	screen.position.y = -vScreen.y*2;
-	screen.sprite = CreateSprite( "./images/bg2.png", (int)vScreen.x, (int)vScreen.y*3,false );
+	screen.position.vectorSetX(0);
+	screen.position.vectorSetY(-vScreen.getVectorY()*2);
+	screen.sprite = CreateSprite( "./images/bg2.png", (int)vScreen.getVectorX(), (int)vScreen.getVectorY()*3,false );
 	//MoveSprite(screen.sprite, iScreenX>>1, iScreenY>>1);
-	MoveSprite(screen.sprite, (int)screen.position.x, (int)screen.position.y);
-	screenTwo.position.x = 0;
-	screenTwo.position.y = -vScreen.y*2;
-	screenTwo.sprite = CreateSprite( "./images/bg2.png", (int)vScreen.x, (int)vScreen.y*6,false );
-	MoveSprite(screenTwo.sprite, (int)screenTwo.position.x, (int)screenTwo.position.y);
+	MoveSprite(screen.sprite, (int)screen.position.getVectorX(), (int)screen.position.getVectorY());
+	screenTwo.position.vectorSetX(0);
+	screenTwo.position.vectorSetY(-vScreen.getVectorY()*2);
+	screenTwo.sprite = CreateSprite( "./images/bg2.png", (int)vScreen.getVectorX(), (int)vScreen.getVectorY()*6,false );
+	MoveSprite(screenTwo.sprite, (int)screenTwo.position.getVectorX(), (int)screenTwo.position.getVectorY());
 	setSprite('L',CreateSprite( "./images/lose.png", 400, 300, true ));
 	setSprite('E',CreateSprite( "./images/exit.png", 400, 300, true ));
 	setSprite('P',CreateSprite( "./images/play.png", 400, 300, true ));
@@ -503,7 +489,55 @@ void loadGame() {
 	for (int i = 0; i < 50; i++)
 	bullet[i].sprite = CreateSprite( "./images/bomb.png", 10, 20, true );
 }
+void loadVectors()
+{
 
+	player1.alive = true;
+	player1.height = 5;
+	player1.width = 5;
+	player1.position.vectorSet(500,300);
+	player1.speed.vectorSet(1,1);
+	player1.sprite = -1;
+	target.alive = true;
+	target.height = 50;
+	target.width = 50;
+	target.position.vectorSet(0,0);
+	target.speed.vectorSet(0,0);
+	target.sprite = -1;
+	screen.alive = true;
+	screen.height = 780;
+	screen.width = 3840;
+	screen.position.vectorSet(0,0);
+	screen.speed.vectorSet(0,0.05f);
+	screen.sprite = -1;
+	screenTwo.alive = true;
+	screenTwo.height = 780;
+	screenTwo.width = 3840;
+	screenTwo.position.vectorSet(0,0);
+	screenTwo.speed.vectorSet(0,0.05f);
+	screenTwo.sprite = -1;
+	vScreen.vectorSet(1280,780);
+	vMouse.vectorSet(0,0);
+	scoreIcon.alive = true;
+	scoreIcon.height = 52;
+	scoreIcon.position.vectorSet(200,50);
+	scoreIcon.sprite = -1;
+	scoreIcon.time = 8000;
+	scoreIcon.width = 52;
+	scoreIcon2.alive = true;
+	scoreIcon2.height = 52;
+	scoreIcon2.position.vectorSet(230,50);
+	scoreIcon2.sprite = -1;
+	scoreIcon2.time = 8000;
+	scoreIcon2.width = 52;
+	scoreIcon3.alive = true;
+	scoreIcon3.height = 52;
+	scoreIcon3.position.vectorSet(260,50);
+	scoreIcon3.sprite = -1;
+	scoreIcon3.time = 8000;
+	scoreIcon3.width = 52;
+	
+}
 void endGame() {
 	DestroySprite(screen.sprite);
 	DestroySprite(player1.sprite);
@@ -529,15 +563,15 @@ void updateGame() {
 	int mX;
 	int mY;
 	GetMouseLocation(mX,mY);
-	vMouse.x = (float)mX;
-	vMouse.y = (float)mY;
+	vMouse.vectorSetX(mX);
+	vMouse.vectorSetY(mY);
 	if (iLives == 4)
 	{
-		if ((IsKeyDown(GLFW_KEY_ENTER)) ||(vMouse.x >= 100 && vMouse.x <= 500 && vMouse.y >= 50 && vMouse.y <= 350 && GetMouseButtonDown(0))){
+		if ((IsKeyDown(GLFW_KEY_ENTER)) ||(vMouse.getVectorX() >= 100 && vMouse.getVectorX() <= 500 && vMouse.getVectorY() >= 50 && vMouse.getVectorY() <= 350 && GetMouseButtonDown(0))){
 			iLives--;
 			wave++;
 		}
-		if ((IsKeyDown(GLFW_KEY_BACKSPACE)) ||(vMouse.x >= 300 && vMouse.x <= 700 && vMouse.y >= 350 && vMouse.y <= 650 && GetMouseButtonDown(0))){
+		if ((IsKeyDown(GLFW_KEY_BACKSPACE)) ||(vMouse.getVectorX() >= 300 && vMouse.getVectorX() <= 700 && vMouse.getVectorY() >= 350 && vMouse.getVectorY() <= 650 && GetMouseButtonDown(0))){
 			iLives = -1;
 		}
 		MoveSprite(getSprite('P'),(int)300,(int)200);
@@ -545,7 +579,7 @@ void updateGame() {
 	}
 	else if (iLives <= 0)
 	{
-		MoveSprite(getSprite('L'),(int)vScreen.x/2,(int)vScreen.y/2);
+		MoveSprite(getSprite('L'),(int)vScreen.getVectorX()/2,(int)vScreen.getVectorY()/2);
 		MoveSprite(getSprite('W'),(int)500,(int)500);
 		if (IsKeyDown(' '))
 			iLives = -1;
@@ -561,24 +595,24 @@ void updateGame() {
 		for (int i = 0; i <= 19; i++)
 			updateAi(monster[i]);
 
-		MoveSprite(target.sprite, (int)vMouse.x, (int)vMouse.y);
+		MoveSprite(target.sprite, (int)vMouse.getVectorX(), (int)vMouse.getVectorY());
 		RotateSprite(player1.sprite,(int)getPlayerAngle(player1));
-		MoveSprite(player1.sprite, (int)player1.position.x, (int)player1.position.y);
+		MoveSprite(player1.sprite, (int)player1.position.getVectorX(), (int)player1.position.getVectorY());
 
-		MoveSprite(scoreIcon.sprite,(int)scoreIcon.position.x,(int)scoreIcon.position.y);
-		MoveSprite(scoreIcon2.sprite,(int)scoreIcon2.position.x,(int)scoreIcon2.position.y);
-		MoveSprite(scoreIcon3.sprite,(int)scoreIcon3.position.x,(int)scoreIcon3.position.y);
+		MoveSprite(scoreIcon.sprite,(int)scoreIcon.position.getVectorX(),(int)scoreIcon.position.getVectorY());
+		MoveSprite(scoreIcon2.sprite,(int)scoreIcon2.position.getVectorX(),(int)scoreIcon2.position.getVectorY());
+		MoveSprite(scoreIcon3.sprite,(int)scoreIcon3.position.getVectorX(),(int)scoreIcon3.position.getVectorY());
 
 
 		for (int i = 0; i < 50; i++)
-		MoveSprite(bullet[i].sprite,(int)bullet[i].position.x,(int)bullet[i].position.y);
+		MoveSprite(bullet[i].sprite,(int)bullet[i].position.getVectorX(),(int)bullet[i].position.getVectorY());
 		for (int i = 0; i <= 19; i++)
 		{
 			updateExplosion(explosion[i]);
-			MoveSprite(explosion[i].sprite, (int)explosion[i].position.x, (int)explosion[i].position.y);
+			MoveSprite(explosion[i].sprite, (int)explosion[i].position.getVectorX(), (int)explosion[i].position.getVectorY());
 
 			if (monster[i].alive)
-				MoveSprite(monster[i].sprite, (int)monster[i].position.x, (int)monster[i].position.y);			
+				MoveSprite(monster[i].sprite, (int)monster[i].position.getVectorX(), (int)monster[i].position.getVectorY());			
 		}
 	}
 }
@@ -623,8 +657,9 @@ void drawGame() {
 
 int main()
 {
+	loadVectors();
 	// First we need to create our Game Framework
-	Initialise((int)vScreen.x, (int)vScreen.y, false );
+	Initialise((int)vScreen.getVectorX(), (int)vScreen.getVectorY(), false );
 
 	loadGame();
 
