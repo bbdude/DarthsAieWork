@@ -7,6 +7,7 @@
 //////////////////////////////////////////////////////////////////////////
 #include "AIE.h"
 #include "KeyCodes.h"
+#include "MenuItems.h"
 #include <string>
 #include <cmath>
 #include <assert.h>
@@ -16,12 +17,10 @@
 #include <list>
 //////////////////////////////////////////////////////////////////////////
 
-//creates 2 variables that act as coords
 struct vector2{
 	float x;
 	float y;
 };
-//creates a set of variables assigned to a movable object
 struct movableObject{
 	vector2 position;
 	vector2 speed;
@@ -31,7 +30,6 @@ struct movableObject{
 	bool alive;
 	std::string tag;
 };
-//creates a set of variables assigned to a object that does not move
 struct stableObject{
 	vector2 position;
 	int sprite;
@@ -57,128 +55,110 @@ struct bulletStruct
 	int width;
 	int height;
 };
+class Vector
+{
+public:
+	Vector()
+	{
+		x = 0;
+		y = 0;
+	}
+	~Vector()
+	{
+	}
+	float getVectorX()
+	{
+		return x;
+	}
+	float getVectorY()
+	{
+		return y;
+	}
+	void vectorSubtract(float s){
+		x -= s;
+		y -= s;
+	}
+	void vectorAdd(float s){
+		x += s;
+		y += s;
+	}
+	void multiplyScalar(float s){
+		x *= s;
+		y *= s;
+	}
+	void vectorSubtract(vector2 &v2){
+		x -= v2.x;
+		y -= v2.y;
+	}
+	void vectorAdd(vector2 &v2){
+		x += v2.x;
+		y += v2.y;
+	}
+	void getNormal(){
+		float mag = sqrt(x*x + y*y);
+		x = x/mag;
+		y = y/mag;
+		
+	}
+	float getMagnitude(){
+		return sqrt(x*x + y*y);
+	}
+	private:
+		float x,y;
+	};
+
 //Declarations
-//screen size
-const int iScreenX = 1280;
-const int iScreenY = 780;
 //Player Lives
 int iLives = 4;
 int whatBullet = 0;
-int iWin = -1;
-int iLose = -1;
-int iLeave = -1;
-int iPlay = -1;
-int iMouseX = 0;
-int iMouseY = 0;
+int whatExplosion = 0;
 float wave = 0;
 float playerAngle = 0;
 bool pressTrigger = false;
-//Game objects
-////////////////////////////Objects that will never move///////////////////
+vector2 vScreen = {1280,780};
+vector2 vMouse = {0,0};
 tempObject scoreIcon = {200,50,-1,52,52,true,8000};
 tempObject scoreIcon2 = {230,50,-1,52,52,true,8000};
 tempObject scoreIcon3 = {260,50,-1,52,52,true,8000};
-bulletStruct bullet[50];// = {-100,-100,0,0,false,-1,10,20};
-
-//tempObject bullet = {-100,-100,-1,50,50,false,1000};
-
-//////////////////////////////////////////////////////////////////////////
-////////////////////////////Objects that will be moving///////////////////
-movableObject player1 = {500, 300, 1, 1, -1 , 5, 5,true,"BLANK"};
+bulletStruct bullet[50];
 movableObject monster[20];
+movableObject explosion[20];
+movableObject player1 = {500, 300, 1, 1, -1 , 5, 5,true,"BLANK"};
 movableObject target = {0,0,0,0,-1,50,50,true,"BLANK"};
 movableObject screen = {0,0,0,.05f,-1,780,3840,true,"BLANK"};
 movableObject screenTwo = {0,0,0,.05f,-1,780,3840,true,"BLANK"};
-//movableObject monster = {500, 300, 1, 0, -1 , 5, 5,true};
-//////////////////////////////////////////////////////////////////////////
 
-/*  vectorSubtract
-
-    input:    Vector 2, Float
-
-    output:   Vector 2
-
-    remarks:  Subtracts a float value from the chosen Vector 2
-*/
 vector2 vectorSubtract(vector2 &v, float s){
 	vector2 result = {v.x - s, v.y - s};
 	return result;
 }
 
-/*  vectorAdd
-
-    input:    Vector 2, Float
-
-    output:   Vector 2
-
-    remarks:  Adds a float value to the chosen Vector 2
-*/
 vector2 vectorAdd(vector2 &v, float s){
 	vector2 result = {v.x + s, v.y + s};
 	return result;
 }
 
-/*  multiplyScalar
-
-    input:    Vector 2, Float
-
-    output:   Vector 2
-
-    remarks:  Scales a Vector2 by the chosen float
-*/
 vector2 multiplyScalar(vector2 &v, float s){
 	vector2 result = {v.x * s, v.y * s};
 	return result;
 }
 
-/*  vectorSubtract
-
-    input:    Vector 2, Vector 2
-
-    output:   Vector 2
-
-    remarks:  Subtracts one float from the other
-*/
 vector2 vectorSubtract(vector2 &v, vector2 &v2){
 	vector2 result = {v.x - v2.x, v.y - v2.y};
 	return result;
 }
 
-/*  vectorAdd
-
-    input:    Vector 2, Vector 2
-
-    output:   Vector 2
-
-    remarks:  Subtracts one Vector 2 from another
-*/
 vector2 vectorAdd(vector2 &v, vector2 &v2){
 	vector2 result = {v.x + v2.x, v.y + v2.y};
 	return result;
 }
 
-/*  getNormal
-
-    input:    Vector 2
-
-    output:   Vector 2
-
-    remarks:  Gets the normal of a Vector2 by getting the magnitude and then dividing the x and y by the magnitude.
-*/
 vector2 getNormal(vector2 &v){
 	float mag = sqrt(v.x*v.x + v.y*v.y);
 	vector2 result = {v.x/mag, v.y/mag};
 	return result;
 }
 
-/*  getMagnitude
-
-    input:    Vector 2
-
-    output:   Vector 2
-
-    remarks:  Gets the Magnitude of a Vector2
-*/
 float getMagnitude(vector2 &v){
 	return sqrt(v.x*v.x + v.y*v.y);
 }
@@ -209,7 +189,7 @@ void loadLevel(int level)
 			monster[i].height = 20;
 			monster[i].sprite = -1;
 			monster[i].width = 20;
-			monster[i].speed.x = -2.5f;
+			monster[i].speed.x = (rand() % 5) - 2.5f;
 			monster[i].speed.y = 0.7f;
 			monster[i].position.x = -200;
 			monster[i].position.y = -200;
@@ -234,7 +214,7 @@ void loadLevel(int level)
 		monster[3].sprite = -1;
 		monster[3].width = 20;
 		monster[3].speed.y = 0.25f;
-		monster[3].speed.x = -2.0f;
+		monster[3].speed.x = (rand() % 5) - 2.5f;
 		monster[3].sprite = CreateSprite( "./images/enemyB.png", 40, 40, true );
 		break;
 	default:
@@ -244,6 +224,7 @@ void loadLevel(int level)
 }
 void loadWave(movableObject &obj,int wave)
 {
+	
 	switch(wave)
 	{
 	case 1:
@@ -252,7 +233,7 @@ void loadWave(movableObject &obj,int wave)
 		//player1.position.y = bricks[23][13].position.y;// + 25;
 
 		//DestroySprite(obj.sprite);
-		obj.position.x = 400;
+		obj.position.x = (rand() % (int)(vScreen.x - 40)) + 20;
 		obj.position.y = -20;
 		obj.alive = true;
 		obj.height = 40;
@@ -260,14 +241,14 @@ void loadWave(movableObject &obj,int wave)
 		obj.width = 40;
 		//if (i == 1 || i == 2){
 		obj.speed.y = 0.25f;
-		obj.speed.x = 2.5f;
+		obj.speed.x = (rand() % 5) - 2.5f;
 		obj.tag = "BLUE";
 		obj.sprite = CreateSprite( "./images/enemyB.png", 40, 40, true );
 		break;
 	case 2:
 		std::cout << "Spawning a green one";
 		//DestroySprite(obj.sprite);
-		obj.position.x = 400;
+		obj.position.x = (rand() % (int)(vScreen.x - 40)) + 20;
 		obj.position.y = -20;
 		obj.alive = true;
 		obj.height = 35;
@@ -282,7 +263,7 @@ void loadWave(movableObject &obj,int wave)
 	case 3:
 		std::cout << "Spawning a red one";
 		//DestroySprite(obj.sprite);
-		obj.position.x = 400;
+		obj.position.x = (rand() % (int)(vScreen.x - 40)) + 20;
 		obj.position.y = -20;
 		obj.alive = true;
 		obj.height = 10;
@@ -354,8 +335,8 @@ void fireBullet(movableObject &player)
 		//bullets.angle.x = std::cos(a);
 		//bullets.angle.y = std::sin(a);
 		vector2 angle = {0,0};
-		angle.x = (iMouseX-player.position.x)/10;
-		angle.y = (iMouseY-player.position.y)/10;
+		angle.x = (vMouse.x-player.position.x)/10;
+		angle.y = (vMouse.y-player.position.y)/10;
 		bullet[whatBullet].angle = angle;
 		bullet[whatBullet].angle.x = std::sqrt(std::pow(angle.x,2))/5;
 		if (angle.x < 0)
@@ -363,15 +344,6 @@ void fireBullet(movableObject &player)
 		bullet[whatBullet].angle.y = std::sqrt(std::pow(angle.y,2))/5;
 		if (angle.y < 0)
 			bullet[whatBullet].angle.y *= -1;
-
-		/*if (angle.x < 4 && angle.x > 0)
-			bullet[whatBullet].angle.x = 4;
-		if (angle.x > -4 && angle.x < 0)
-			bullet[whatBullet].angle.x = -4;
-		if (angle.y < 4 && angle.y > 0)
-			bullet[whatBullet].angle.y = 4;
-		if (angle.y > -4 && angle.y < 0)
-			bullet[whatBullet].angle.y = -4;*/
 
 		whatBullet++;
 		if (whatBullet == 50)
@@ -387,7 +359,7 @@ void updatePlayer(movableObject &player){
 		plannedMovement.y -= player.speed.y;
 		//player.position.y -= player.speed.y;
 	}
-	if (IsKeyDown('S') && player.position.y + (player.height/2) + player.speed.y <= iScreenY)
+	if (IsKeyDown('S') && player.position.y + (player.height/2) + player.speed.y <= vScreen.y)
 	{
 		plannedMovement.y += player.speed.y;
 		//player.position.y += player.speed.y;
@@ -397,7 +369,7 @@ void updatePlayer(movableObject &player){
 		plannedMovement.x -= player.speed.x;
 		//player.position.x -= player.speed.x;
 	}
-	if (IsKeyDown('D') && player.position.x + (player.width/2) + player.speed.x <= iScreenX)
+	if (IsKeyDown('D') && player.position.x + (player.width/2) + player.speed.x <= vScreen.x)
 	{
 		plannedMovement.x += player.speed.x;
 		//player.position.x += player.speed.x;
@@ -416,78 +388,89 @@ void updatePlayer(movableObject &player){
 
 	if (moving && !stopIt)
 		player.position = vectorAdd(player.position,plannedMovement);
-	for (int i = 0; i <= 2; i++)
-	{
-		if (!detectCollision(player,monster[i]) && monster[i].alive)
-		{
-			//loadLevel(1);
-			iLives--;
-			monster[i].alive = false;
-		}
-	}
-
 }
 
 float getPlayerAngle(movableObject &player)
 {
-	return std::tan((iMouseY-player.position.y)/(iMouseX-player.position.x));
+	return std::tan((vMouse.y-player.position.y)/(vMouse.x-player.position.x));
 }
 void explodeAi(movableObject &monster)
 {
 	std::cout << "Explode AI";
 	DestroySprite(monster.sprite);
-	monster.sprite = -1;
-	monster.sprite = CreateSprite( "./images/explosion.png", monster.width, monster.height, true );
+	whatExplosion++;
+	if (whatExplosion >= 20)
+		whatExplosion = 0;
+	explosion[whatExplosion].sprite = -1;
+	explosion[whatExplosion].position.x = monster.position.x;
+	explosion[whatExplosion].position.y = monster.position.y;
+	explosion[whatExplosion].speed.x = 0;
+	explosion[whatExplosion].speed.y = monster.speed.y/1.2f;//0.25f;
+	explosion[whatExplosion].sprite = CreateSprite( "./images/explosion.png", monster.width, monster.height, true );
 }
 void updateAi(movableObject &monster){
 	if (monster.alive)
 	{
-	vector2 plannedMovement = {0,0};
-	plannedMovement = vectorAdd(plannedMovement,monster.speed);
-	bool moving = true;
-	bool stopIt = false;
-	if (monster.tag == "RED" && rand()%300 == 2)
-	{
-		if (monster.speed.y < 0)
-			monster.speed.y = -20;
-		else
-			monster.speed.y = 20;
-	}
-	else if (monster.tag == "RED")
-	{
-		if (monster.speed.y < 0)
-			monster.speed.y = 0.0f;
-		else 
-			monster.speed.y = 0.0f;
-	}
-
-	if (monster.position.x + plannedMovement.x < 20 || monster.position.x + plannedMovement.x > 1260)
-		moving = false;
-	for (int i = 0; i < 49; i++)
-		if (!detectCollision(bullet[i],monster))
+		vector2 plannedMovement = {0,0};
+		plannedMovement = vectorAdd(plannedMovement,monster.speed);
+		bool moving = true;
+		bool stopIt = false;
+		if (monster.tag == "RED" && rand()%300 == 2)
 		{
-			monster.alive = false;
-			bullet[i].alive = false;
+			if (monster.speed.y < 0)
+				monster.speed.y = -20;
+			else
+				monster.speed.y = 20;
+		}
+		else if (monster.tag == "RED")
+		{
+			if (monster.speed.y < 0)
+				monster.speed.y = 0.0f;
+			else 
+				monster.speed.y = 0.0f;
+		}
+		if (monster.position.y > vScreen.y)
+		{
+			wave += 0.1f;
 			loadWave(monster,(int)wave);
 		}
-	if (moving && !stopIt)
-		monster.position = vectorAdd(monster.position,plannedMovement);
-	else 
-		monster.speed.x = multiplyScalar(monster.speed,-1).x;
+		if (!detectCollision(player1,monster))
+		{
+			iLives--;
+			loadWave(monster,(int)wave);
+		}
+		if (monster.position.x + plannedMovement.x < 20 || monster.position.x + plannedMovement.x > 1260)
+			moving = false;
+		for (int i = 0; i < 49; i++)
+			if (!detectCollision(bullet[i],monster))
+			{
+				monster.alive = false;
+				bullet[i].alive = false;
+				explodeAi(monster);
+				loadWave(monster,(int)wave);
+
+			}
+		if (moving && !stopIt)
+			monster.position = vectorAdd(monster.position,plannedMovement);
+		else 
+			monster.speed.x = multiplyScalar(monster.speed,-1).x;
 	}
-	if (!monster.alive)
-		explodeAi(monster);
+	
+}
+void updateExplosion(movableObject &explosion)
+{
+	explosion.position = vectorAdd(explosion.position,explosion.speed);
 }
 void updateScreen()
 {
 	screen.position = vectorAdd(screen.position,screen.speed);
 	MoveSprite(screen.sprite, (int)screen.position.x, (int)screen.position.y);
-	if (screen.position.y >= iScreenY)
-		screen.position.y = -iScreenY*2;
+	if (screen.position.y >= vScreen.y)
+		screen.position.y = -vScreen.y*2;
 	screenTwo.position = vectorAdd(screenTwo.position,screenTwo.speed);
 	MoveSprite(screenTwo.sprite, (int)screenTwo.position.x, (int)screenTwo.position.y);
-	if (screenTwo.position.y >= iScreenY)
-		screenTwo.position.y = (int)(-iScreenY*2);
+	if (screenTwo.position.y >= vScreen.y)
+		screenTwo.position.y = -vScreen.y*2;
 }
 void loadGame() {
 	srand((int)time(0));
@@ -495,19 +478,18 @@ void loadGame() {
 	// Now load some sprites
 	loadLevel(1);
 	screen.position.x = 0;
-	screen.position.y = -iScreenY*2;
-	screen.sprite = CreateSprite( "./images/bg2.png", iScreenX, iScreenY*3,false );
+	screen.position.y = -vScreen.y*2;
+	screen.sprite = CreateSprite( "./images/bg2.png", (int)vScreen.x, (int)vScreen.y*3,false );
 	//MoveSprite(screen.sprite, iScreenX>>1, iScreenY>>1);
 	MoveSprite(screen.sprite, (int)screen.position.x, (int)screen.position.y);
 	screenTwo.position.x = 0;
-	screenTwo.position.y = -iScreenY*2;
-	screenTwo.sprite = CreateSprite( "./images/bg2.png", iScreenX, iScreenY*6,false );
-	//MoveSprite(screenTwo.sprite, iscreenTwoX>>1, iscreenTwoY>>1);
+	screenTwo.position.y = -vScreen.y*2;
+	screenTwo.sprite = CreateSprite( "./images/bg2.png", (int)vScreen.x, (int)vScreen.y*6,false );
 	MoveSprite(screenTwo.sprite, (int)screenTwo.position.x, (int)screenTwo.position.y);
-	iLose = CreateSprite( "./images/lose.png", 400, 300, true );
-	iLeave = CreateSprite( "./images/exit.png", 400, 300, true );
-	iPlay = CreateSprite( "./images/play.png", 400, 300, true );
-	iWin = CreateSprite( "./images/win.png", 400, 300, true );
+	setSprite('L',CreateSprite( "./images/lose.png", 400, 300, true ));
+	setSprite('E',CreateSprite( "./images/exit.png", 400, 300, true ));
+	setSprite('P',CreateSprite( "./images/play.png", 400, 300, true ));
+	setSprite('W',CreateSprite( "./images/win.png", 400, 300, true ));
 	scoreIcon.sprite = CreateSprite( "./images/cherry.png", 52, 52, true );
 	scoreIcon2.sprite = CreateSprite( "./images/cherry.png", 52, 52, true );
 	scoreIcon3.sprite = CreateSprite( "./images/cherry.png", 52, 52, true );
@@ -516,32 +498,20 @@ void loadGame() {
 	target.sprite = CreateSprite( "./images/flag.png", 50, 50, true );
 	for (int i = 0; i <= 19; i++)
 		monster[i].sprite = CreateSprite( "./images/enemy.png", 20, 20, true );
+	for (int i = 0; i <= 19; i++)
+		explosion[i].sprite = CreateSprite( "./images/explosion.png", 20, 20, true );
 	for (int i = 0; i < 50; i++)
 	bullet[i].sprite = CreateSprite( "./images/bomb.png", 10, 20, true );
-	/*
-	bricks[0].position.x =  (float)(300+(rand()%600));
-	bricks[1].position.x =  (float)(300+(rand()%600));
-	bricks[2].position.x =  (float)(300+(rand()%600));
-	bricks[0].position.y = (float)(200+(rand()%400));
-	bricks[1].position.y = (float)(200+(rand()%400));
-	bricks[2].position.y = (float)(200+(rand()%400));
-	*/
 }
 
-/*  endGame
-
-    input:    
-
-    output:   void
-
-    remarks:  Destroys all the sprites when they game has ended
-*/
 void endGame() {
 	DestroySprite(screen.sprite);
 	DestroySprite(player1.sprite);
 	DestroySprite(target.sprite);
 	for (int i = 0; i <= 19; i++)
 	DestroySprite(monster[i].sprite);
+	for (int i = 0; i <= 19; i++)
+	DestroySprite(explosion[i].sprite);
 	DestroySprite(scoreIcon3.sprite);
 	DestroySprite(scoreIcon2.sprite);
 	DestroySprite(scoreIcon.sprite);
@@ -550,40 +520,33 @@ void endGame() {
 
 	for (int i = 0; i < 50; i++)
 	DestroySprite(bullet[i].sprite);
-	DestroySprite(iLose);
-	DestroySprite(iLeave);
-	DestroySprite(iPlay);
+	DestroySprite(getSprite('L'));
+	DestroySprite(getSprite('E'));
+	DestroySprite(getSprite('P'));
 }
 
-/*  updateGame
-
-    input:    
-
-    output:   void
-
-    remarks:  Runs each of the update functions, runs cheat codes, determines how much life each player has.
-*/
 void updateGame() {
-	GetMouseLocation(iMouseX,iMouseY);
+	int mX;
+	int mY;
+	GetMouseLocation(mX,mY);
+	vMouse.x = (float)mX;
+	vMouse.y = (float)mY;
 	if (iLives == 4)
 	{
-		if ((IsKeyDown(GLFW_KEY_ENTER)) ||(iMouseX >= 100 && iMouseX <= 500 && iMouseY >= 50 && iMouseY <= 350 && GetMouseButtonDown(0))){
+		if ((IsKeyDown(GLFW_KEY_ENTER)) ||(vMouse.x >= 100 && vMouse.x <= 500 && vMouse.y >= 50 && vMouse.y <= 350 && GetMouseButtonDown(0))){
 			iLives--;
 			wave++;
 		}
-		if ((IsKeyDown(GLFW_KEY_BACKSPACE)) ||(iMouseX >= 300 && iMouseX <= 700 && iMouseY >= 350 && iMouseY <= 650 && GetMouseButtonDown(0))){
+		if ((IsKeyDown(GLFW_KEY_BACKSPACE)) ||(vMouse.x >= 300 && vMouse.x <= 700 && vMouse.y >= 350 && vMouse.y <= 650 && GetMouseButtonDown(0))){
 			iLives = -1;
-			wave++;
 		}
-		MoveSprite(iPlay,(int)300,(int)200);
-		MoveSprite(iLeave,(int)500,(int)500);
-		//GetMouseLocation(0,0);
-			//lives = -1;
+		MoveSprite(getSprite('P'),(int)300,(int)200);
+		MoveSprite(getSprite('E'),(int)500,(int)500);
 	}
 	else if (iLives <= 0)
 	{
-		MoveSprite(iLose,(int)iScreenX/2,(int)iScreenY/2);
-		MoveSprite(iWin,(int)500,(int)500);
+		MoveSprite(getSprite('L'),(int)vScreen.x/2,(int)vScreen.y/2);
+		MoveSprite(getSprite('W'),(int)500,(int)500);
 		if (IsKeyDown(' '))
 			iLives = -1;
 	}
@@ -598,7 +561,7 @@ void updateGame() {
 		for (int i = 0; i <= 19; i++)
 			updateAi(monster[i]);
 
-		MoveSprite(target.sprite, (int)iMouseX, (int)iMouseY);
+		MoveSprite(target.sprite, (int)vMouse.x, (int)vMouse.y);
 		RotateSprite(player1.sprite,(int)getPlayerAngle(player1));
 		MoveSprite(player1.sprite, (int)player1.position.x, (int)player1.position.y);
 
@@ -611,39 +574,23 @@ void updateGame() {
 		MoveSprite(bullet[i].sprite,(int)bullet[i].position.x,(int)bullet[i].position.y);
 		for (int i = 0; i <= 19; i++)
 		{
+			updateExplosion(explosion[i]);
+			MoveSprite(explosion[i].sprite, (int)explosion[i].position.x, (int)explosion[i].position.y);
+
 			if (monster[i].alive)
-				MoveSprite(monster[i].sprite, (int)monster[i].position.x, (int)monster[i].position.y);
-			if (monster[i].position.y > iScreenY && monster[i].alive)
-			{
-				std::cout << "Colliding";
-				wave += 0.1;
-				loadWave(monster[i],(int)wave);
-			}
-			
+				MoveSprite(monster[i].sprite, (int)monster[i].position.x, (int)monster[i].position.y);			
 		}
-		//if ((int)wave != 1)
-			//loadLevel(wave);
 	}
 }
-/*  drawGame
-
-    input:    
-
-    output:   void
-
-    remarks:  Draws the sprites of every object in layers. the last line being the last one drawn ; the first line being drawn first
-*/
 void drawGame() {
 	if (iLives == 4)
 	{
-		DrawSprite(iPlay);
-		DrawSprite(iLeave);
+		DrawSprite(getSprite('P'));
+		DrawSprite(getSprite('E'));
 	}
-	////else if (iLiveE <= 0)
-	//	DrawSprite(iWin);
 	else if (iLives <= 0)
 	{
-		DrawSprite(iLose);
+		DrawSprite(getSprite('L'));
 	}
 	else
 	{
@@ -652,12 +599,13 @@ void drawGame() {
 		DrawSprite(player1.sprite);
 		for (int i = 0; i <= 19; i++)
 		{
-			//if (monster[i].alive)
+			DrawSprite(explosion[i].sprite);
+			if (monster[i].alive)
 				DrawSprite(monster[i].sprite);
 		}
 		for (int i = 0; i < 50; i++)
-		if (bullet[i].alive)
-			DrawSprite(bullet[i].sprite);
+			if (bullet[i].alive)
+				DrawSprite(bullet[i].sprite);
 		switch(iLives)
 		{
 		case 3:
@@ -673,25 +621,10 @@ void drawGame() {
 	DrawSprite(screenTwo.sprite);
 }
 
-/*  main
-
-    input:    
-
-    output:   int
-
-    remarks:  Runs the game loop until you run out of lives or the framework crashes.
-				1st it Initializes,
-				2nd it loads all the sprites,
-				3rd it clears the screen,
-				4th it updates the game,
-				5th it draws the game,
-				6th it repeats until said otherwise,
-				7th it destroys the sprites and shuts down the game
-*/
 int main()
 {
 	// First we need to create our Game Framework
-	Initialise(iScreenX, iScreenY, false );
+	Initialise((int)vScreen.x, (int)vScreen.y, false );
 
 	loadGame();
 
