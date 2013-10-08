@@ -39,6 +39,7 @@
     <None Include="resources\images\shield.png" />
     <None Include="resources\images\healthbarP.png" />
     <None Include="resources\images\healthbarV.png" />
+    <None Include="resources\images\beam.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\main.cpp">

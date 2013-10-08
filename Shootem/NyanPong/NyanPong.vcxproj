@@ -102,6 +102,7 @@
     <None Include="resources\fonts\arial.fnt" />
     <None Include="resources\images\arial_0.png" />
     <None Include="resources\images\Arial_00.png" />
+    <None Include="resources\images\beam.png" />
     <None Include="resources\images\bg.png" />
     <None Include="resources\images\bg2.png" />
     <None Include="resources\images\bomb.png" />

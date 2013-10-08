@@ -31,6 +31,7 @@ struct tempObject{
 	int width;
 	int height;
 	bool alive;
+	bool fire;
 	int time;
 };
 struct bulletStruct
@@ -55,6 +56,7 @@ struct movableObject{
 //Player Lives
 int iLives = 8;
 int whatBullet = 0;
+int whatAI = 0;
 int whatExplosion = 0;
 float wave = 0;
 float playerAngle = 0;
@@ -62,6 +64,7 @@ bool pressTrigger = false;
 Vector vScreen;
 Vector vMouse;
 //200,50,{-1,52,52,true,8000}
+tempObject beam;
 tempObject healthIcon;
 bulletStruct bullet[50];
 movableObject monster[20];
@@ -103,7 +106,7 @@ void loadLevel(int level)
 		}
 		for (int i = 0; i <= 19; i++)
 		{
-			monster[i].alive = true;
+			monster[i].alive = false;
 			monster[i].height = 20;
 			monster[i].sprite = -1;
 			monster[i].width = 20;
@@ -119,6 +122,12 @@ void loadLevel(int level)
 		monster[1].position.vectorSetY(100);// + 25;
 		monster[2].position.vectorSetX(150);// + 25;
 		monster[2].position.vectorSetY(150);// + 25;
+		monster[0].alive = true;// + 25;
+		monster[0].alive = true;// + 25;
+		monster[1].alive = true;// + 25;
+		monster[1].alive = true;// + 25;
+		monster[2].alive = true;// + 25;
+		monster[2].alive = true;// + 25;
 		break;
 	case 2:
 		std::cout << "Wave 2";
@@ -142,7 +151,68 @@ void loadLevel(int level)
 }
 void loadWave(movableObject &obj,int wave)
 {
-	
+	whatAI++;
+	if (whatAI >= 20)
+		whatAI = 0;
+	for (int i = whatAI; i >= 0; i--)
+	{
+		if (!monster[i].alive)
+		switch(rand() % 4)
+		{
+		case 1:
+			monster[i].position.vectorSetX((float)(rand() % (int)(vScreen.getVectorX() - 40)) + 20);
+			monster[i].position.vectorSetY(-20);
+			monster[i].alive = true;
+			monster[i].height = 40;
+			monster[i].sprite = -1;
+			monster[i].width = 40;
+			//if (i == 1 || i == 2){
+			monster[i].speed.vectorSetY(0.25f);
+			monster[i].speed.vectorSetX((rand() % 5) - 2.5f);
+			monster[i].tag = "BLUE";
+			monster[i].sprite = CreateSprite( "./images/enemyB.png", 40, 40, true );
+			break;
+		case 2:
+			monster[i].position.vectorSetX((float)(rand() % (int)(vScreen.getVectorX() - 40)) + 20);
+			monster[i].position.vectorSetY(-20);
+			monster[i].alive = true;
+			monster[i].height = 35;
+			monster[i].sprite = -1;
+			monster[i].width = 20;
+			//if (i == 1 || i == 2){
+			monster[i].speed.vectorSetY(0.25f);
+			monster[i].speed.vectorSetX(0.0f);
+			monster[i].tag = "GREEN";
+			monster[i].sprite = CreateSprite( "./images/enemyG.png", 20, 35, true );
+			break;
+		case 3:
+			//DestroySprite(monster[i].sprite);
+			monster[i].position.vectorSetX((float)(rand() % (int)(vScreen.getVectorX() - 40)) + 20);
+			monster[i].position.vectorSetY(-20);
+			monster[i].alive = true;
+			monster[i].height = 10;
+			monster[i].sprite = -1;
+			monster[i].width = 10;
+			//if (i == 1 || i == 2){
+			monster[i].speed.vectorSetY(0.28f);
+			monster[i].speed.vectorSetX(0.1f);
+			monster[i].tag = "RED";
+			monster[i].sprite = CreateSprite( "./images/enemyR.png", 10, 10, true );
+			break;
+		case 4:
+			//DestroySprite(monster[i].sprite);
+			monster[i].alive = false;
+			monster[i].height = 20;
+			monster[i].sprite = -1;
+			monster[i].width = 20;
+			monster[i].speed.vectorSetX((float)(rand() % 5) - 2.5f);
+			monster[i].speed.vectorSetY(0.7f);
+			monster[i].position.vectorSetX(-200);
+			monster[i].position.vectorSetY(-200);
+			monster[i].tag = "PINK";
+			break;
+		}
+	}
 	switch(wave)
 	{
 	case 1:
@@ -151,7 +221,7 @@ void loadWave(movableObject &obj,int wave)
 		//player1.position.y = bricks[23][13].position.y;// + 25;
 
 		//DestroySprite(obj.sprite);
-		obj.position.vectorSetX((rand() % (int)(vScreen.getVectorX() - 40)) + 20);
+		obj.position.vectorSetX((float)(rand() % (int)(vScreen.getVectorX() - 40)) + 20);
 		obj.position.vectorSetY(-20);
 		obj.alive = true;
 		obj.height = 40;
@@ -164,9 +234,8 @@ void loadWave(movableObject &obj,int wave)
 		obj.sprite = CreateSprite( "./images/enemyB.png", 40, 40, true );
 		break;
 	case 2:
-		std::cout << "Spawning a green one";
 		//DestroySprite(obj.sprite);
-		obj.position.vectorSetX((rand() % (int)(vScreen.getVectorX() - 40)) + 20);
+		obj.position.vectorSetX((float)(rand() % (int)(vScreen.getVectorX() - 40)) + 20);
 		obj.position.vectorSetY(-20);
 		obj.alive = true;
 		obj.height = 35;
@@ -178,10 +247,9 @@ void loadWave(movableObject &obj,int wave)
 		obj.tag = "GREEN";
 		obj.sprite = CreateSprite( "./images/enemyG.png", 20, 35, true );
 		break;
-	case 3:
-		std::cout << "Spawning a red one";
+	default:
 		//DestroySprite(obj.sprite);
-		obj.position.vectorSetX((rand() % (int)(vScreen.getVectorX() - 40)) + 20);
+		obj.position.vectorSetX((float)(rand() % (int)(vScreen.getVectorX() - 40)) + 20);
 		obj.position.vectorSetY(-20);
 		obj.alive = true;
 		obj.height = 10;
@@ -193,9 +261,6 @@ void loadWave(movableObject &obj,int wave)
 		obj.tag = "RED";
 		obj.sprite = CreateSprite( "./images/enemyR.png", 10, 10, true );
 		break;
-	case 4:
-	case 5:
-	case 6:
 		break;
 	}
 }
@@ -213,6 +278,15 @@ bool detectCollision(movableObject &objOne,movableObject &objTwo)
 	return true;
 }
 bool detectCollision(bulletStruct &objOne,movableObject &objTwo)
+{
+	if(objOne.position.getVectorX() >= objTwo.position.getVectorX() - (objTwo.width/2) && objOne.position.getVectorX() <= objTwo.position.getVectorX() + (objTwo.width/2)
+		&& objOne.position.getVectorY() >= objTwo.position.getVectorY() - (objTwo.width/2)&& objOne.position.getVectorY() <= objTwo.position.getVectorY() + (objTwo.height/2) && objOne.alive)
+	{
+		return false;
+	}
+	return true;
+}
+bool detectCollision(tempObject &objTwo,movableObject &objOne)
 {
 	if(objOne.position.getVectorX() >= objTwo.position.getVectorX() - (objTwo.width/2) && objOne.position.getVectorX() <= objTwo.position.getVectorX() + (objTwo.width/2)
 		&& objOne.position.getVectorY() >= objTwo.position.getVectorY() - (objTwo.width/2)&& objOne.position.getVectorY() <= objTwo.position.getVectorY() + (objTwo.height/2) && objOne.alive)
@@ -268,6 +342,32 @@ void fireBullet(movableObject &player)
 			whatBullet = 0;
 		pressTrigger = false;
 	}
+}
+void updateBeam(tempObject &beam)
+{
+	if (GetMouseButtonDown(1) && beam.time == 0)
+	{
+		beam.fire = true;
+	}
+	else if (beam.fire)
+	{
+		beam.fire = false;
+		beam.alive = true;
+		//beam.position.vectorSet(player1.position);
+		beam.time = 2000;
+	}
+	if (beam.time != 0)
+	{
+		beam.position.vectorSetX(player1.position.getVectorX());
+		beam.position.vectorSetY(player1.position.getVectorY() - (beam.height/2) + 5);
+		beam.time--;
+	}
+	else
+	{
+		beam.alive = false;
+		beam.position.vectorSet(-1000,-1000);
+	}
+	MoveSprite(beam.sprite,(int)beam.position.getVectorX(),(int)beam.position.getVectorY());
 }
 void updatePlayer(movableObject &player){
 
@@ -356,7 +456,7 @@ void updatePowerUp(movableObject &power)
 	else if (rand()%4000 == 2)
 	{
 		power.alive = true;
-		power.position.vectorSetX((rand() % (int)(vScreen.getVectorX() - 40)) + 20);
+		power.position.vectorSetX((float)(rand() % (int)(vScreen.getVectorX() - 40)) + 20);
 		power.position.vectorSetY(-20);
 		power.speed.vectorSetY(0.25f);
 		power.speed.vectorSetX((rand() % 5) - 2.5f);
@@ -421,11 +521,15 @@ void updateAi(movableObject &monster,movableObject &power){
 		{
 			if (monster.tag == "GREEN" && power.tag != "FROZEN")
 			{
-				std::cout << "Green Hit";
 				power.tag = "VENOM";
 				healthIcon.sprite = CreateSprite( "./images/healthbarV.png", 50 * iLives, 25, true );
 			}
 			updateLives(powerUp);
+			loadWave(monster,(int)wave);
+		}
+		else if (!detectCollision(beam,monster))
+		{ 
+			explodeAi(monster);
 			loadWave(monster,(int)wave);
 		}
 		if (monster.position.getVectorX() + plannedMovement.getVectorX() < 20 || monster.position.getVectorX() + plannedMovement.getVectorX() > 1260)
@@ -480,6 +584,8 @@ void loadGame() {
 	setSprite('P',CreateSprite( "./images/play.png", 400, 300, true ));
 	setSprite('W',CreateSprite( "./images/win.png", 400, 300, true ));
 	healthIcon.sprite = CreateSprite( "./images/healthbar.png", 150, 50, true );
+	beam.sprite = CreateSprite( "./images/beam.png", 760, 50, true );
+	RotateSprite(beam.sprite,90);
 	powerUp.sprite = CreateSprite( "./images/shield.png", 50, 50, true );
 
 	player1.sprite = CreateSprite( "./images/player.png", 20, 20, true );
@@ -526,6 +632,13 @@ void loadVectors()
 	healthIcon.sprite = -1;
 	healthIcon.time = 8000;
 	healthIcon.width = 52;
+	beam.alive = false;
+	beam.fire = false;
+	beam.height = 780;
+	beam.position.vectorSet(-1000,-1000);
+	beam.sprite = -1;
+	beam.time = 0;
+	beam.width = 100;
 	powerUp.alive = false;
 	powerUp.height = 100;
 	powerUp.width = 100;
@@ -552,6 +665,7 @@ void endGame() {
 	DestroySprite(getSprite('E'));
 	DestroySprite(getSprite('P'));
 	DestroySprite(getSprite('W'));
+	DestroySprite(beam.sprite);
 }
 
 void updateGame() {
@@ -559,8 +673,8 @@ void updateGame() {
 	int mY;
 	//GetMouseLocation(mX,mY);
 	GetMouseLocation(mX,mY);
-	vMouse.vectorSetX(mX);
-	vMouse.vectorSetY(mY);
+	vMouse.vectorSetX((float)mX);
+	vMouse.vectorSetY((float)mY);
 	if (iLives == 8)
 	{
 		if ((IsKeyDown(GLFW_KEY_ENTER)) ||(vMouse.getVectorX() >= 100 && vMouse.getVectorX() <= 500 && vMouse.getVectorY() >= 50 && vMouse.getVectorY() <= 350 && GetMouseButtonDown(0))){
@@ -589,6 +703,7 @@ void updateGame() {
 		updatePlayer(player1);
 		updateScreen();
 		updatePowerUp(powerUp);
+		updateBeam(beam);
 
 		MoveSprite(target.sprite, (int)vMouse.getVectorX(), (int)vMouse.getVectorY());
 		RotateSprite(player1.sprite,(int)getPlayerAngle(player1));
@@ -626,6 +741,7 @@ void drawGame() {
 		DrawSprite(healthIcon.sprite);
 		DrawSprite(target.sprite);
 		DrawSprite(player1.sprite);
+		DrawSprite(beam.sprite);
 		for (int i = 0; i <= 19; i++)
 		{
 			DrawSprite(explosion[i].sprite);
