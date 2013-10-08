@@ -128,7 +128,7 @@ struct movableObject{
 };
 //Declarations
 //Player Lives
-int iLives = 4;
+int iLives = 8;
 int whatBullet = 0;
 int whatExplosion = 0;
 float wave = 0;
@@ -137,14 +137,11 @@ bool pressTrigger = false;
 Vector vScreen;
 Vector vMouse;
 //200,50,{-1,52,52,true,8000}
-tempObject scoreIcon;
-//230,50, = {-1,52,52,true,8000}
-tempObject scoreIcon2;
-//260,50, = {-1,52,52,true,8000}
-tempObject scoreIcon3;
+tempObject healthIcon;
 bulletStruct bullet[50];
 movableObject monster[20];
 movableObject explosion[20];
+movableObject powerUp;
 movableObject player1;
 movableObject target;
 movableObject screen;
@@ -152,6 +149,15 @@ movableObject screenTwo;
 
 void loadLevel(int level)
 {
+	powerUp.alive = true;
+	powerUp.height = 50;
+	powerUp.sprite = -1;
+	powerUp.width = 50;
+	powerUp.speed.vectorSetX((rand() % 5) - 2.5f);
+	powerUp.speed.vectorSetY(0.7f);
+	powerUp.position.vectorSetX(-200);
+	powerUp.position.vectorSetY(-200);
+		powerUp.tag = "PINK";
 	switch (level)
 	{
 	case 1:
@@ -397,6 +403,13 @@ void explodeAi(movableObject &monster)
 	explosion[whatExplosion].speed.vectorSetY(monster.speed.getVectorY()/1.2f);
 	explosion[whatExplosion].sprite = CreateSprite( "./images/explosion.png", monster.width, monster.height, true );
 }
+
+void updateLives()
+{
+	iLives--;
+	healthIcon.position.vectorSetX(vScreen.getVectorX()/2);
+	healthIcon.sprite = CreateSprite( "./images/healthbar.png", 50 * iLives, 25, true );
+}
 void updateAi(movableObject &monster){
 	if (monster.alive)
 	{
@@ -422,7 +435,7 @@ void updateAi(movableObject &monster){
 		}
 		if (!detectCollision(player1,monster))
 		{
-			iLives--;
+			updateLives();
 			loadWave(monster,(int)wave);
 		}
 		if (monster.position.getVectorX() + plannedMovement.getVectorX() < 20 || monster.position.getVectorX() + plannedMovement.getVectorX() > 1260)
@@ -476,9 +489,8 @@ void loadGame() {
 	setSprite('E',CreateSprite( "./images/exit.png", 400, 300, true ));
 	setSprite('P',CreateSprite( "./images/play.png", 400, 300, true ));
 	setSprite('W',CreateSprite( "./images/win.png", 400, 300, true ));
-	scoreIcon.sprite = CreateSprite( "./images/cherry.png", 52, 52, true );
-	scoreIcon2.sprite = CreateSprite( "./images/cherry.png", 52, 52, true );
-	scoreIcon3.sprite = CreateSprite( "./images/cherry.png", 52, 52, true );
+	healthIcon.sprite = CreateSprite( "./images/healthbar.png", 150, 50, true );
+	powerUp.sprite = CreateSprite( "./images/shield.png", 50, 50, true );
 
 	player1.sprite = CreateSprite( "./images/player.png", 20, 20, true );
 	target.sprite = CreateSprite( "./images/flag.png", 50, 50, true );
@@ -518,24 +530,12 @@ void loadVectors()
 	screenTwo.sprite = -1;
 	vScreen.vectorSet(1280,780);
 	vMouse.vectorSet(0,0);
-	scoreIcon.alive = true;
-	scoreIcon.height = 52;
-	scoreIcon.position.vectorSet(200,50);
-	scoreIcon.sprite = -1;
-	scoreIcon.time = 8000;
-	scoreIcon.width = 52;
-	scoreIcon2.alive = true;
-	scoreIcon2.height = 52;
-	scoreIcon2.position.vectorSet(230,50);
-	scoreIcon2.sprite = -1;
-	scoreIcon2.time = 8000;
-	scoreIcon2.width = 52;
-	scoreIcon3.alive = true;
-	scoreIcon3.height = 52;
-	scoreIcon3.position.vectorSet(260,50);
-	scoreIcon3.sprite = -1;
-	scoreIcon3.time = 8000;
-	scoreIcon3.width = 52;
+	healthIcon.alive = true;
+	healthIcon.height = 52;
+	healthIcon.position.vectorSet(200,50);
+	healthIcon.sprite = -1;
+	healthIcon.time = 8000;
+	healthIcon.width = 52;
 	
 }
 void endGame() {
@@ -543,12 +543,12 @@ void endGame() {
 	DestroySprite(player1.sprite);
 	DestroySprite(target.sprite);
 	for (int i = 0; i <= 19; i++)
-	DestroySprite(monster[i].sprite);
-	for (int i = 0; i <= 19; i++)
+	{
 	DestroySprite(explosion[i].sprite);
-	DestroySprite(scoreIcon3.sprite);
-	DestroySprite(scoreIcon2.sprite);
-	DestroySprite(scoreIcon.sprite);
+	DestroySprite(monster[i].sprite);
+	}
+	DestroySprite(healthIcon.sprite);
+	DestroySprite(powerUp.sprite);
 	DestroySprite(screen.sprite);
 	DestroySprite(screenTwo.sprite);
 
@@ -557,22 +557,24 @@ void endGame() {
 	DestroySprite(getSprite('L'));
 	DestroySprite(getSprite('E'));
 	DestroySprite(getSprite('P'));
+	DestroySprite(getSprite('W'));
 }
 
 void updateGame() {
 	int mX;
 	int mY;
+	//GetMouseLocation(mX,mY);
 	GetMouseLocation(mX,mY);
 	vMouse.vectorSetX(mX);
 	vMouse.vectorSetY(mY);
-	if (iLives == 4)
+	if (iLives == 8)
 	{
 		if ((IsKeyDown(GLFW_KEY_ENTER)) ||(vMouse.getVectorX() >= 100 && vMouse.getVectorX() <= 500 && vMouse.getVectorY() >= 50 && vMouse.getVectorY() <= 350 && GetMouseButtonDown(0))){
-			iLives--;
+			updateLives();
 			wave++;
 		}
 		if ((IsKeyDown(GLFW_KEY_BACKSPACE)) ||(vMouse.getVectorX() >= 300 && vMouse.getVectorX() <= 700 && vMouse.getVectorY() >= 350 && vMouse.getVectorY() <= 650 && GetMouseButtonDown(0))){
-			iLives = -1;
+			updateLives();
 		}
 		MoveSprite(getSprite('P'),(int)300,(int)200);
 		MoveSprite(getSprite('E'),(int)500,(int)500);
@@ -582,7 +584,7 @@ void updateGame() {
 		MoveSprite(getSprite('L'),(int)vScreen.getVectorX()/2,(int)vScreen.getVectorY()/2);
 		MoveSprite(getSprite('W'),(int)500,(int)500);
 		if (IsKeyDown(' '))
-			iLives = -1;
+			updateLives();
 	}
 	else
 	{
@@ -598,10 +600,9 @@ void updateGame() {
 		MoveSprite(target.sprite, (int)vMouse.getVectorX(), (int)vMouse.getVectorY());
 		RotateSprite(player1.sprite,(int)getPlayerAngle(player1));
 		MoveSprite(player1.sprite, (int)player1.position.getVectorX(), (int)player1.position.getVectorY());
-
-		MoveSprite(scoreIcon.sprite,(int)scoreIcon.position.getVectorX(),(int)scoreIcon.position.getVectorY());
-		MoveSprite(scoreIcon2.sprite,(int)scoreIcon2.position.getVectorX(),(int)scoreIcon2.position.getVectorY());
-		MoveSprite(scoreIcon3.sprite,(int)scoreIcon3.position.getVectorX(),(int)scoreIcon3.position.getVectorY());
+		
+		MoveSprite(healthIcon.sprite,(int)healthIcon.position.getVectorX(),(int)healthIcon.position.getVectorY());
+		MoveSprite(powerUp.sprite,(int)powerUp.position.getVectorX(),(int)powerUp.position.getVectorY());
 
 
 		for (int i = 0; i < 50; i++)
@@ -617,7 +618,7 @@ void updateGame() {
 	}
 }
 void drawGame() {
-	if (iLives == 4)
+	if (iLives == 8)
 	{
 		DrawSprite(getSprite('P'));
 		DrawSprite(getSprite('E'));
@@ -628,7 +629,7 @@ void drawGame() {
 	}
 	else
 	{
-
+		DrawSprite(healthIcon.sprite);
 		DrawSprite(target.sprite);
 		DrawSprite(player1.sprite);
 		for (int i = 0; i <= 19; i++)
@@ -640,17 +641,8 @@ void drawGame() {
 		for (int i = 0; i < 50; i++)
 			if (bullet[i].alive)
 				DrawSprite(bullet[i].sprite);
-		switch(iLives)
-		{
-		case 3:
-			DrawSprite(scoreIcon3.sprite);
-		case 2:
-			DrawSprite(scoreIcon2.sprite);
-		case 1:
-			DrawSprite(scoreIcon.sprite);
-			break;
-		}
 	}
+	DrawSprite(powerUp.sprite);
 	DrawSprite(screen.sprite);
 	DrawSprite(screenTwo.sprite);
 }

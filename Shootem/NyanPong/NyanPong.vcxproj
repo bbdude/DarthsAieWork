@@ -117,9 +117,11 @@
     <None Include="resources\images\explosion.png" />
     <None Include="resources\images\flag.png" />
     <None Include="resources\images\floor.png" />
+    <None Include="resources\images\healthbar.png" />
     <None Include="resources\images\lose.png" />
     <None Include="resources\images\play.png" />
     <None Include="resources\images\player.png" />
+    <None Include="resources\images\shield.png" />
     <None Include="resources\shaders\pixel.glsl" />
     <None Include="resources\shaders\vertex.glsl" />
   </ItemGroup>
