@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Vector.h"
+#include "VectorClass.h"
 
 
 Vector::Vector()

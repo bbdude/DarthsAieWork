@@ -118,6 +118,8 @@
     <None Include="resources\images\flag.png" />
     <None Include="resources\images\floor.png" />
     <None Include="resources\images\healthbar.png" />
+    <None Include="resources\images\healthbarP.png" />
+    <None Include="resources\images\healthbarV.png" />
     <None Include="resources\images\lose.png" />
     <None Include="resources\images\play.png" />
     <None Include="resources\images\player.png" />
@@ -128,11 +130,13 @@
   <ItemGroup>
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\MenuItems.cpp" />
+    <ClCompile Include="source\Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\AIE.h" />
     <ClInclude Include="include\KeyCodes.h" />
     <ClInclude Include="include\MenuItems.h" />
+    <ClInclude Include="include\Vector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

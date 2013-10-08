@@ -37,12 +37,17 @@
     <None Include="resources\images\explosion.png" />
     <None Include="resources\images\healthbar.png" />
     <None Include="resources\images\shield.png" />
+    <None Include="resources\images\healthbarP.png" />
+    <None Include="resources\images\healthbarV.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\MenuItems.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\Vector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -54,6 +59,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\MenuItems.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Vector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
