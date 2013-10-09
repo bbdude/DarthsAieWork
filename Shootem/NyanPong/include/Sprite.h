@@ -18,24 +18,48 @@ class Sprite
 public:
 	Sprite(void);
 	~Sprite(void);
-	void setHeight(int change);
-	void setWidth(int change);
 	int getHeight();
 	int getWidth();
-	void setSprite(int change);
 	int getSprite();
-	void updateSprite();
+	int getTime();
+	float getPositionX();
+	float getPositionY();
+	float getSpeedX();
+	float getSpeedY();
 	bool detectCollision(Vector objTwo,int heightT,int widthT);
+	bool detectCollisionA(Vector objTwo,int heightT,int widthT);
+	bool getAlive();
+	bool getFire();
+	void setTag(std::string change);
+	void setTime(int change);
+	void setFire(bool change);
+	void setHeight(int change);
+	void setWidth(int change);
+	void setSprite(int change);
 	void setBulletAngle(Vector player,Vector vMouse);
 	void setAlive(bool change);
-	bool getAlive();
+	void updateSprite();
 	void loadSprite();
 	void drawSprite();
 	void endSprite();
-private:
+	void setPositionX(float change);
+	void setPositionY(float change);
+	void setPosition(float c,float v);
+	void setPosition(Vector change);
+	void setSpeedX(float change);
+	void setSpeedY(float change);
+	void setSpeed(float c,float v);
+	void setSpeed(Vector change);
+	void updateBeam(Vector player);
+	void moveTarget(Vector change);
+	Vector getPosition();
+	Vector getSpeed();
+
+	std::string getTag();
 	Vector position;
-	Vector angle;
 	Vector speed;
+private:
+	Vector angle;
 	bool alive;
 	bool fire;
 	int sprite;
