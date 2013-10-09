@@ -1,6 +1,6 @@
 #pragma once
-#ifndef BULLET_H
-#define BULLET_H
+#ifndef SPRITE_H
+#define SPRITE_H
 #include "AIE.h"
 #include "KeyCodes.h"
 #include "MenuItems.h"
@@ -13,32 +13,35 @@
 #include <iostream>
 #include <list>
 
-class Bullet
+class Sprite
 {
 public:
-	Bullet(void);
-	~Bullet(void);
-	void Bullet::setHeight(int change);
-	void Bullet::setWidth(int change);
-	int Bullet::getHeight();
-	int Bullet::getWidth();
-	void Bullet::setSprite(int change);
-	int Bullet::getSprite();
-	void updateBullet();
+	Sprite(void);
+	~Sprite(void);
+	void setHeight(int change);
+	void setWidth(int change);
+	int getHeight();
+	int getWidth();
+	void setSprite(int change);
+	int getSprite();
+	void updateSprite();
 	bool detectCollision(Vector objTwo,int heightT,int widthT);
 	void setBulletAngle(Vector player,Vector vMouse);
 	void setAlive(bool change);
 	bool getAlive();
-	void loadBullet();
-	void drawBullet();
-	void endBullet();
+	void loadSprite();
+	void drawSprite();
+	void endSprite();
 private:
 	Vector position;
 	Vector angle;
+	Vector speed;
 	bool alive;
+	bool fire;
 	int sprite;
 	int width;
 	int height;
+	std::string tag;
+	int time;
 };
 #endif
-

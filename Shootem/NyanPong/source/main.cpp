@@ -36,15 +36,6 @@ struct tempObject{
 	bool fire;
 	int time;
 };
-struct bulletStruct
-{
-	Vector position;
-	Vector angle;
-	bool alive;
-	int sprite;
-	int width;
-	int height;
-};
 struct movableObject{
 	Vector position;
 	Vector speed;
@@ -68,7 +59,7 @@ Vector vMouse;
 //200,50,{-1,52,52,true,8000}
 tempObject beam;
 tempObject healthIcon;
-bulletStruct bullet[50];
+Bullet bullet[50];
 movableObject monster[20];
 movableObject explosion[20];
 movableObject powerUp;
@@ -95,17 +86,6 @@ void loadLevel(int level)
 		
 		//player1.position.x = bricks[23][13].position.x;// + 25;
 		//player1.position.y = bricks[23][13].position.y;// + 25;
-		for (int i = 0; i < 50; i++)
-		{
-			bullet[i].alive = true;
-			bullet[i].angle.vectorSetX(0);
-			bullet[i].angle.vectorSetY(0);
-			bullet[i].position.vectorSetX(-200);
-			bullet[i].position.vectorSetY(-200);
-			bullet[i].height = 20;
-			bullet[i].width = 10;
-			bullet[i].sprite = -1;
-		}
 		for (int i = 0; i <= 19; i++)
 		{
 			monster[i].alive = false;
@@ -323,15 +303,6 @@ bool detectCollision(movableObject &objOne,movableObject &objTwo)
 	}
 	return true;
 }
-bool detectCollision(bulletStruct &objOne,movableObject &objTwo)
-{
-	if(objOne.position.getVectorX() >= objTwo.position.getVectorX() - (objTwo.width/2) && objOne.position.getVectorX() <= objTwo.position.getVectorX() + (objTwo.width/2)
-		&& objOne.position.getVectorY() >= objTwo.position.getVectorY() - (objTwo.width/2)&& objOne.position.getVectorY() <= objTwo.position.getVectorY() + (objTwo.height/2) && objOne.alive)
-	{
-		return false;
-	}
-	return true;
-}
 bool detectCollision(tempObject &objTwo,movableObject &objOne)
 {
 	if(objOne.position.getVectorX() >= objTwo.position.getVectorX() - (objTwo.width/2) && objOne.position.getVectorX() <= objTwo.position.getVectorX() + (objTwo.width/2)
@@ -341,17 +312,6 @@ bool detectCollision(tempObject &objTwo,movableObject &objOne)
 	}
 	return true;
 }
-void updateBullet(bulletStruct &bullets,movableObject &player)
-{
-	if (bullets.position.getVectorX() < 0 || bullets.position.getVectorX()  > 1280 || bullets.position.getVectorY()  < 0 || bullets.position.getVectorY() > 780)
-	{
-		bullets.alive = false;
-		bullets.position.vectorSetX(-1000);
-		bullets.position.vectorSetY(-1000);
-	}
-	if (bullets.alive)
-		bullets.position.vectorAdd(bullets.angle);
-}
 void fireBullet(movableObject &player)
 {
 	if (GetMouseButtonDown(0))
@@ -360,29 +320,7 @@ void fireBullet(movableObject &player)
 	}
 	else if (pressTrigger)
 	{
-		bullet[whatBullet].position.vectorSetX(player.position.getVectorX());
-		bullet[whatBullet].position.vectorSetY(player.position.getVectorY());
-		bullet[whatBullet].alive = true;
-		//int distance = (int)sqrt((target.position.x-bullets.position.x)*(target.position.x-bullets.position.x) + (target.position.y-bullets.position.y)*(target.position.y-bullets.position.y));
-		//int distance = (int)sqrt(std::pow(target.position.x-bullets.position.x,2) + std::pow(target.position.y-bullets.position.y,2));
-		//int distancey = (int)sqrt(((target.position.y-bullets.position.y)^2));
-		//bullets.angle.x = (target.position.x-bullets.position.x)/distance;
-		//bullets.angle.y = (target.position.y-bullets.position.y)/distance;
-		//float a = std::atan2(target.position.x - bullets.position.x,target.position.y - bullets.position.y);
-		//bullet[whatBullet].angle.y = -1;
-		//bullets.angle.x = std::cos(a);
-		//bullets.angle.y = std::sin(a);
-		Vector angle;
-		angle.vectorSetX((vMouse.getVectorX()-player.position.getVectorX())/10);
-		angle.vectorSetY((vMouse.getVectorY()-player.position.getVectorY())/10);
-		bullet[whatBullet].angle = angle;
-		bullet[whatBullet].angle.vectorSetX(std::sqrt(std::pow(angle.getVectorX(),2))/5);
-		bullet[whatBullet].angle.vectorSetY(std::sqrt(std::pow(angle.getVectorY(),2))/5);
-		if (angle.getVectorX() < 0)
-			bullet[whatBullet].angle.vectorSetX(bullet[whatBullet].angle.getVectorX() * -1);
-		if (angle.getVectorY() < 0)
-			bullet[whatBullet].angle.vectorSetY(bullet[whatBullet].angle.getVectorY() * -1);
-
+		bullet[whatBullet].setBulletAngle(player.position,vMouse);
 		whatBullet++;
 		if (whatBullet == 50)
 			whatBullet = 0;
@@ -581,10 +519,10 @@ void updateAi(movableObject &monster,movableObject &power){
 		if (monster.position.getVectorX() + plannedMovement.getVectorX() < 20 || monster.position.getVectorX() + plannedMovement.getVectorX() > 1260)
 			moving = false;
 		for (int i = 0; i < 49; i++)
-			if (!detectCollision(bullet[i],monster))
+			if (!bullet[i].detectCollision(monster.position,monster.height,monster.width))
 			{
 				monster.alive = false;
-				bullet[i].alive = false;
+				bullet[i].setAlive(false);
 				explodeAi(monster);
 				loadWave(monster,(int)wave);
 
@@ -642,7 +580,7 @@ void loadGame() {
 	for (int i = 0; i <= 19; i++)
 		explosion[i].sprite = CreateSprite( "./images/explosion.png", 20, 20, true );
 	for (int i = 0; i < 50; i++)
-	bullet[i].sprite = CreateSprite( "./images/bomb.png", 10, 20, true );
+		bullet[i].loadBullet();
 }
 void endGame() {
 	boss.endBoss();
@@ -660,7 +598,7 @@ void endGame() {
 	DestroySprite(screenTwo.sprite);
 
 	for (int i = 0; i < 50; i++)
-	DestroySprite(bullet[i].sprite);
+		bullet[i].endBullet();
 	DestroySprite(getSprite('L'));
 	DestroySprite(getSprite('E'));
 	DestroySprite(getSprite('P'));
@@ -698,7 +636,7 @@ void updateGame() {
 	{
 		
 		for (int i = 0; i < 50; i++)
-		updateBullet(bullet[i],player1);
+			bullet[i].updateBullet();
 		fireBullet(player1);
 		updatePlayer(player1);
 		updateScreen();
@@ -713,9 +651,6 @@ void updateGame() {
 		
 		MoveSprite(healthIcon.sprite,(int)healthIcon.position.getVectorX(),(int)healthIcon.position.getVectorY());
 
-
-		for (int i = 0; i < 50; i++)
-		MoveSprite(bullet[i].sprite,(int)bullet[i].position.getVectorX(),(int)bullet[i].position.getVectorY());
 		for (int i = 0; i <= 19; i++)
 		{
 			updateAi(monster[i],powerUp);
@@ -752,8 +687,7 @@ void drawGame() {
 				DrawSprite(monster[i].sprite);
 		}
 		for (int i = 0; i < 50; i++)
-			if (bullet[i].alive)
-				DrawSprite(bullet[i].sprite);
+			bullet[i].drawBullet();
 	}
 	DrawSprite(screen.sprite);
 	DrawSprite(screenTwo.sprite);

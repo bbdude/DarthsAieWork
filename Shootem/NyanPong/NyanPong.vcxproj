@@ -130,19 +130,21 @@
     <None Include="resources\shaders\vertex.glsl" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Boss.cpp" />
-    <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="source\Boss.cpp" />
+    <ClCompile Include="source\Bullet.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\MenuItems.cpp" />
     <ClCompile Include="source\Vector.cpp" />
+    <ClCompile Include="source\Sprite.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Boss.h" />
-    <ClInclude Include="Bullet.h" />
+    <ClInclude Include="include\Boss.h" />
+    <ClInclude Include="include\Bullet.h" />
     <ClInclude Include="include\AIE.h" />
     <ClInclude Include="include\KeyCodes.h" />
     <ClInclude Include="include\MenuItems.h" />
     <ClInclude Include="include\Vector.h" />
+    <ClInclude Include="include\Sprite.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
