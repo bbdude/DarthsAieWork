@@ -131,12 +131,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Boss.cpp" />
+    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\MenuItems.cpp" />
     <ClCompile Include="source\Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Boss.h" />
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="include\AIE.h" />
     <ClInclude Include="include\KeyCodes.h" />
     <ClInclude Include="include\MenuItems.h" />

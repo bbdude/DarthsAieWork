@@ -10,6 +10,7 @@
 #include "Boss.h"
 #include "MenuItems.h"
 #include "Vector.h"
+#include "Bullet.h"
 #include <string>
 #include <cmath>
 #include <assert.h>
@@ -704,7 +705,7 @@ void updateGame() {
 		updatePowerUp(powerUp);
 		updateBeam(beam);
 		boss.updateBoss();
-		if(wave >= 3)
+		if(wave >= 1)
 		boss.moveWave();
 		MoveSprite(target.sprite, (int)vMouse.getVectorX(), (int)vMouse.getVectorY());
 		RotateSprite(player1.sprite,(int)getPlayerAngle(player1));
