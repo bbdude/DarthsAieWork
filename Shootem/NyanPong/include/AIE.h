@@ -11,7 +11,7 @@
 #define DLLEXPORT __declspec(dllexport)
 
 const unsigned int KEY_SPACE		=	 32;
-const unsigned int KEY_ESC		=	257;
+const unsigned int KEY_ESC		    =	257;
 
 //////////////////////////////////////////////////////////////////////////
 //Removed the "DLLEXPORT" from before the struct;

@@ -106,6 +106,7 @@
     <None Include="resources\images\bg.png" />
     <None Include="resources\images\bg2.png" />
     <None Include="resources\images\bomb.png" />
+    <None Include="resources\images\boss.png" />
     <None Include="resources\images\breakable.png" />
     <None Include="resources\images\brick.png" />
     <None Include="resources\images\cherry.png" />
@@ -129,11 +130,13 @@
     <None Include="resources\shaders\vertex.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Boss.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\MenuItems.cpp" />
     <ClCompile Include="source\Vector.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Boss.h" />
     <ClInclude Include="include\AIE.h" />
     <ClInclude Include="include\KeyCodes.h" />
     <ClInclude Include="include\MenuItems.h" />

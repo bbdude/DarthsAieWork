@@ -7,6 +7,7 @@
 //////////////////////////////////////////////////////////////////////////
 #include "AIE.h"
 #include "KeyCodes.h"
+#include "Boss.h"
 #include "MenuItems.h"
 #include "Vector.h"
 #include <string>
@@ -74,7 +75,7 @@ movableObject player1;
 movableObject target;
 movableObject screen;
 movableObject screenTwo;
-
+Boss boss;
 void loadLevel(int level)
 {
 	powerUp.alive = false;
@@ -264,9 +265,53 @@ void loadWave(movableObject &obj,int wave)
 		break;
 	}
 }
-void updateWave(movableObject &obj)
+void loadVectors()
 {
 
+	player1.alive = true;
+	player1.height = 5;
+	player1.width = 5;
+	player1.position.vectorSet(500,300);
+	player1.speed.vectorSet(1,1);
+	player1.sprite = -1;
+	target.alive = true;
+	target.height = 50;
+	target.width = 50;
+	target.position.vectorSet(0,0);
+	target.speed.vectorSet(0,0);
+	target.sprite = -1;
+	screen.alive = true;
+	screen.height = 780;
+	screen.width = 3840;
+	screen.position.vectorSet(0,0);
+	screen.speed.vectorSet(0,0.05f);
+	screen.sprite = -1;
+	screenTwo.alive = true;
+	screenTwo.height = 780;
+	screenTwo.width = 3840;
+	screenTwo.position.vectorSet(0,0);
+	screenTwo.speed.vectorSet(0,0.05f);
+	screenTwo.sprite = -1;
+	vScreen.vectorSet(1280,780);
+	vMouse.vectorSet(0,0);
+	healthIcon.alive = true;
+	healthIcon.height = 52;
+	healthIcon.position.vectorSet(200,50);
+	healthIcon.sprite = -1;
+	healthIcon.time = 8000;
+	healthIcon.width = 52;
+	beam.alive = false;
+	beam.fire = false;
+	beam.height = 780;
+	beam.position.vectorSet(-1000,-1000);
+	beam.sprite = -1;
+	beam.time = 0;
+	beam.width = 100;
+	powerUp.alive = false;
+	powerUp.height = 100;
+	powerUp.width = 100;
+	powerUp.position.vectorSet(0,0);
+	
 }
 bool detectCollision(movableObject &objOne,movableObject &objTwo)
 {
@@ -570,6 +615,7 @@ void loadGame() {
 	//fillBulletStruct();
 	// Now load some sprites
 	loadLevel(1);
+	boss.loadBoss();
 	screen.position.vectorSetX(0);
 	screen.position.vectorSetY(-vScreen.getVectorY()*2);
 	screen.sprite = CreateSprite( "./images/bg2.png", (int)vScreen.getVectorX(), (int)vScreen.getVectorY()*3,false );
@@ -597,55 +643,8 @@ void loadGame() {
 	for (int i = 0; i < 50; i++)
 	bullet[i].sprite = CreateSprite( "./images/bomb.png", 10, 20, true );
 }
-void loadVectors()
-{
-
-	player1.alive = true;
-	player1.height = 5;
-	player1.width = 5;
-	player1.position.vectorSet(500,300);
-	player1.speed.vectorSet(1,1);
-	player1.sprite = -1;
-	target.alive = true;
-	target.height = 50;
-	target.width = 50;
-	target.position.vectorSet(0,0);
-	target.speed.vectorSet(0,0);
-	target.sprite = -1;
-	screen.alive = true;
-	screen.height = 780;
-	screen.width = 3840;
-	screen.position.vectorSet(0,0);
-	screen.speed.vectorSet(0,0.05f);
-	screen.sprite = -1;
-	screenTwo.alive = true;
-	screenTwo.height = 780;
-	screenTwo.width = 3840;
-	screenTwo.position.vectorSet(0,0);
-	screenTwo.speed.vectorSet(0,0.05f);
-	screenTwo.sprite = -1;
-	vScreen.vectorSet(1280,780);
-	vMouse.vectorSet(0,0);
-	healthIcon.alive = true;
-	healthIcon.height = 52;
-	healthIcon.position.vectorSet(200,50);
-	healthIcon.sprite = -1;
-	healthIcon.time = 8000;
-	healthIcon.width = 52;
-	beam.alive = false;
-	beam.fire = false;
-	beam.height = 780;
-	beam.position.vectorSet(-1000,-1000);
-	beam.sprite = -1;
-	beam.time = 0;
-	beam.width = 100;
-	powerUp.alive = false;
-	powerUp.height = 100;
-	powerUp.width = 100;
-	powerUp.position.vectorSet(0,0);
-	
-}
 void endGame() {
+	boss.endBoss();
 	DestroySprite(screen.sprite);
 	DestroySprite(player1.sprite);
 	DestroySprite(target.sprite);
@@ -704,7 +703,9 @@ void updateGame() {
 		updateScreen();
 		updatePowerUp(powerUp);
 		updateBeam(beam);
-
+		boss.updateBoss();
+		if(wave >= 3)
+		boss.moveWave();
 		MoveSprite(target.sprite, (int)vMouse.getVectorX(), (int)vMouse.getVectorY());
 		RotateSprite(player1.sprite,(int)getPlayerAngle(player1));
 		MoveSprite(player1.sprite, (int)player1.position.getVectorX(), (int)player1.position.getVectorY());
@@ -742,6 +743,7 @@ void drawGame() {
 		DrawSprite(target.sprite);
 		DrawSprite(player1.sprite);
 		DrawSprite(beam.sprite);
+		boss.drawBoss();
 		for (int i = 0; i <= 19; i++)
 		{
 			DrawSprite(explosion[i].sprite);
