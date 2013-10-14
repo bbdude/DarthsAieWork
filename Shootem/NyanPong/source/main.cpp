@@ -389,13 +389,15 @@ void updateAi(Sprite &monster,Sprite &power){
 			wave += 0.1f;
 			loadWave(monster,(int)wave);
 		}
-		if (!player1.detectCollisionA(monster.getPosition(),monster.getHeight(),monster.getWidth()))
+		if (!player1.detectCollision(monster.getPosition(),monster.getHeight(),monster.getWidth()))
 		{
 			if (monster.getTag() == "GREEN" && power.getTag() != "FROZEN")
 			{
 				power.setTag("VENOM");
 				healthIcon.setSprite(CreateSprite( "./images/healthbarV.png", 50 * iLives, 25, true ));
 			}
+			monster.setAlive(false);
+			explodeAi(monster);
 			updateLives(powerUp);
 			loadWave(monster,(int)wave);
 		}
@@ -566,7 +568,7 @@ void drawGame() {
 		player1.drawSprite();
 		healthIcon.drawSprite();
 		beam.drawSprite();
-		//boss.drawBoss();
+		boss.drawBoss();
 		for (int i = 0; i <= 50; i++)
 		{
 			if(i < 20)

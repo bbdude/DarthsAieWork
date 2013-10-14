@@ -28,6 +28,7 @@ public:
 	float getSpeedY();
 	bool detectCollision(Vector objTwo,int heightT,int widthT);
 	bool detectCollisionA(Vector objTwo,int heightT,int widthT);
+	bool detectCollisionR(Vector objTwo,int heightT,int widthT);
 	bool getAlive();
 	bool getFire();
 	void setTag(std::string change);

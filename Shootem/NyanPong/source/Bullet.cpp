@@ -58,8 +58,8 @@ void Bullet::updateBullet()
 }
 bool Bullet::detectCollision(Vector objTwo,int heightT,int widthT)
 {
-	if(position.getVectorX() >= objTwo.getVectorX() - (widthT/2) && position.getVectorX() <= position.getVectorX() + (widthT/2)
-		&& position.getVectorY() >= position.getVectorY() - (heightT/2)&& position.getVectorY() <= objTwo.getVectorY() + (heightT/2) && alive)
+	if(position.getVectorX() >= objTwo.getVectorX() - (widthT/2) && position.getVectorX() <= objTwo.getVectorX() + (widthT/2)
+		&& position.getVectorY() >= objTwo.getVectorY() - (widthT/2)&& position.getVectorY() <= objTwo.getVectorY() + (heightT/2))
 	{
 		return false;
 	}
