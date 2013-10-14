@@ -9,6 +9,7 @@
 #include "KeyCodes.h"
 #include "Boss.h"
 #include "MenuItems.h"
+#include "windows.h"
 #include "Vector.h"
 #include "Sprite.h"
 #include "Bullet.h"
@@ -19,6 +20,7 @@
 #include <ctime>
 #include <iostream>
 #include <list>
+#include <exception>
 //////////////////////////////////////////////////////////////////////////
 struct movableObject{
 	Vector position;
@@ -108,8 +110,9 @@ void loadWave(Sprite &obj,int wave)
 	for (int i = whatAI; i >= 0; i--)
 	{
 		if (!monster[i].getAlive())
-			switch(rand() % 4)
+			switch(rand() % 10)
 			{
+			case 2:
 			case 1:
 				monster[i].setAlive(true);
 				monster[i].setHeight(40);
@@ -119,7 +122,8 @@ void loadWave(Sprite &obj,int wave)
 				monster[i].setSpeed((rand() % 5) - 2.5f,0.25f);
 				monster[i].setTag("BLUE");
 				break;
-			case 2:
+			case 3:
+			case 4:
 				monster[i].setAlive(true);
 				monster[i].setHeight(35);
 				monster[i].setSprite(CreateSprite( "./images/enemyG.png", 20, 35, true ));
@@ -128,7 +132,8 @@ void loadWave(Sprite &obj,int wave)
 				monster[i].setSpeed(0.25f,0);
 				monster[i].setTag("GREEN");
 				break;
-			case 3:
+			case 5:
+			case 6:
 				monster[i].setAlive(true);
 				monster[i].setHeight(10);
 				monster[i].setSprite(CreateSprite( "./images/enemyR.png", 10, 10, true ));
@@ -137,7 +142,7 @@ void loadWave(Sprite &obj,int wave)
 				monster[i].setSpeed(0.28f,0.1f);
 				monster[i].setTag("RED");
 				break;
-			case 4:
+			default:
 				monster[i].setAlive(true);
 				monster[i].setHeight(20);
 				monster[i].setSprite(CreateSprite( "./images/enemyR.png", 10, 10, true ));
@@ -190,12 +195,14 @@ void loadWave(Sprite &obj,int wave)
 }
 void loadVectors()
 {
+
 	player1.setHeight(5);
 	player1.setSprite(-1);
 	player1.setWidth(5);
 	player1.setSpeed(1,1);
 	player1.setPosition(500,300);
 	player1.setTag("PINK");
+	player1.setInv(0);
 
 	target.setAlive(true);
 	target.setHeight(50);
@@ -226,6 +233,7 @@ void loadVectors()
 	beam.setAlive(false);
 	beam.setFire(false);
 	beam.setHeight(780);
+	beam.setWidth(100);
 	beam.setPosition(-1000,-1000);
 	beam.setSprite(-1);
 	beam.setWidth(100);
@@ -245,6 +253,36 @@ void fireBullet(Sprite &player)
 	}
 	else if (pressTrigger)
 	{
+		try
+		{
+		PlaySound("./sounds/shoot.wav",NULL,SND_ASYNC);
+			 //PlaySound("shoot.wav", NULL, SND_ASYNC);
+		}
+		catch(std::bad_alloc)
+		{
+		}
+		bullet[whatBullet].setBulletAngle(player.getPosition(),vMouse);
+		whatBullet++;
+		if (whatBullet == 50)
+			whatBullet = 0;
+		pressTrigger = false;
+	}
+	if (GetMouseButtonDown(2))
+	{
+		player.lineBeam = !player.lineBeam;
+	}
+	else if (player.lineBeam)
+	{
+		//RED::65535
+		//DARKRED::32255
+		//GREEN::16711680
+		//LIMEGREEN::16711935
+		//Yellow::16777215
+		SColour lineColorEnd(65535);
+		SColour lineColorStart(16777215);
+		//SColour lineColorEnd('9','`','0','0');
+		DrawLine((int)player.position.getVectorX(),(int)player.position.getVectorY(),(int)vMouse.getVectorX(),(int)vMouse.getVectorY(),lineColorStart,lineColorEnd);
+
 		bullet[whatBullet].setBulletAngle(player.getPosition(),vMouse);
 		whatBullet++;
 		if (whatBullet == 50)
@@ -253,6 +291,38 @@ void fireBullet(Sprite &player)
 	}
 }
 
+void updateLives(Sprite &power)
+{
+	if (player1.getInv() <= 0)
+	{
+		if (power.getTag() == "FROZEN")
+		{
+			power.setTag("PINK");
+			healthIcon.setSprite(CreateSprite( "./images/healthbar.png", 50 * iLives, 25, true ));
+		}
+		else if (power.getTag() == "VENOM")
+		{
+			power.setTag("VENOM2");
+			iLives -= 2;
+			healthIcon.setPositionX(vScreen.getVectorX()/2);
+			healthIcon.setSprite(CreateSprite( "./images/healthbarV.png", 50 * iLives, 25, true ));
+		}
+		else if (power.getTag() == "VENOM2")
+		{
+			power.setTag("PINK");
+			iLives -= 2;
+			healthIcon.setPositionX(vScreen.getVectorX()/2);
+			healthIcon.setSprite(CreateSprite( "./images/healthbar.png", 50 * iLives, 25, true ));
+		}
+		else if (power.getTag() != "FROZEN" && power.getTag() != "VENOM" && power.getTag() != "VENOM2")
+		{
+			iLives--;
+			healthIcon.setPositionX(vScreen.getVectorX()/2);
+			healthIcon.setSprite(CreateSprite( "./images/healthbar.png", 50 * iLives, 25, true ));
+		}
+		player1.setInv(1500);
+	}
+}
 void updatePlayer(Sprite &player){
 
 	Vector plannedMovement;
@@ -287,6 +357,15 @@ void updatePlayer(Sprite &player){
 		plannedMovement.vectorSetY(0);
 
 	player.position.vectorAdd(plannedMovement);
+
+	if (!boss.collideLasers(player.position,player.getHeight(),player.getWidth()))
+		updateLives(powerUp);
+	if (!player.detectCollision(boss.getPosition(),boss.getHeight(),boss.getWidth()))
+		updateLives(powerUp);
+	if (player.getInv() > 0)
+	{
+		player.setInv(player1.getInv()-1);
+	}
 }
 
 float getPlayerAngle(Sprite &player)
@@ -298,6 +377,7 @@ float getPlayerAngle(Sprite &player)
 }
 void explodeAi(Sprite &monster)
 {
+	PlaySound("./sounds/boom.wav",NULL,SND_ASYNC);
 	std::cout << "Explode AI";
 	whatExplosion++;
 	if (whatExplosion >= 20)
@@ -310,7 +390,7 @@ void updatePowerUp(Sprite &power)
 {
 	if (power.getAlive())
 	{
-		if (!player1.detectCollisionA(power.position,power.getHeight(),power.getWidth()))
+		if (!player1.detectCollision(power.position,power.getHeight(),power.getWidth()))
 		{
 			power.setAlive(false);
 			power.position.vectorSet(-100,-100);
@@ -339,34 +419,6 @@ void updatePowerUp(Sprite &power)
 		power.speed.vectorSetY(0.25f);
 		power.speed.vectorSetX((rand() % 5) - 2.5f);
 		//power.tag = "PINK";
-	}
-}
-void updateLives(Sprite &power)
-{
-	if (power.getTag() == "FROZEN")
-	{
-		power.setTag("PINK");
-		healthIcon.setSprite(CreateSprite( "./images/healthbar.png", 50 * iLives, 25, true ));
-	}
-	else if (power.getTag() == "VENOM")
-	{
-		power.setTag("VENOM2");
-		iLives -= 2;
-		healthIcon.setPositionX(vScreen.getVectorX()/2);
-		healthIcon.setSprite(CreateSprite( "./images/healthbarV.png", 50 * iLives, 25, true ));
-	}
-	else if (power.getTag() == "VENOM2")
-	{
-		power.setTag("PINK");
-		iLives -= 2;
-		healthIcon.setPositionX(vScreen.getVectorX()/2);
-		healthIcon.setSprite(CreateSprite( "./images/healthbar.png", 50 * iLives, 25, true ));
-	}
-	else if (power.getTag() != "FROZEN" && power.getTag() != "VENOM" && power.getTag() != "VENOM2")
-	{
-		iLives--;
-		healthIcon.setPositionX(vScreen.getVectorX()/2);
-		healthIcon.setSprite(CreateSprite( "./images/healthbar.png", 50 * iLives, 25, true ));
 	}
 }
 void updateAi(Sprite &monster,Sprite &power){
@@ -404,12 +456,13 @@ void updateAi(Sprite &monster,Sprite &power){
 		else if (!beam.detectCollisionA(monster.getPosition(),monster.getHeight(),monster.getWidth()))
 		{ 
 			explodeAi(monster);
+			monster.setAlive(false);
 			loadWave(monster,(int)wave);
 		}
 		if (monster.position.getVectorX() + plannedMovement.getVectorX() < 20 || monster.position.getVectorX() + plannedMovement.getVectorX() > 1260)
 			moving = false;
-		for (int i = 0; i < 49; i++)
-			if (!bullet[i].detectCollision(monster.position,monster.getHeight(),monster.getWidth()) && bullet[i].getAlive())
+		for (int i = 0; i < 49; i++){
+			if (!bullet[i].detectCollision(monster.position,monster.getHeight(),monster.getWidth()))
 			{
 				monster.setAlive(false);
 				bullet[i].setAlive(false);
@@ -417,6 +470,16 @@ void updateAi(Sprite &monster,Sprite &power){
 				loadWave(monster,(int)wave);
 
 			}
+			if (!bullet[i].detectCollision(boss.getPosition(),boss.getHeight(),boss.getWidth()))
+			{
+				boss.lowerHealth(2);
+				bullet[i].setAlive(false);
+			}
+		}
+		if (!beam.detectCollisionA(boss.getPosition(),boss.getHeight(),boss.getWidth()))
+		{
+			boss.lowerHealth(0.01f);
+		}
 		if (moving && !stopIt)
 			monster.position.vectorAdd(plannedMovement);
 		else 
@@ -508,6 +571,7 @@ void updateGame() {
 		if ((IsKeyDown(GLFW_KEY_ENTER)) ||(vMouse.getVectorX() >= 100 && vMouse.getVectorX() <= 500 && vMouse.getVectorY() >= 50 && vMouse.getVectorY() <= 350 && GetMouseButtonDown(0))){
 			updateLives(powerUp);
 			wave++;
+			PlaySound("./sounds/Blop.wav",NULL,SND_ASYNC);
 		}
 		if ((IsKeyDown(GLFW_KEY_BACKSPACE)) ||(vMouse.getVectorX() >= 300 && vMouse.getVectorX() <= 700 && vMouse.getVectorY() >= 350 && vMouse.getVectorY() <= 650 && GetMouseButtonDown(0))){
 			iLives = -1;
@@ -588,6 +652,15 @@ int main()
 {
 	loadVectors();
 	// First we need to create our Game Framework
+	//OFF = 0,
+	//LOW = 858993459,
+	//NORMAL = 1717986918,
+	//MEDIUM = -1717986919,
+	//HIGH = -858993460,
+	//VERY_HIGH = -1
+
+	waveOutSetVolume(0, 8000);
+
 	Initialise((int)vScreen.getVectorX(), (int)vScreen.getVectorY(), false );
 
 	loadGame();

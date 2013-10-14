@@ -45,7 +45,7 @@ int Sprite::getSprite()
 bool Sprite::detectCollision(Vector objTwo,int heightT,int widthT)
 {
 	if(position.getVectorX() >= objTwo.getVectorX() - (widthT/2) && position.getVectorX() <= objTwo.getVectorX() + (widthT/2)
-		&& position.getVectorY() >= objTwo.getVectorY() - (widthT/2)&& position.getVectorY() <= objTwo.getVectorY() + (heightT/2))
+		&& position.getVectorY() >= objTwo.getVectorY() - (heightT/2)&& position.getVectorY() <= objTwo.getVectorY() + (heightT/2))
 	{
 		return false;
 	}
@@ -54,17 +54,16 @@ bool Sprite::detectCollision(Vector objTwo,int heightT,int widthT)
 bool Sprite::detectCollisionR(Vector objTwo,int heightT,int widthT)
 {
 	if(position.getVectorX() >= objTwo.getVectorX() - (widthT/2) && position.getVectorX() <= objTwo.getVectorX() + (widthT/2)
-		&& position.getVectorY() >= objTwo.getVectorY() - (widthT/2)&& position.getVectorY() <= objTwo.getVectorY() + (heightT/2))
+		&& position.getVectorY() >= objTwo.getVectorY() - (heightT/2)&& position.getVectorY() <= objTwo.getVectorY() + (heightT/2))
 	{
 		return false;
 	}
 	return true;
 }
-
 bool Sprite::detectCollisionA(Vector objTwo,int heightT,int widthT)
 {
 	if(position.getVectorX() >= objTwo.getVectorX() - (widthT/2) && position.getVectorX() <= objTwo.getVectorX() + (widthT/2)
-		&& position.getVectorY() >= objTwo.getVectorY() - (widthT/2)&& position.getVectorY() <= objTwo.getVectorY() + (heightT/2) && alive)
+		&& position.getVectorY() >= objTwo.getVectorY() - (heightT/2)&& position.getVectorY() <= objTwo.getVectorY() + (heightT/2) && alive)
 	{
 		return false;
 	}
@@ -150,6 +149,14 @@ void Sprite::setSpeed(float c,float v)
 void Sprite::setSpeed(Vector change)
 {
 	speed.vectorSet(change);
+}
+void Sprite::setInv(int change)
+{
+	invTimer = change;
+}
+int Sprite::getInv()
+{
+	return invTimer;
 }
 
 float Sprite::getPositionX()

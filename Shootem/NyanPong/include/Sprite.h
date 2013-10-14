@@ -22,6 +22,7 @@ public:
 	int getWidth();
 	int getSprite();
 	int getTime();
+	int getInv();
 	float getPositionX();
 	float getPositionY();
 	float getSpeedX();
@@ -37,6 +38,7 @@ public:
 	void setHeight(int change);
 	void setWidth(int change);
 	void setSprite(int change);
+	void setInv(int change);
 	void setBulletAngle(Vector player,Vector vMouse);
 	void setAlive(bool change);
 	void updateSprite();
@@ -55,10 +57,11 @@ public:
 	void moveTarget(Vector change);
 	Vector getPosition();
 	Vector getSpeed();
-
 	std::string getTag();
+
 	Vector position;
 	Vector speed;
+	bool lineBeam;
 private:
 	Vector angle;
 	bool alive;
@@ -66,6 +69,7 @@ private:
 	int sprite;
 	int width;
 	int height;
+	int invTimer;
 	std::string tag;
 	int time;
 };
