@@ -65,7 +65,7 @@
       <ProgramDatabaseFile>$(OutDir)$(ProjectName)_d.pdb</ProgramDatabaseFile>
       <SubSystem>NotSet</SubSystem>
       <AdditionalLibraryDirectories>./libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>AIE_GL_Static_Framework_d.lib;kernel32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>AIE_GL_Static_Framework_d.lib;kernel32.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Manifest>
       <OutputManifestFile>$(TargetPath).manifest</OutputManifestFile>
@@ -128,6 +128,9 @@
     <None Include="resources\images\shield.png" />
     <None Include="resources\shaders\pixel.glsl" />
     <None Include="resources\shaders\vertex.glsl" />
+    <None Include="resources\sounds\Blop.wav" />
+    <None Include="resources\sounds\boom.wav" />
+    <None Include="resources\sounds\shoot.wav" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Boss.cpp" />

@@ -41,6 +41,9 @@
     <None Include="resources\images\healthbarV.png" />
     <None Include="resources\images\beam.png" />
     <None Include="resources\images\boss.png" />
+    <None Include="resources\sounds\shoot.wav" />
+    <None Include="resources\sounds\Blop.wav" />
+    <None Include="resources\sounds\boom.wav" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\main.cpp">
