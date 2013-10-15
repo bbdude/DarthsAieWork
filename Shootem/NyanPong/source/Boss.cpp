@@ -82,13 +82,17 @@ void Boss::updateBoss()
 		plannedPosition.vectorSetX(plannedPosition.getVectorX()*-1);
 	position.vectorAdd(plannedPosition);
 	MoveSprite(sprite,(int)position.getVectorX(),(int)position.getVectorY());
-	if (position.getVectorY() >= (height/2) - 50)
+	MoveSprite(spriteDead,(int)position.getVectorX(),(int)position.getVectorY());
+	if (position.getVectorY() >= (height/2) - 50 && health > 0)
 	{
 		time--;
 		if(time <= 0)
 			time = (rand() % 1000 ) + 2000;
-		else if (time > 2900)
+		else if (time > 2800)
+		{
 			launch = true;
+			time = 2800;
+		}
 		else if (time <= 1000)
 			fireLasers();
 	}
@@ -103,6 +107,7 @@ void Boss::loadBoss()
 	position.vectorSetX((float)width/2);
 	position.vectorSetY((float)-height);
 	sprite = CreateSprite( "./images/boss.png",width, height,true );
+	spriteDead = CreateSprite( "./images/bossDead.png",width, height,true );
 	spriteBar = CreateSprite( "./images/healthbar.png",(int)(12.8f*health), 25,true );
 	
 	MoveSprite(spriteBar,640,5);
@@ -110,11 +115,18 @@ void Boss::loadBoss()
 void Boss::drawBoss()
 {
 	//if (showing)
+	if (health > 0)
+	{
 	if (position.getVectorY() >= (height/2) - 50)
 	{
 		DrawSprite(spriteBar);
 	}
 	DrawSprite(sprite);
+	}
+	else
+	{
+		DrawSprite(spriteDead);
+	}
 }
 void Boss::endBoss()
 {
@@ -124,6 +136,8 @@ void Boss::endBoss()
 bool Boss::moveWave()
 {
 	//std::cout << "Moving boss forward";
+	if (health > 0)
+	{
 	if (!(position.getVectorY() >= (height/2) - 50))
 		plannedPosition.vectorSetY(1);
 	else if (time < 2000 && time > 1800)
@@ -133,6 +147,12 @@ bool Boss::moveWave()
 	else
 		plannedPosition.vectorSetY(0);
 		//return true;
+	}
+	else
+	{
+		plannedPosition.vectorSetX(0);
+		plannedPosition.vectorSetY(-1);
+	}
 	return false;
 }
 void Boss::fireLasers()

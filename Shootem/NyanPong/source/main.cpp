@@ -72,10 +72,10 @@ switch(type)
 			obj.setHeight(35);
 			obj.setSprite(CreateSprite( "./images/enemyG.png", 20, 35, true ));
 			obj.setWidth(20);
-			//obj.setPosition((float)(rand() % (int)(vScreen.getVectorX() - 40)) + 20,-20);
-			obj.setPosition(200,200);
+			obj.setPosition((float)(rand() % (int)(vScreen.getVectorX() - 40)) + 20,100);
+			//obj.setPosition(200,200);
 			//obj.setSpeed(0.25f,0);
-			obj.setSpeed(1,0.25f);
+			obj.setSpeed(0,0.25f);
 			obj.setTag("GREEN");
 			break;
 		case 3:
@@ -97,6 +97,74 @@ switch(type)
 			obj.setTag("PINK");
 			break;
 		}
+}
+void sideLoadAI()
+{
+	int range = 0;
+	switch(rand()% 1000)
+	{
+	case 50:
+		for(int i = 0; i <= 19; i++)
+		{
+			if (!monster[i].getAlive() || monster[i].position.getVectorY() < 0)
+			{
+				range++;
+				monster[i].setPosition(1260,-20 + (50*range));
+				monster[i].setSpeed(0.5f,0.5f);
+				monster[i].setAlive(true);
+			}
+			if (range >= 3)
+				return;
+		}
+		//for(int i = 0; i 
+		break;
+	case 100:
+		for(int i = 0; i <= 19; i++)
+		{
+			if (!monster[i].getAlive() || monster[i].position.getVectorY() < 0)
+			{
+				range++;
+				monster[i].setPosition(20,-20 + (50*range));
+				monster[i].setSpeed(0.5f,0.5f);
+				monster[i].setAlive(true);
+			}
+			if (range >= 3)
+				return;
+		}
+		//for(int i = 0; i 
+		break;
+	case 150:
+		for(int i = 0; i <= 19; i++)
+		{
+			if (!monster[i].getAlive() || monster[i].position.getVectorY() < 0)
+			{
+				range++;
+				monster[i].setPosition(1260 - (rand() % 200),-20 - (50*range));
+				monster[i].setSpeed(0,0.6f);
+				monster[i].setAlive(true);
+			}
+			if (range >= 3)
+				return;
+		}
+		//for(int i = 0; i 
+		
+	case 200:
+		for(int i = 0; i <= 19; i++)
+		{
+			if (!monster[i].getAlive() || monster[i].position.getVectorY() < 0)
+			{
+				range++;
+				monster[i].setPosition((rand() % 200) + 100,-20 - (50*range));
+				monster[i].setSpeed(0,0.6f);
+				monster[i].setAlive(true);
+			}
+			if (range >= 3)
+				return;
+		}
+		//for(int i = 0; i 
+		
+		break;
+	}
 }
 void loadLevel(int level)
 {
@@ -535,13 +603,14 @@ void updateAi(Sprite &monster,Sprite &power){
 			monster.position.vectorAdd(plannedMovement);
 		else 
 			monster.speed.multiplyScalarX(-1);
-		if (boss.getLaunch() && !monster.getAlive())
-		{
-			boss.setLaunch(false);
-			monster.setAlive(false);
-			//loadAI(monster,rand()%4);
-			loadAI(monster,2);
-		}
+		
+	}
+	if (boss.getLaunch() && !monster.getAlive())
+	{
+		boss.setLaunch(false);
+		monster.setAlive(false);
+		loadAI(monster,rand()%4);
+		//loadAI(monster,2);
 	}
 	
 }
@@ -659,7 +728,7 @@ void updateGame() {
 		beam.updateSprite();
 		boss.updateBoss();
 		player1.updateSprite();
-		if(wave >= 1)
+		if(wave >= 2)
 			boss.moveWave();
 		//RotateSprite(player1.getSprite(),(int)getPlayerAngle(player1));
 		target.moveTarget(vMouse);
@@ -672,6 +741,7 @@ void updateGame() {
 			if (monster[i].getAlive())
 				monster[i].updateSprite();			
 		}
+		sideLoadAI();
 	}
 }
 void drawGame() {

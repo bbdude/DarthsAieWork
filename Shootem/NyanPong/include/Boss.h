@@ -43,6 +43,7 @@ private:
 	float health;
 	int sprite;
 	int spriteBar;
+	int spriteDead;
 	int width;
 	int height;
 	int time;
