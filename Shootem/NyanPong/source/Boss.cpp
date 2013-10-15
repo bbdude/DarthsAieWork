@@ -4,6 +4,7 @@
 
 Boss::Boss(void)
 {
+	launch = true;
 }
 
 
@@ -66,6 +67,14 @@ float Boss::getHealth()
 {
 	return health;
 }
+bool Boss::getLaunch()
+{
+	return launch;
+}
+void Boss::setLaunch(bool change)
+{
+	launch = change;
+}
 void Boss::updateBoss()
 {
 	//position.vectorSet(plannedPosition);
@@ -78,6 +87,8 @@ void Boss::updateBoss()
 		time--;
 		if(time <= 0)
 			time = (rand() % 1000 ) + 2000;
+		else if (time > 2900)
+			launch = true;
 		else if (time <= 1000)
 			fireLasers();
 	}

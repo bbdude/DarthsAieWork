@@ -125,6 +125,7 @@
     <None Include="resources\images\lose.png" />
     <None Include="resources\images\play.png" />
     <None Include="resources\images\player.png" />
+    <None Include="resources\images\playerVoid.png" />
     <None Include="resources\images\shield.png" />
     <None Include="resources\shaders\pixel.glsl" />
     <None Include="resources\shaders\vertex.glsl" />

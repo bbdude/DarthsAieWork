@@ -21,6 +21,7 @@ public:
 	void setSprite(int change);
 	void setSpriteBar(int change);
 	void setTime (int change);
+	void setLaunch (bool change);
 	void loadBoss();
 	void endBoss();
 	void drawBoss();
@@ -28,6 +29,7 @@ public:
 	void fireLasers();
 	void lowerHealth(float change);
 	bool moveWave();
+	bool getLaunch();
 	bool collideLasers(Vector position,int height,int width);
 	int getHeight();
 	int getWidth();
@@ -45,5 +47,6 @@ private:
 	int height;
 	int time;
 	bool showing;
+	bool launch;
 };
 

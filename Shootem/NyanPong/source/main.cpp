@@ -54,6 +54,50 @@ Sprite target;
 movableObject screen;
 movableObject screenTwo;
 Boss boss;
+void loadAI(Sprite &obj,int type)
+{
+switch(type)
+	{
+	case 1:
+			obj.setAlive(true);
+			obj.setHeight(40);
+			obj.setSprite(CreateSprite("./images/enemyB.png", 40, 40, true ));
+			obj.setWidth(40);
+			obj.setPosition((float)(rand() % (int)(vScreen.getVectorX() - 40)) + 20,-20);
+			obj.setSpeed((rand() % 5) - 2.5f,0.25f);
+			obj.setTag("BLUE");
+			break;
+		case 2:
+			obj.setAlive(true);
+			obj.setHeight(35);
+			obj.setSprite(CreateSprite( "./images/enemyG.png", 20, 35, true ));
+			obj.setWidth(20);
+			//obj.setPosition((float)(rand() % (int)(vScreen.getVectorX() - 40)) + 20,-20);
+			obj.setPosition(200,200);
+			//obj.setSpeed(0.25f,0);
+			obj.setSpeed(1,0.25f);
+			obj.setTag("GREEN");
+			break;
+		case 3:
+			obj.setAlive(true);
+			obj.setHeight(10);
+			obj.setSprite(CreateSprite( "./images/enemyR.png", 10, 10, true ));
+			obj.setWidth(10);
+			obj.setPosition((float)(rand() % (int)(vScreen.getVectorX() - 40)) + 20,-20);
+			obj.setSpeed(0.28f,0.1f);
+			obj.setTag("RED");
+			break;
+		default:
+			obj.setAlive(true);
+			obj.setHeight(20);
+			obj.setSprite(CreateSprite( "./images/enemyR.png", 10, 10, true ));
+			obj.setWidth(20);
+			obj.setPosition((float)(rand() % (int)(vScreen.getVectorX() - 40)) + 20,-20);
+			obj.setSpeed((float)(rand() % 5) - 2.5f,0.7f);
+			obj.setTag("PINK");
+			break;
+		}
+}
 void loadLevel(int level)
 {
 	powerUp.setAlive(false);
@@ -319,8 +363,9 @@ void updateLives(Sprite &power)
 			iLives--;
 			healthIcon.setPositionX(vScreen.getVectorX()/2);
 			healthIcon.setSprite(CreateSprite( "./images/healthbar.png", 50 * iLives, 25, true ));
+			
+			player1.setInv(1500);
 		}
-		player1.setInv(1500);
 	}
 }
 void updatePlayer(Sprite &player){
@@ -362,9 +407,15 @@ void updatePlayer(Sprite &player){
 		updateLives(powerUp);
 	if (!player.detectCollision(boss.getPosition(),boss.getHeight(),boss.getWidth()))
 		updateLives(powerUp);
+	if (player.getInv() == 1500)
+		player1.setSprite( CreateSprite( "./images/playerVoid.png", 20, 20, true ));
+
 	if (player.getInv() > 0)
 	{
 		player.setInv(player1.getInv()-1);
+		if (player.getInv() == 0)
+			player1.setSprite( CreateSprite( "./images/player.png", 20, 20, true ));
+
 	}
 }
 
@@ -484,6 +535,13 @@ void updateAi(Sprite &monster,Sprite &power){
 			monster.position.vectorAdd(plannedMovement);
 		else 
 			monster.speed.multiplyScalarX(-1);
+		if (boss.getLaunch() && !monster.getAlive())
+		{
+			boss.setLaunch(false);
+			monster.setAlive(false);
+			//loadAI(monster,rand()%4);
+			loadAI(monster,2);
+		}
 	}
 	
 }
@@ -570,6 +628,7 @@ void updateGame() {
 	{
 		if ((IsKeyDown(GLFW_KEY_ENTER)) ||(vMouse.getVectorX() >= 100 && vMouse.getVectorX() <= 500 && vMouse.getVectorY() >= 50 && vMouse.getVectorY() <= 350 && GetMouseButtonDown(0))){
 			updateLives(powerUp);
+			player1.setInv(0);
 			wave++;
 			PlaySound("./sounds/Blop.wav",NULL,SND_ASYNC);
 		}
