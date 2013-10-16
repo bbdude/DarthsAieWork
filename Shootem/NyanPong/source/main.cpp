@@ -33,7 +33,7 @@ struct movableObject{
 };
 //Declarations
 //Player Lives
-int iLives = 8;
+int iLives = 9;
 int whatBullet = 0;
 int whatAI = 0;
 int whatExplosion = 0;
@@ -109,7 +109,7 @@ void sideLoadAI()
 			if (!monster[i].getAlive() || monster[i].position.getVectorY() < 0)
 			{
 				range++;
-				monster[i].setPosition(1260,-20 + (50*range));
+				monster[i].setPosition((float)1260,(float)(-20 + (50*range)));
 				monster[i].setSpeed(0.5f,0.5f);
 				monster[i].setAlive(true);
 			}
@@ -124,7 +124,7 @@ void sideLoadAI()
 			if (!monster[i].getAlive() || monster[i].position.getVectorY() < 0)
 			{
 				range++;
-				monster[i].setPosition(20,-20 + (50*range));
+				monster[i].setPosition(20,(float)(-20 + (50*range)));
 				monster[i].setSpeed(0.5f,0.5f);
 				monster[i].setAlive(true);
 			}
@@ -139,7 +139,7 @@ void sideLoadAI()
 			if (!monster[i].getAlive() || monster[i].position.getVectorY() < 0)
 			{
 				range++;
-				monster[i].setPosition(1260 - (rand() % 200),-20 - (50*range));
+				monster[i].setPosition((float)(1260 - (rand() % 200)),(float)(-20 - (50*range)));
 				monster[i].setSpeed(0,0.6f);
 				monster[i].setAlive(true);
 			}
@@ -154,7 +154,7 @@ void sideLoadAI()
 			if (!monster[i].getAlive() || monster[i].position.getVectorY() < 0)
 			{
 				range++;
-				monster[i].setPosition((rand() % 200) + 100,-20 - (50*range));
+				monster[i].setPosition((float)(rand() % 200) + 100,(float)-20 - (50*range));
 				monster[i].setSpeed(0,0.6f);
 				monster[i].setAlive(true);
 			}
@@ -217,9 +217,9 @@ void loadLevel(int level)
 void loadWave(Sprite &obj,int wave)
 {
 	whatAI++;
-	if (whatAI >= 20)
+	if (whatAI >= 40)
 		whatAI = 0;
-	for (int i = whatAI; i >= 0; i--)
+	for (int i = whatAI/2; i >= 0; i--)
 	{
 		if (!monster[i].getAlive())
 			switch(rand() % 10)
@@ -313,7 +313,7 @@ void loadVectors()
 	player1.setWidth(5);
 	player1.setSpeed(1,1);
 	player1.setPosition(500,300);
-	player1.setTag("PINK");
+	player1.setTag("BASIC");
 	player1.setInv(0);
 
 	target.setAlive(true);
@@ -549,7 +549,7 @@ void updateAi(Sprite &monster,Sprite &power){
 		bool stopIt = false;
 		if (monster.getTag() == "RED" && rand()%600 == 2)
 		{
-			monster.setSpeedY(-20);
+			monster.setSpeedY(20);
 		}
 		else if (monster.getTag() == "RED")
 		{
@@ -648,6 +648,8 @@ void loadGame() {
 	setSprite('E',CreateSprite( "./images/exit.png", 400, 300, true ));
 	setSprite('P',CreateSprite( "./images/play.png", 400, 300, true ));
 	setSprite('W',CreateSprite( "./images/win.png", 400, 300, true ));
+	setSprite('T',CreateSprite( "./images/stats.png", 760, 470, true ));
+	MoveSprite(getSprite('T'),(int)vScreen.getVectorX()/2,(int)vScreen.getVectorX()/2);
 	healthIcon.setSprite(CreateSprite( "./images/healthbar.png", 50 * iLives, 25, true ));
 	beam.setSprite(CreateSprite( "./images/beam.png", 760, 50, true ));
 	RotateSprite(beam.getSprite(),90);
@@ -680,10 +682,12 @@ void endGame() {
 
 	for (int i = 0; i < 50; i++)
 		bullet[i].endBullet();
-	DestroySprite(getSprite('L'));
-	DestroySprite(getSprite('E'));
-	DestroySprite(getSprite('P'));
-	DestroySprite(getSprite('W'));
+
+	//DestroySprite(getSprite('L'));
+	//DestroySprite(getSprite('E'));
+	//DestroySprite(getSprite('P'));
+	//DestroySprite(getSprite('W'));
+	endItems();
 }
 
 void updateGame() {
@@ -693,19 +697,37 @@ void updateGame() {
 	GetMouseLocation(mX,mY);
 	vMouse.vectorSetX((float)mX);
 	vMouse.vectorSetY((float)mY);
-	if (iLives == 8)
+	if (iLives == 9)
 	{
 		if ((IsKeyDown(GLFW_KEY_ENTER)) ||(vMouse.getVectorX() >= 100 && vMouse.getVectorX() <= 500 && vMouse.getVectorY() >= 50 && vMouse.getVectorY() <= 350 && GetMouseButtonDown(0))){
 			updateLives(powerUp);
 			player1.setInv(0);
 			wave++;
 			PlaySound("./sounds/Blop.wav",NULL,SND_ASYNC);
+			setUp(true);
 		}
 		if ((IsKeyDown(GLFW_KEY_BACKSPACE)) ||(vMouse.getVectorX() >= 300 && vMouse.getVectorX() <= 700 && vMouse.getVectorY() >= 350 && vMouse.getVectorY() <= 650 && GetMouseButtonDown(0))){
 			iLives = -1;
 		}
 		MoveSprite(getSprite('P'),(int)300,(int)200);
 		MoveSprite(getSprite('E'),(int)500,(int)500);
+	}
+	else if (iLives == 8)
+	{
+		if (IsKeyDown('A'))
+		{
+			setTag("BASIC");
+		}
+		else if (IsKeyDown('D'))
+		{
+			setTag("WOAH");
+		}
+		else if (IsKeyDown(GLFW_KEY_SPACE))
+		{
+			setUp(false);
+			updateLives(powerUp);
+			player1.setInv(0);
+		}
 	}
 	else if (iLives <= 0)
 	{
@@ -728,7 +750,7 @@ void updateGame() {
 		beam.updateSprite();
 		boss.updateBoss();
 		player1.updateSprite();
-		if(wave >= 2)
+		if(wave >= 3)
 			boss.moveWave();
 		//RotateSprite(player1.getSprite(),(int)getPlayerAngle(player1));
 		target.moveTarget(vMouse);
@@ -745,10 +767,15 @@ void updateGame() {
 	}
 }
 void drawGame() {
-	if (iLives == 8)
+	
+	if (iLives == 9)
 	{
 		DrawSprite(getSprite('P'));
 		DrawSprite(getSprite('E'));
+	}
+	else if (iLives == 8)
+	{
+		drawStat();
 	}
 	else if (iLives <= 0)
 	{
@@ -756,6 +783,7 @@ void drawGame() {
 	}
 	else
 	{
+		drawStat();
 		powerUp.drawSprite();
 		target.drawSprite();
 		player1.drawSprite();
@@ -798,7 +826,8 @@ int main()
 	{
 		ClearScreen();
 
-		updateGame();
+		if (!getUp())
+			updateGame();
 
 		drawGame();
 	};

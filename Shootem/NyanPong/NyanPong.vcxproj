@@ -127,6 +127,7 @@
     <None Include="resources\images\player.png" />
     <None Include="resources\images\playerVoid.png" />
     <None Include="resources\images\shield.png" />
+    <None Include="resources\images\stats.png" />
     <None Include="resources\shaders\pixel.glsl" />
     <None Include="resources\shaders\vertex.glsl" />
     <None Include="resources\sounds\Blop.wav" />
