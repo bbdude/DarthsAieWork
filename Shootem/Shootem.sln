@@ -1,7 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NyanPong", "NyanPong\NyanPong.vcxproj", "{BAE9F21B-0C4A-4ED9-906B-65FE4F26EECF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ShootemProject", "NyanPong\NyanPong.vcxproj", "{BAE9F21B-0C4A-4ED9-906B-65FE4F26EECF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B3019B66-86A1-40A0-999C-632F064BE0B4}"
+	ProjectSection(SolutionItems) = preProject
+		playerLock.xml = playerLock.xml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

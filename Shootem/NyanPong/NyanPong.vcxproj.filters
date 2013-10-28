@@ -46,6 +46,7 @@
     <None Include="resources\sounds\boom.wav" />
     <None Include="resources\images\playerVoid.png" />
     <None Include="resources\images\stats.png" />
+    <None Include="resources\images\playerF.png" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\main.cpp">
@@ -64,6 +65,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\Sprite.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\readXML.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -87,6 +91,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\Sprite.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\readXML.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

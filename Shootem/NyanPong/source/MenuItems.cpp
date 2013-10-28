@@ -27,6 +27,7 @@ int getSprite(char choice)
 		return iPlay;
 		break;
 	}
+	return iPlay;
 }
 void setSprite(char choice,int number)
 {
@@ -55,7 +56,7 @@ void setTag(std::string change)
 {
 	tag = change;
 }
-void drawStat()
+std::string drawStat(int lives)
 {
 	if (IsKeyDown('E'))
 		press = true;
@@ -67,12 +68,27 @@ void drawStat()
 	if (up)
 	{
 		MoveSprite(iStat,640,340);
-		std::string basic = "BASIC";
-		if (tag == basic)
-			DrawString( "BASIC", 300, 300, 0);
-		
+		if (tag == "BASIC")
+		{
+			DrawString( "Basic Ship", 380, 500, 0);
+			DrawString( "Ability: Laser Beam", 600, 200, 0);
+			DrawString( "Speed: 1", 600, 300, 0);
+			DrawString( "Health: 7 Bars", 600, 400, 0);
+			DrawString( "Defense: 1", 600, 500, 0);
+		}
+		else// if (tag == "WOAH")
+		{
+			DrawString( "Fast Ship", 380, 500, 0);
+			DrawString( "Ability: Pulse Ray", 600, 200, 0);
+			DrawString( "Speed: 2", 600, 300, 0);
+			DrawString( "Health: 5 Bars", 600, 400, 0);
+			DrawString( "Defense: 1", 600, 500, 0);
+		}
+
 		DrawSprite(iStat);
+		return tag;
 	}
+	return "";
 }
 void endItems()
 {
@@ -90,4 +106,8 @@ bool getUp()
 void setUp(bool change)
 {
 	up = change;
+}
+std::string getTag()
+{
+	return tag;
 }

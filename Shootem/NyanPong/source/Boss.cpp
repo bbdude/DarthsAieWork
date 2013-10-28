@@ -1,12 +1,10 @@
 #include <iostream>
 #include "Boss.h"
 
-
 Boss::Boss(void)
 {
 	launch = true;
 }
-
 
 Boss::~Boss(void)
 {
@@ -109,7 +107,7 @@ void Boss::loadBoss()
 	sprite = CreateSprite( "./images/boss.png",width, height,true );
 	spriteDead = CreateSprite( "./images/bossDead.png",width, height,true );
 	spriteBar = CreateSprite( "./images/healthbar.png",(int)(12.8f*health), 25,true );
-	
+
 	MoveSprite(spriteBar,640,5);
 }
 void Boss::drawBoss()
@@ -168,7 +166,6 @@ void Boss::fireLasers()
 	//84,198 1198 190
 	DrawLine(((int)position.getVectorX() - (width/2)) + 84,((int)position.getVectorY() - (height/2)) + 200,((int)position.getVectorX() - (width/2)) + 84,(int)position.getVectorY() + 800,lineColorStart,lineColorEnd);
 	DrawLine(((int)position.getVectorX() - (width/2)) + 1198,((int)position.getVectorY() - (height/2)) + 200,((int)position.getVectorX() - (width/2)) + 1198,(int)position.getVectorY() + 800,lineColorStart,lineColorEnd);
-
 }
 bool Boss::collideLasers(Vector objTwo,int heightT,int widthT)
 {

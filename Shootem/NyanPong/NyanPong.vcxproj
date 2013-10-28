@@ -58,6 +58,7 @@
       <AssemblerListingLocation>$(IntDir)</AssemblerListingLocation>
       <ObjectFileName>$(IntDir)</ObjectFileName>
       <WarningLevel>Level3</WarningLevel>
+      <AdditionalUsingDirectories>System.xml.dll;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -125,6 +126,7 @@
     <None Include="resources\images\lose.png" />
     <None Include="resources\images\play.png" />
     <None Include="resources\images\player.png" />
+    <None Include="resources\images\playerF.png" />
     <None Include="resources\images\playerVoid.png" />
     <None Include="resources\images\shield.png" />
     <None Include="resources\images\stats.png" />
@@ -139,6 +141,7 @@
     <ClCompile Include="source\Bullet.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\MenuItems.cpp" />
+    <ClCompile Include="source\readXML.cpp" />
     <ClCompile Include="source\Vector.cpp" />
     <ClCompile Include="source\Sprite.cpp" />
   </ItemGroup>
@@ -148,6 +151,7 @@
     <ClInclude Include="include\AIE.h" />
     <ClInclude Include="include\KeyCodes.h" />
     <ClInclude Include="include\MenuItems.h" />
+    <ClInclude Include="include\readXML.h" />
     <ClInclude Include="include\Vector.h" />
     <ClInclude Include="include\Sprite.h" />
   </ItemGroup>

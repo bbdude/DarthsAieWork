@@ -50,4 +50,3 @@ private:
 	bool showing;
 	bool launch;
 };
-

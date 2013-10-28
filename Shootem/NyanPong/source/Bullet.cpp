@@ -1,11 +1,9 @@
 #include "Bullet.h"
 #include <iostream>
 
-
 Bullet::Bullet(void)
 {
 }
-
 
 Bullet::~Bullet(void)
 {

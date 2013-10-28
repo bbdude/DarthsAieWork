@@ -1,7 +1,6 @@
 #include <iostream>
 #include "Vector.h"
 
-
 Vector::Vector()
 {
 	x = 0;
@@ -10,7 +9,7 @@ Vector::Vector()
 Vector::~Vector()
 {
 }
-	
+
 void Vector::vectorSet(Vector &v2){
 	x = v2.getVectorX();
 	y = v2.getVectorY();
@@ -66,7 +65,6 @@ void Vector::getNormal(){
 	float mag = sqrt(x*x + y*y);
 	x = x/mag;
 	y = y/mag;
-		
 }
 float Vector::getMagnitude(){
 	return sqrt(x*x + y*y);

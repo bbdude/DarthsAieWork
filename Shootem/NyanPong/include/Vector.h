@@ -1,4 +1,3 @@
-
 #pragma once
 #ifndef VECTOR_H
 #define VECTOR_H
@@ -15,10 +14,10 @@ private:
 class Vector
 {
 public:
-	
+
 	Vector();
 	~Vector();
-	
+
 	void vectorSet(Vector &v2);
 	float getVectorX();
 	float getVectorY();
@@ -34,7 +33,7 @@ public:
 	void vectorAdd(Vector &v2);
 	void getNormal();
 	float getMagnitude();
-	
+
 	private:
 		float x,y;
 };

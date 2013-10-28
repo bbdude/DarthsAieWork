@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
 //	Author:	Jamie Stewart
 //	Date:	12/11/2012
-//	Brief:	This is the main entry point for access to the functionality provided by the 
+//	Brief:	This is the main entry point for access to the functionality provided by the
 //			AIE Static OpenGL Framework.
 //////////////////////////////////////////////////////////////////////////
 #ifndef _AIE_H_
@@ -39,7 +39,7 @@ struct SColour
 };
 
 //////////////////////////////////////////////////////////////////////////
-// Call this function to initialise the framework 
+// Call this function to initialise the framework
 //////////////////////////////////////////////////////////////////////////
 DLLEXPORT int			Initialise( int a_iWidth, int a_iHeight, bool a_bFullscreen = false );
 DLLEXPORT void			Shutdown();
