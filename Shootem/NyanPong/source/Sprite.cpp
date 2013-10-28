@@ -6,10 +6,8 @@ Sprite::Sprite(void)
 }
 Sprite::Sprite(bool aAlive,bool aFire,int aWidth, int aHeight,int aInvTimer,std::string aTag,int aTime,float x,float y)
 {
-	if (aAlive != NULL)
-		alive = aAlive;
-	if (aFire != NULL)
-		fire = aFire;
+	alive = aAlive;
+	fire = aFire;
 	if (aWidth != NULL)
 		width = aWidth;
 	if (aHeight != NULL)
@@ -80,11 +78,13 @@ bool   Sprite::detectCollisionR(Vector objTwo,int heightT,int widthT)
 }
 bool   Sprite::detectCollisionA(Vector objTwo,int heightT,int widthT)
 {
-	if(position.getVectorX() >= objTwo.getVectorX() - (widthT/2) && position.getVectorX() <= objTwo.getVectorX() + (widthT/2)
-		&& position.getVectorY() >= objTwo.getVectorY() - (heightT/2)&& position.getVectorY() <= objTwo.getVectorY() + (heightT/2) && alive)
-	{
+	//if(position.getVectorX() >= objTwo.getVectorX() - (widthT/2) && position.getVectorX() <= objTwo.getVectorX() + (widthT/2)
+	//	&& position.getVectorY() >= objTwo.getVectorY() - (heightT/2)&& position.getVectorY() <= objTwo.getVectorY() + (heightT/2) && alive)
+	//{
+	//	return false;
+	//}
+	if ((objTwo.getVectorX() >= position.getVectorX() - (width/2)) && (objTwo.getVectorX() <= position.getVectorX() + (width/2)))// && alive)
 		return false;
-	}
 	return true;
 }
 void   Sprite::loadSprite()

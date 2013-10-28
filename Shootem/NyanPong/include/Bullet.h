@@ -27,6 +27,7 @@ public:
 	void updateBullet();
 	bool detectCollision(Vector objTwo,int heightT,int widthT);
 	void setBulletAngle(Vector player,Vector vMouse);
+	void setBulletAngle(float playerx,float playery,Vector vMouse);
 	void setAlive(bool change);
 	bool getAlive();
 	void loadBullet();

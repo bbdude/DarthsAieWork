@@ -91,9 +91,34 @@ void Boss::updateBoss()
 			launch = true;
 			time = 2800;
 		}
+		else if (time == 500 || time == 1000 || time == 1500 || time == 2000)
+			for (int i = 0; i <= 2; i++)
+			{
+				if (!bullet[i].getAlive())
+				{
+					bullet[i].setAlive(true);
+					bullet[i].updateBullet();
+					int pos = (100*i) - 100;
+					bullet[i].setBulletAngle(position.getVectorX()-pos,position.getVectorY(),playerPosition);
+					//bullet[i].set
+				}
+			}
 		else if (time <= 1000)
 			fireLasers();
+
+		for (int i = 0; i <= 2; i++)
+		{
+			if (bullet[i].getAlive())
+			{
+				bullet[i].updateBullet();
+				//bullet[i].setBulletAngle(position,playerPosition);
+			}
+		}
 	}
+}
+void Boss::setPlayerPosition(Vector &player)
+{
+	playerPosition.vectorSet(player);
 }
 void Boss::loadBoss()
 {
@@ -104,6 +129,8 @@ void Boss::loadBoss()
 	plannedPosition.vectorSet(1,0);
 	position.vectorSetX((float)width/2);
 	position.vectorSetY((float)-height);
+	for (int i = 0; i <= 2; i++)
+		bullet[i].loadBullet();
 	sprite = CreateSprite( "./images/boss.png",width, height,true );
 	spriteDead = CreateSprite( "./images/bossDead.png",width, height,true );
 	spriteBar = CreateSprite( "./images/healthbar.png",(int)(12.8f*health), 25,true );
@@ -117,6 +144,12 @@ void Boss::drawBoss()
 	{
 	if (position.getVectorY() >= (height/2) - 50)
 	{
+
+		for (int i = 0; i <= 2; i++)
+		{
+			if (bullet[i].getAlive())
+				bullet[i].drawBullet();
+		}
 		DrawSprite(spriteBar);
 	}
 	DrawSprite(sprite);

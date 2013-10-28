@@ -141,7 +141,6 @@
     <ClCompile Include="source\Bullet.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\MenuItems.cpp" />
-    <ClCompile Include="source\readXML.cpp" />
     <ClCompile Include="source\Vector.cpp" />
     <ClCompile Include="source\Sprite.cpp" />
   </ItemGroup>
@@ -151,7 +150,6 @@
     <ClInclude Include="include\AIE.h" />
     <ClInclude Include="include\KeyCodes.h" />
     <ClInclude Include="include\MenuItems.h" />
-    <ClInclude Include="include\readXML.h" />
     <ClInclude Include="include\Vector.h" />
     <ClInclude Include="include\Sprite.h" />
   </ItemGroup>

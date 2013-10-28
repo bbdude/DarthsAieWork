@@ -4,12 +4,13 @@
 #include "MenuItems.h"
 #include "Vector.h"
 #include <string>
-#include <cmath>
-#include <assert.h>
-#include <crtdbg.h>
-#include <ctime>
+#include "Bullet.h"
+//#include <cmath>
+//#include <assert.h>
+//#include <crtdbg.h>
+//#include <ctime>
 #include <iostream>
-#include <list>
+//#include <list>
 
 class Boss
 {
@@ -28,6 +29,7 @@ public:
 	void updateBoss();
 	void fireLasers();
 	void lowerHealth(float change);
+	void setPlayerPosition(Vector &player);
 	bool moveWave();
 	bool getLaunch();
 	bool collideLasers(Vector position,int height,int width);
@@ -38,8 +40,10 @@ public:
 	float getHealth();
 	Vector getPosition();
 private:
+	Bullet bullet[3];
 	Vector position;
 	Vector plannedPosition;
+	Vector playerPosition;
 	float health;
 	int sprite;
 	int spriteBar;

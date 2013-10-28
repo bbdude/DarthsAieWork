@@ -13,14 +13,15 @@
 #include "Vector.h"
 #include "Sprite.h"
 #include "Bullet.h"
-#include <string>
-#include <cmath>
-#include <assert.h>
-#include <crtdbg.h>
-#include <ctime>
+
 #include <iostream>
-#include <list>
-#include <exception>
+//#include <string>
+//#include <cmath>
+//#include <ctime>
+//#include <list>
+//#include <assert.h>
+//#include <crtdbg.h>
+//#include <exception>
 //////////////////////////////////////////////////////////////////////////
 struct movableObject{
 	Vector position;
@@ -471,32 +472,39 @@ void updateScreen(Vector &vScreen,movableObject &screen,movableObject &screenTwo
 }
 void loadGame(int &iLives,Vector &vScreen,movableObject &screen,movableObject &screenTwo,Sprite &beam,Boss &boss,Sprite &healthIcon,Sprite &player1,Sprite &powerUp,Sprite &target) {
 	srand((int)time(0));
-	//fillBulletStruct();
-	// Now load some sprites
+
 	loadLevel(1,powerUp);
+
 	boss.loadBoss();
+
 	screen.position.vectorSetX(0);
 	screen.position.vectorSetY(-vScreen.getVectorY()*2);
 	screen.sprite = CreateSprite( "./images/bg2.png", (int)vScreen.getVectorX(), (int)vScreen.getVectorY()*3,false );
-	//MoveSprite(screen.sprite, iScreenX>>1, iScreenY>>1);
 	MoveSprite(screen.sprite, (int)screen.position.getVectorX(), (int)screen.position.getVectorY());
+
 	screenTwo.position.vectorSetX(0);
-	screenTwo.position.vectorSetY(-vScreen.getVectorY()*2);
+	screenTwo.position.vectorSetY(-vScreen.getVectorY()*7.2f);
 	screenTwo.sprite = CreateSprite( "./images/bg2.png", (int)vScreen.getVectorX(), (int)vScreen.getVectorY()*6,false );
 	MoveSprite(screenTwo.sprite, (int)screenTwo.position.getVectorX(), (int)screenTwo.position.getVectorY());
+
 	setSprite('L',CreateSprite( "./images/lose.png", 400, 300, true ));
 	setSprite('E',CreateSprite( "./images/exit.png", 400, 300, true ));
 	setSprite('P',CreateSprite( "./images/play.png", 400, 300, true ));
 	setSprite('W',CreateSprite( "./images/win.png", 400, 300, true ));
 	setSprite('T',CreateSprite( "./images/stats.png", 760, 470, true ));
 	MoveSprite(getSprite('T'),(int)vScreen.getVectorX()/2,(int)vScreen.getVectorX()/2);
+
 	healthIcon.setSprite(CreateSprite( "./images/healthbar.png", 50 * iLives, 25, true ));
+
 	beam.setSprite(CreateSprite( "./images/beam.png", 760, 50, true ));
 	RotateSprite(beam.getSprite(),90);
+
 	powerUp.setSprite( CreateSprite( "./images/shield.png", 50, 50, true ));
 
 	player1.setSprite( CreateSprite( "./images/player.png", 20, 20, true ));
+
 	target.setSprite( CreateSprite( "./images/flag.png", 50, 50, true ));
+
 	for (int i = 0; i <= 19; i++)
 		monster[i].setSprite( CreateSprite( "./images/enemy.png", 20, 20, true ));
 	for (int i = 0; i <= 19; i++)
@@ -599,6 +607,7 @@ void updateGame(int &iLives,int &whatBullet, int &whatAI,int &whatExplosion,floa
 		healthIcon.updateSprite();
 		beam.updateSprite();
 		boss.updateBoss();
+		boss.setPlayerPosition(player1.getPosition());
 		player1.updateSprite();
 		if(wave >= 3)
 			boss.moveWave();
@@ -682,6 +691,8 @@ int main()
 	//The moving backgrounds
 	movableObject screen;
 	movableObject screenTwo;
+	screen.speed.vectorSet(0,0.05f);
+	screenTwo.speed.vectorSet(0,0.05f);
 
 	//The screen size
 	Vector vScreen;
@@ -699,13 +710,13 @@ int main()
 	Sprite player1(false,false,5,5,0,"BASIC",0,500,300);
 
 	//The health bar
-	Sprite healthIcon(true,NULL,52,52,NULL,"",NULL,200,50);
+	Sprite healthIcon(true,true,52,52,NULL,"",NULL,200,50);
 
 	//The power up
-	Sprite powerUp(false,NULL,100,100,NULL,"",NULL,0,0);
+	Sprite powerUp(false,true,100,100,NULL,"",NULL,0,0);
 
 	//The marker for the mouse
-	Sprite target(true,NULL,50,50,NULL,"",NULL,0,0);
+	Sprite target(true,true,50,50,NULL,"",NULL,0,0);
 
 	//Sets what ship is being used.
 	setTag("BASIC");
