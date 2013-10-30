@@ -208,6 +208,20 @@ bool Boss::collideLasers(Vector objTwo,int heightT,int widthT)
 			return false;
 		if((position.getVectorX() - (width/2)) + 1198 >= objTwo.getVectorX() - (widthT/2) && (position.getVectorX() - (width/2)) + 1198 <= objTwo.getVectorX() + (widthT/2))
 			return false;
+		for (int i = 0; i <= 2; i++)
+		{
+			if(bullet[i].detectCollision(objTwo,heightT,widthT))
+				return false;
+		}
+	}
+	return true;
+}
+bool Boss::collideBullets(Vector objTwo,int heightT,int widthT)
+{
+	for (int i = 0; i <= 2; i++)
+	{
+		if(bullet[i].detectCollision(objTwo,heightT,widthT))
+			return false;
 	}
 	return true;
 }

@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
-//	Author:	Jacob Miller
-//	Date:	09/13/2013
-//	Brief:	Main file for Shootem
+//	@Author:	Jacob Miller
+//	@Date:	10/30/2013
+//	@Brief:	Main file for Shootem
 //////////////////////////////////////////////////////////////////////////
 #define _USE_MATH_DEFINES
 //////////////////////////////////////////////////////////////////////////
@@ -13,15 +13,13 @@
 #include "Vector.h"
 #include "Sprite.h"
 #include "Bullet.h"
-
+#include < GL/glew.h>
 #include <iostream>
-//#include <string>
-//#include <cmath>
-//#include <ctime>
-//#include <list>
-//#include <assert.h>
-//#include <crtdbg.h>
-//#include <exception>
+#include <time.h> 
+//////////////////////////////////////////////////////////////////////////
+/// <Generic moving object>
+///
+/// <Used to move the 2 backgrounds in unison, no need for a class with a lot of data in it.>
 //////////////////////////////////////////////////////////////////////////
 struct movableObject{
 	Vector position;
@@ -31,10 +29,36 @@ struct movableObject{
 	int height;
 };
 //Declarations
+//////////////////////////////////////////////////////////////////////////
+/// <The array of bullets using the Bullet class>
+///
+/// <50 bullets that cycle so that the player can have as many bullets as he needs>
+//////////////////////////////////////////////////////////////////////////
 Bullet bullet[50];
+
+//////////////////////////////////////////////////////////////////////////
+/// <The array of enemies using the Sprite class>
+///
+/// <20 enemies that cycle so they can come in waves>
+//////////////////////////////////////////////////////////////////////////
 Sprite monster[20];
+
+//////////////////////////////////////////////////////////////////////////
+/// <The array of explosions using the Sprite class>
+///
+/// <20 explosions that spawn when an enemy dies>
+//////////////////////////////////////////////////////////////////////////
 Sprite explosion[20];
 
+//////////////////////////////////////////////////////////////////////////
+/// <Generates a certain enemy based on the functions parameters>
+///
+/// <Takes in a sprite and then just changes its values based of which type was selected>
+///
+/// @param  Sprite,Int,Vector
+/// @param  Takes in an enemy, enters a switch that is based off of the type you chose, and then it changes the enemy.
+/// @return Returns void
+//////////////////////////////////////////////////////////////////////////
 void loadAI(Sprite &obj,int type,Vector &vScreen)
 {
 	switch(type)
@@ -65,6 +89,16 @@ void loadAI(Sprite &obj,int type,Vector &vScreen)
 		break;
 	}
 }
+
+////////////////////////////////////////////////////////////////////////// 
+/// <Sends in enemys from certain angles>
+///
+/// <Finds 3 sprites that are dead and sends them in from either the left,right, or the top in a group>
+///
+/// @param  N/A
+/// @param 
+/// @return Returns void
+//////////////////////////////////////////////////////////////////////////
 void sideLoadAI()
 {
 	int range = 0;
@@ -127,6 +161,16 @@ void sideLoadAI()
 		break;
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////
+/// <Gives all enemys a base value and sets up the first few enemys >
+///
+/// <Sets all enemys to the default type, then sets 3 monsters to spawn right when the level begins>
+///
+/// @param  Int,Sprite
+/// @param  Takes in what level it is and then spawns newer types based on that
+/// @return Returns void
+//////////////////////////////////////////////////////////////////////////
 void loadLevel(int level,Sprite &powerUp)
 {
 	powerUp.loadSprite(false,NULL,100,100,NULL,"PINK",NULL,-200,-200);
@@ -154,6 +198,16 @@ void loadLevel(int level,Sprite &powerUp)
 		break;
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////
+/// <Generates a random enemy based on the functions parameters and the wave>
+///
+/// <Increases how many enemies have dies, based on how many enemies have dies it spawns even more>
+///
+/// @param  Sprite,Int,Int,Vector
+/// @param  Takes in the amount of dead enemies then increases it, then loads it a new type of enemy based on the wave
+/// @return Returns void
+//////////////////////////////////////////////////////////////////////////
 void loadWave(Sprite &obj,int wave,int &whatAI,Vector &vScreen)
 {
 	whatAI++;
@@ -196,6 +250,18 @@ void loadWave(Sprite &obj,int wave,int &whatAI,Vector &vScreen)
 			break;
 		}
 }
+
+//////////////////////////////////////////////////////////////////////////
+/// <Fires a bullet toward where the mouse is>
+///
+/// <Checks if the left mouse button is down, if it is then it waits until it is no longer pressed and then fires a new bullet towards the mouse>
+/// <Checks if the right mouse button is down, if it is then it waits until it is no longer pressed and then activates the secondary ability>
+///
+/// @param  Sprite,Int,Bool,Vector,Sprite,Sprite
+/// @param  If either of the keys were pressed then it sets a bool to detect if that  key has been released yet.
+/// @param  If a bullet is to be fired then it determines what bullet to fire based off of whatBullet then increases it, also plays a shooting sound.
+/// @return Returns void
+//////////////////////////////////////////////////////////////////////////
 void fireBullet(Sprite &player,int &whatBullet,bool &pressTrigger,Vector &vMouse,Sprite &beam,Sprite &player1)
 {
 	if (GetMouseButtonDown(0))
@@ -257,6 +323,17 @@ void fireBullet(Sprite &player,int &whatBullet,bool &pressTrigger,Vector &vMouse
 	player1.setTime(player1.getTime()-1);
 	beam.setTime(beam.getTime()-1);
 }
+
+//////////////////////////////////////////////////////////////////////////
+/// <Changes the players life>
+///
+/// <Checks if the player is invicible or infected and changes the players life and health bar based on that.>
+/// <If player does take damage that is not venomous then he becomes invicible for a short period of time>
+///
+/// @param  Sprite,Int,Vector,Sprite,Sprite,Sprite
+/// @param  checks the players invincibility timer then edits the players tag based on if he was invincible , infected, or normal
+/// @return void
+//////////////////////////////////////////////////////////////////////////
 void updateLives(Sprite &power, int &iLives,Vector &vScreen,Sprite &healthIcon,Sprite &player1)
 {
 	if (player1.getInv() <= 0)
@@ -290,6 +367,19 @@ void updateLives(Sprite &power, int &iLives,Vector &vScreen,Sprite &healthIcon,S
 		}
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////
+/// <Updates the player>
+///
+/// <Checks if the WASD is being pressed and moves the player based of off that if he will not move out side of bounds>
+/// <Then checks if the boss and the player are colliding>
+/// <If the inviciblity timer is out then reset the health bar to normal>
+///
+/// @param  Sprite,Int,Vector,Boss,Sprite,Sprite,Sprite
+/// @param  checks the players height and speed to see if he can move.
+/// @param  Checks on the players invincibility timer.
+/// @return void
+//////////////////////////////////////////////////////////////////////////
 void updatePlayer(Sprite &player,int &iLives,Vector &vScreen,Boss &boss,Sprite &healthIcon,Sprite &player1,Sprite &powerUp){
 	Vector plannedMovement;
 	if (IsKeyDown('W') && player.getPositionY() - (player.getHeight()/2) - player.getSpeedY() >= 0)
@@ -339,22 +429,52 @@ void updatePlayer(Sprite &player,int &iLives,Vector &vScreen,Boss &boss,Sprite &
 		}
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////
+/// <Changes the player direction>
+///
+/// <Angle the player towards your mouse>
+///
+/// @param  Sprite,Vector,Vector
+/// @param  Uses Atan2 to calculate the angle based on the screens diameters, mouses position, pi, and the players position.
+/// @return Returns the angle at which the player will be pointed to(float).
+//////////////////////////////////////////////////////////////////////////
 float getPlayerAngle(Sprite &player,Vector &vScreen,Vector &vMouse)
 {
 	float angle = std::atan2 ( (vScreen.getVectorY() - vMouse.getVectorY()) - player.position.getVectorY(), vMouse.getVectorX() - player.position.getVectorX()) * 57.2957795f; //57... is 180/pi
 	return angle;
 }
+
+//////////////////////////////////////////////////////////////////////////
+/// <Makes an explosion where an enemy dies>
+///
+/// <Sets a explosion down with the same dimentions and speed as the blown up enemy then playes a sound>
+///
+/// @param  Sprite,Int
+/// @param  Sets an explosion based on whatExplosion then increases whatExplosion
+/// @return void
+//////////////////////////////////////////////////////////////////////////
 void explodeAi(Sprite &monster, int &whatExplosion)
 {
-	PlaySound("./sounds/boom.wav",NULL,SND_ASYNC);
-	std::cout << "Explode AI";
 	whatExplosion++;
 	if (whatExplosion >= 20)
 		whatExplosion = 0;
 	explosion[whatExplosion].setPosition(monster.position);
 	explosion[whatExplosion].setSpeed(0,monster.speed.getVectorY()/1.2f);
 	explosion[whatExplosion].setSprite(CreateSprite( "./images/explosion.png", monster.getWidth(), monster.getHeight(), true ));
+	PlaySound("./sounds/boom.wav",NULL,SND_ASYNC);
 }
+
+//////////////////////////////////////////////////////////////////////////
+/// <Updates the power up>
+///
+/// <If the powerup is alive then detect if it collides with a player, goes off screen, or needs to bounce of the side walls>
+/// <Randomly spawns it if it is no longer alive>
+///
+/// @param  Sprite,Int,Vector,Sprite,Sprite
+/// @param  checks if power up is alive, sets it variables if it collides, sets it to dead if it goes off screen, reverses its direction if it collides it with the walls.
+/// @return void
+//////////////////////////////////////////////////////////////////////////
 void updatePowerUp(Sprite &power, int &iLives,Vector &vScreen,Sprite &healthIcon,Sprite &player1)
 {
 	if (power.getAlive())
@@ -388,6 +508,18 @@ void updatePowerUp(Sprite &power, int &iLives,Vector &vScreen,Sprite &healthIcon
 		power.speed.vectorSetX((rand() % 5) - 2.5f);
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////
+/// <Updates all the Enemys>
+///
+/// <Checks what type of enemy it is so it can change how it moves>
+/// <Checks if the enemy collides with bullet then if it does explode it and the bullet>
+/// <Updates the wave if an enemy goes off screen>
+///
+/// @param  Sprite,Sprite, int,int ,int ,float ,Vector ,Sprite,Boss,Sprite,Sprite ,Sprite
+/// @param  checks the enemies tag, checks if enemy collides, checks if boss collides,
+/// @return void
+//////////////////////////////////////////////////////////////////////////
 void updateAi(Sprite &monster,Sprite &power, int &iLives,int &whatAI,int &whatExplosion,float &wave,Vector &vScreen,Sprite &beam,Boss &boss,Sprite &healthIcon,Sprite &player1,Sprite &powerUp){
 	if (monster.getAlive())
 	{
@@ -458,7 +590,25 @@ void updateAi(Sprite &monster,Sprite &power, int &iLives,int &whatAI,int &whatEx
 		loadAI(monster,rand()%4,vScreen);
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////
+/// <Updates the explosion>
+///
+/// <moves the explosion>
+///
+/// @param  Sprite
+/// @return void
+//////////////////////////////////////////////////////////////////////////
 void updateExplosion(Sprite &explosion){ 	explosion.position.vectorAdd(explosion.speed);	}
+
+//////////////////////////////////////////////////////////////////////////
+/// <Updates the two moving screens>
+///
+/// <Checks if it has passed the end of the screen and then moves it>
+///
+/// @param Vector,movableObject,movableObject
+/// @return void
+//////////////////////////////////////////////////////////////////////////
 void updateScreen(Vector &vScreen,movableObject &screen,movableObject &screenTwo)
 {
 	screen.position.vectorAdd(screen.speed);
@@ -470,6 +620,15 @@ void updateScreen(Vector &vScreen,movableObject &screen,movableObject &screenTwo
 	if (screenTwo.position.getVectorY() >= vScreen.getVectorY())
 		screenTwo.position.vectorSetY(-vScreen.getVectorY()*2);
 }
+
+//////////////////////////////////////////////////////////////////////////
+/// <Load Game>
+///
+/// <Runs all the load functions, sets the basic variables for all the classes, and initlizes all the objects>
+///
+/// @param  Int,Vector,moveableObject,moveableObject,Sprite,Boss,Sprite,Sprite,Sprite,Sprite
+/// @return void
+//////////////////////////////////////////////////////////////////////////
 void loadGame(int &iLives,Vector &vScreen,movableObject &screen,movableObject &screenTwo,Sprite &beam,Boss &boss,Sprite &healthIcon,Sprite &player1,Sprite &powerUp,Sprite &target) {
 	srand((int)time(0));
 
@@ -512,6 +671,15 @@ void loadGame(int &iLives,Vector &vScreen,movableObject &screen,movableObject &s
 	for (int i = 0; i < 50; i++)
 		bullet[i].loadBullet();
 }
+
+//////////////////////////////////////////////////////////////////////////
+/// <Ends the game>
+///
+/// <Removes all sprites and data that is stored>
+///
+/// @param  moveableObject,moveableObject,Sprite,Boss,Sprite,Sprite,Sprite,Sprite
+/// @return void
+//////////////////////////////////////////////////////////////////////////
 void endGame(movableObject &screen,movableObject &screenTwo,Sprite &beam,Boss &boss,Sprite &healthIcon,Sprite &player1,Sprite &powerUp,Sprite &target) {
 	boss.endBoss();
 	DestroySprite(screen.sprite);
@@ -532,8 +700,24 @@ void endGame(movableObject &screen,movableObject &screenTwo,Sprite &beam,Boss &b
 		bullet[i].endBullet();
 	endItems();
 }
-void updateLevel(int &level, int &iLives,Vector &vScreen,Sprite &healthIcon,Sprite &player1,Sprite &powerUp)
+
+//////////////////////////////////////////////////////////////////////////
+/// <Updates Level>
+///
+/// <CMoves the mouse and changes the ship choice>
+///
+/// @param  int,int,vector,sprite,sprite,sprite,vector,sprite
+/// @return void
+//////////////////////////////////////////////////////////////////////////
+void updateLevel(int &level, int &iLives,Vector &vScreen,Sprite &healthIcon,Sprite &player1,Sprite &powerUp,Vector &vMouse,Sprite &target)
 {
+	int mX;
+	int mY;
+	GetMouseLocation(mX,mY);
+	vMouse.vectorSetX((float)mX);
+	vMouse.vectorSetY((float)mY);
+	target.moveTarget(vMouse);
+
 	if (level == 8)
 	{
 		if (IsKeyDown(GLFW_KEY_SPACE))
@@ -566,12 +750,17 @@ void updateLevel(int &level, int &iLives,Vector &vScreen,Sprite &healthIcon,Spri
 		MoveSprite(player1.getSprite(),432,300);
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////
+/// <Updates everything else>
+///
+/// <Runs the update functions for every class>
+///
+/// @param  int ,int, int,int,float,Vector,Vector,bool,movableObject,movableObject,Sprite,Boss,Sprite,Sprite,Sprite,Sprite
+/// @return void
+//////////////////////////////////////////////////////////////////////////
 void updateGame(int &iLives,int &whatBullet, int &whatAI,int &whatExplosion,float &wave,Vector &vMouse,Vector &vScreen,bool &pressTrigger,movableObject &screen,movableObject &screenTwo,Sprite &beam,Boss &boss,Sprite &healthIcon,Sprite &player1,Sprite &powerUp,Sprite &target) {
-	int mX;
-	int mY;
-	GetMouseLocation(mX,mY);
-	vMouse.vectorSetX((float)mX);
-	vMouse.vectorSetY((float)mY);
+	
 	if (iLives == 9)
 	{
 		if ((IsKeyDown(GLFW_KEY_ENTER)) ||(vMouse.getVectorX() >= 100 && vMouse.getVectorX() <= 500 && vMouse.getVectorY() >= 50 && vMouse.getVectorY() <= 350 && GetMouseButtonDown(0))){
@@ -612,7 +801,6 @@ void updateGame(int &iLives,int &whatBullet, int &whatAI,int &whatExplosion,floa
 		if(wave >= 3)
 			boss.moveWave();
 		//RotateSprite(player1.getSprite(),(int)getPlayerAngle(player1));
-		target.moveTarget(vMouse);
 		for (int i = 0; i <= 19; i++)
 		{
 			updateAi(monster[i],powerUp,iLives,whatAI,whatExplosion,wave,vScreen,beam,boss,healthIcon,player1,powerUp);
@@ -625,7 +813,19 @@ void updateGame(int &iLives,int &whatBullet, int &whatAI,int &whatExplosion,floa
 		sideLoadAI();
 	}
 }
+
+//////////////////////////////////////////////////////////////////////////
+/// <Draws everything to the screen>
+///
+/// <Runs the draw functions for every class>
+///
+/// @param  int,movableObject,movableObject,Sprite,Boss,Sprite,Sprite,Sprite,Sprite
+/// @return void
+//////////////////////////////////////////////////////////////////////////
 void drawGame(int &iLives,movableObject &screen,movableObject &screenTwo,Sprite &beam,Boss &boss,Sprite &healthIcon,Sprite &player1,Sprite &powerUp,Sprite &target) {
+
+	target.drawSprite();
+
 	if (iLives == 9)
 	{
 		DrawSprite(getSprite('P'));
@@ -644,7 +844,6 @@ void drawGame(int &iLives,movableObject &screen,movableObject &screenTwo,Sprite 
 	{
 		drawStat(iLives);
 		powerUp.drawSprite();
-		target.drawSprite();
 		player1.drawSprite();
 		healthIcon.drawSprite();
 		if (beam.getAlive())
@@ -734,27 +933,38 @@ int main()
 	//Sets the volume at a decent level
 	waveOutSetVolume(0, 8000);
 
+
+	//Sets the cursor not to show(must be called before Initialise runs)
+	ShowCursor(FALSE); 
 	// First we need to initialize our Game Framework
 	Initialise((int)vScreen.getVectorX(), (int)vScreen.getVectorY(), false );
 
 	//Loads all the game assets
 	loadGame(iLives,vScreen,screen,screenTwo,beam,boss,healthIcon,player1,powerUp,target);
 
+	enum GAMESTATE { UPDATEGAME,UPDATELEVEL,DRAWGAME};
+	GAMESTATE currentState = UPDATEGAME;
+
 	//The game loop
 	while (!FrameworkUpdate() && iLives != -1)
 	{
-		//Clears the screen before the draw
-		ClearScreen();
-
-		//Checks if the game is paused, if not then update the game
-		if (!getUp())
-			updateGame(iLives,whatBullet,whatAI,whatExplosion,wave,vMouse,vScreen,pressTrigger,screen,screenTwo,beam,boss,healthIcon,player1,powerUp,target);
-
-		//if in the choose ship part then let the player choose what ship
-		updateLevel(iLives,iLives,vScreen,healthIcon,player1,powerUp);
-
-		//Draws all the sprites
-		drawGame(iLives,screen,screenTwo,beam,boss,healthIcon,player1,powerUp,target);
+		switch(currentState)
+		{
+		case UPDATEGAME:
+			if (!getUp())
+				updateGame(iLives,whatBullet,whatAI,whatExplosion,wave,vMouse,vScreen,pressTrigger,screen,screenTwo,beam,boss,healthIcon,player1,powerUp,target);
+			currentState = UPDATELEVEL;
+			break;
+		case UPDATELEVEL:
+			updateLevel(iLives,iLives,vScreen,healthIcon,player1,powerUp,vMouse,target);
+			currentState = DRAWGAME;
+			break;
+		case DRAWGAME:
+			ClearScreen();
+			drawGame(iLives,screen,screenTwo,beam,boss,healthIcon,player1,powerUp,target);
+			currentState = UPDATEGAME;
+			break;
+		}
 	};
 
 	//Deletes all the memory and data used
@@ -765,3 +975,20 @@ int main()
 
 	return 0;
 }
+//
+//The game loop
+// 	while (!FrameworkUpdate() && iLives != -1)
+// 	{
+// 		//Clears the screen before the draw
+// 		ClearScreen();
+// 
+// 		//Checks if the game is paused, if not then update the game
+// 		if (!getUp())
+// 			updateGame(iLives,whatBullet,whatAI,whatExplosion,wave,vMouse,vScreen,pressTrigger,screen,screenTwo,beam,boss,healthIcon,player1,powerUp,target);
+// 
+// 		//if in the choose ship part then let the player choose what ship
+// 		updateLevel(iLives,iLives,vScreen,healthIcon,player1,powerUp,vMouse,target);
+// 
+// 		//Draws all the sprites
+// 		drawGame(iLives,screen,screenTwo,beam,boss,healthIcon,player1,powerUp,target);
+// 	};

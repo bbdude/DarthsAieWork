@@ -68,15 +68,6 @@ void Bullet::setBulletAngle(Vector player,Vector vMouse)
 	position.vectorSetX(player.getVectorX());
 	position.vectorSetY(player.getVectorY());
 	alive = true;
-	//int distance = (int)sqrt((target.position.x-bullets.position.x)*(target.position.x-bullets.position.x) + (target.position.y-bullets.position.y)*(target.position.y-bullets.position.y));
-	//int distance = (int)sqrt(std::pow(target.position.x-bullets.position.x,2) + std::pow(target.position.y-bullets.position.y,2));
-	//int distancey = (int)sqrt(((target.position.y-bullets.position.y)^2));
-	//bullets.angle.x = (target.position.x-bullets.position.x)/distance;
-	//bullets.angle.y = (target.position.y-bullets.position.y)/distance;
-	//float a = std::atan2(target.position.x - bullets.position.x,target.position.y - bullets.position.y);
-	//bullet[whatBullet].angle.y = -1;
-	//bullets.angle.x = std::cos(a);
-	//bullets.angle.y = std::sin(a);
 	Vector angle;
 	angle.vectorSetX((vMouse.getVectorX()-position.getVectorX())/10);
 	angle.vectorSetY((vMouse.getVectorY()-position.getVectorY())/10);

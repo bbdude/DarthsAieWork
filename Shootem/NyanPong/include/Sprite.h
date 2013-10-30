@@ -1,18 +1,26 @@
+//////////////////////////////////////////////////////////////////////////
+//	@Author:	Jacob Miller
+//	@Date:	10/30/2013
+//	@Brief:	File for the Sprite class
+//  @Desc: Creates a Sprite that can be moved, drawn, and updated
+//////////////////////////////////////////////////////////////////////////
+
 #pragma once
 #ifndef SPRITE_H
 #define SPRITE_H
+
 #include "AIE.h"
 #include "KeyCodes.h"
 #include "MenuItems.h"
 #include "Vector.h"
 #include <string>
-#include <cmath>
-#include <assert.h>
-#include <crtdbg.h>
-#include <ctime>
 #include <iostream>
-#include <list>
 
+//////////////////////////////////////////////////////////////////////////
+/// <Sprite Class>
+///
+/// &Variables <Vector angle,bool alive,bool fire,int sprite,int width,int height,int invTimer,std::string tag,int time>
+//////////////////////////////////////////////////////////////////////////
 class Sprite
 {
 public:

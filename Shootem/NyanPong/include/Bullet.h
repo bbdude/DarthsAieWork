@@ -1,17 +1,25 @@
+//////////////////////////////////////////////////////////////////////////
+//	@Author:	Jacob Miller
+//	@Date:	10/30/2013
+//	@Brief:	File for the Bullet class
+//  @Desc: Creates a Bullet that can be moved, drawn, and updated
+//////////////////////////////////////////////////////////////////////////
 #pragma once
 #ifndef BULLET_H
 #define BULLET_H
+
+
 #include "AIE.h"
 #include "KeyCodes.h"
 #include "MenuItems.h"
 #include "Vector.h"
-#include <string>
-#include <cmath>
-#include <assert.h>
-#include <crtdbg.h>
-#include <ctime>
 #include <iostream>
-#include <list>
+
+//////////////////////////////////////////////////////////////////////////
+/// <Bullet Class>
+///
+/// &Variables <Vector position,Vector angle,bool alive,int sprite,int width,int height>
+//////////////////////////////////////////////////////////////////////////
 
 class Bullet
 {
