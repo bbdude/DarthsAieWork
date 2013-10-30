@@ -94,7 +94,7 @@ void Bullet::setBulletAngle(float playerx,float playery,Vector vMouse)
 		this->angle.vectorSetX(this->angle.getVectorX() * -1);
 	if (angle.getVectorY() < 0)
 		this->angle.vectorSetY(this->angle.getVectorY() * -1);
-	this->angle.vectorSet(this->angle.getVectorX()/1.5,this->angle.getVectorY()/1.5);
+	this->angle.vectorSet((float)(this->angle.getVectorX()/1.5),(float)(this->angle.getVectorY()/1.5));
 }
 void Bullet::loadBullet()
 {

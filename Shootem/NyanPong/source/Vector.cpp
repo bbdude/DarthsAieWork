@@ -69,3 +69,60 @@ void Vector::getNormal(){
 float Vector::getMagnitude(){
 	return sqrt(x*x + y*y);
 }
+
+void Vector::operator += (Vector change)
+{
+	x += change.x;
+	y += change.y;
+}
+void Vector::operator *= (Vector change)
+{
+	x *= change.x;
+	y *= change.y;
+}
+void Vector::operator *= (int change)
+{
+	x *= change;
+	y *= change;
+}
+void Vector::operator -= (Vector change)
+{
+	x -= change.x;
+	y -= change.y;
+}
+Vector Vector::operator - (Vector change)
+{
+	Vector temp;
+	temp.x = x;
+	temp.y = y;
+	temp.x -= change.x;
+	temp.y -= change.y;
+	return temp;
+}
+Vector Vector::operator + (Vector change)
+{
+	Vector temp;
+	temp.x = x;
+	temp.y = y;
+	temp.x += change.x;
+	temp.y += change.y;
+	return temp;
+}
+Vector Vector::operator + (int change)
+{
+	Vector temp;
+	temp.x = x;
+	temp.y = y;
+	temp.x += change;
+	temp.y += change;
+	return temp;
+}
+Vector Vector::operator - (int change)
+{
+	Vector temp;
+	temp.x = x;
+	temp.y = y;
+	temp.x -= change;
+	temp.y -= change;
+	return temp;
+}

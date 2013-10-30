@@ -16,18 +16,23 @@
 #include < GL/glew.h>
 #include <iostream>
 #include <time.h> 
+
+
 //////////////////////////////////////////////////////////////////////////
 /// <Generic moving object>
 ///
 /// <Used to move the 2 backgrounds in unison, no need for a class with a lot of data in it.>
+/// &Variables <Vector position,Vector speed,int sprite,int width,int height>
 //////////////////////////////////////////////////////////////////////////
 struct movableObject{
+public:
 	Vector position;
 	Vector speed;
 	int sprite;
 	int width;
 	int height;
 };
+
 //Declarations
 //////////////////////////////////////////////////////////////////////////
 /// <The array of bullets using the Bullet class>

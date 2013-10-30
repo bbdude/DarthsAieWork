@@ -9,6 +9,7 @@
 #include <iostream>
 #include "AIE.h"
 #include "KeyCodes.h"
+#include "Vector.h"
 #include <string>
 
 int getSprite(char choice);
@@ -19,3 +20,4 @@ std::string getTag();
 void endItems();
 bool getUp();
 void setUp(bool change);
+

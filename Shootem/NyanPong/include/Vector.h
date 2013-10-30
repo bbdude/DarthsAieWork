@@ -38,6 +38,15 @@ public:
 	void getNormal();
 	float getMagnitude();
 
+	void operator += (Vector change);
+	void operator *= (Vector change);
+	void operator *= (int change);
+	void operator -= (Vector change);
+	Vector operator - (Vector change);
+	Vector operator + (Vector change);
+	Vector operator + (int change);
+	Vector operator - (int change);
+
 	private:
 		float x,y;
 };
