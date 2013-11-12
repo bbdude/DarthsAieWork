@@ -234,6 +234,16 @@ void   Sprite::loadSprite(bool aAlive,bool aFire,int aWidth, int aHeight,std::st
 	if (y != NULL)
 		position.vectorSetY(y);
 }
+void   Sprite::loadSprite(Sprite sprite) const
+{
+	this->sprite = sprite.getSprite();
+	speed = sprite.getSpeed();
+	alive = sprite.getAlive();
+	width = sprite.getWidth();
+	height = sprite.getHeight();
+	std::string tag = sprite.getTag();
+	position = sprite.getPosition();
+}
 //////////////////////////////////////////////////////////////////////////
 /// <update the sprites posiition>
 ///

@@ -61,6 +61,7 @@ public:
 	void loadSprite();
 	void loadSprite(bool aAlive,bool aFire,int aWidth, int aHeight,int aInvTimer,std::string aTag,int aTime,float x,float y);
 	void loadSprite(bool aAlive,bool aFire,int aWidth, int aHeight,std::string aTag,int aTime,float x,float y) const;
+	void loadSprite(Sprite sprite) const;
 	void drawSprite();
 	void drawSprite() const;
 	void endSprite();

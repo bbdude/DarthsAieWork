@@ -50,7 +50,7 @@ std::list<Bullet> bullet_list;
 //Sprite monster[20];
 Sprite monster;
 std::list<Sprite> monster_list;
-int maxAI = 35;
+int maxAI = 20;
 //////////////////////////////////////////////////////////////////////////
 /// <Generates a certain enemy based on the functions parameters>
 ///
@@ -170,13 +170,13 @@ void sideLoadAI()
 		if (!monster_list.empty())
 			for ( cIter = monster_list.begin( ); cIter != monster_list.end( ); cIter++ )
 			{
-				if ((cIter->getAlive() || cIter->getPosition().getVectorY() < 0) && range >= 3)
+				if ((cIter->getAlive() || cIter->getPosition().getVectorY() < 0) && range >= maxAI/2)
 				{
 					range++;
 					cIter->loadSprite(true,false,cIter->getWidth(),cIter->getHeight(),cIter->getTag(),0,1260,(-20 + (50*range)));
 					cIter->setSpeed(0.5f,0.5f);
 				}
-				if (range >= 3)
+				if (range >= maxAI/2)
 					return;
 			}
 		break;
@@ -184,13 +184,13 @@ void sideLoadAI()
 		if (!monster_list.empty())
 			for ( cIter = monster_list.begin( ); cIter != monster_list.end( ); cIter++ )
 			{
-				if ((cIter->getAlive() || cIter->getPosition().getVectorY() < 0) && range >= 3)
+				if ((cIter->getAlive() || cIter->getPosition().getVectorY() < 0) && range >= maxAI/2)
 				{
 					range++;
 					cIter->loadSprite(true,false,cIter->getWidth(),cIter->getHeight(),cIter->getTag(),0,20,(-20 + (50*range)));
 					cIter->setSpeed(0.5f,0.5f);
 				}
-				if (range >= 3)
+				if (range >= maxAI/2)
 					return;
 			}
 		break;
@@ -198,13 +198,13 @@ void sideLoadAI()
 		if (!monster_list.empty())
 			for ( cIter = monster_list.begin( ); cIter != monster_list.end( ); cIter++ )
 			{
-				if ((cIter->getAlive() || cIter->getPosition().getVectorY() < 0) && range >= 3)
+				if ((cIter->getAlive() || cIter->getPosition().getVectorY() < 0) && range >= maxAI/2)
 				{
 					range++;
 					cIter->loadSprite(true,false,cIter->getWidth(),cIter->getHeight(),cIter->getTag(),0,(1260 - (rand() % 200)),(-20 + (50*range)));
 					cIter->setSpeed(0,0.6f);
 				}
-				if (range >= 3)
+				if (range >= maxAI/2)
 					return;
 			}
 		break;
@@ -212,13 +212,13 @@ void sideLoadAI()
 		if (!monster_list.empty())
 			for ( cIter = monster_list.begin( ); cIter != monster_list.end( ); cIter++ )
 			{
-				if ((cIter->getAlive() || cIter->getPosition().getVectorY() < 0) && range >= 3)
+				if ((cIter->getAlive() || cIter->getPosition().getVectorY() < 0) && range >= maxAI/2)
 				{
 					range++;
 					cIter->loadSprite(true,false,cIter->getWidth(),cIter->getHeight(),cIter->getTag(),0,((rand() % 200) + 100),(-20 + (50*range)));
 					cIter->setSpeed(0,0.6f);
 				}
-				if (range >= 3)
+				if (range >= maxAI/2)
 					return;
 			}
 		break;
@@ -242,29 +242,25 @@ void loadLevel(int level,Sprite &powerUp)
 	case 1:
 		{
 		int index = 0;
-		while (index != 10)
+		while (index != maxAI)
 		{
 			index++;
-			Sprite monsternew(false,false,20,20,0,"PINK",0,-200,-200);
-			if (index >= 3)
+			if (index <= 3)
 			{
-				monsternew.setPosition(50*index,50*index);
-				monsternew.setAlive(true);
+				Sprite monsternew(true,true,20,20,0,"PINK",0,50*index,50*index);
+				//monsternew.setSpeed((rand() % 5) - 2.5f,0.7f);
+				monsternew.setSpeed(0,0.7f);
+				monster_list.push_front(monsternew);
 			}
-			monsternew.setSpeed((rand() % 5) - 2.5f,0.7f);
+			else
+			{
+				Sprite monsternew(true,false,20,20,0,"PINK",0,-200,-200);
+				monsternew.setSpeed((rand() % 5) - 2.5f,0.7f);
+				monster_list.push_front(monsternew);
+			}
 
-			monster_list.push_front(monsternew);
 
-		}
-		//if (!monster_list.empty())
-			//for ( cIter = monster_list.begin( ); cIter != monster_list.end( ); cIter++ )
-			//{
-			//	if (cIter->getAlive() || cIter->getPosition().getVectorY() < 0)
-			//	{
-			//		cIter->loadSprite(false,NULL,20,20,NULL,"PINK",NULL,-200,-200);
-			//		cIter->setSpeed((rand() % 5) - 2.5f,0.7f);
-			//	}
-			//}
+			}
 		break;
 		}
 	case 2:
@@ -291,7 +287,7 @@ void loadWave(Sprite &obj,int wave,int &whatAI,Vector &vScreen)
 	std::list<Sprite>::const_iterator cIter;
 	int index = 0;
 	whatAI++;
-	if (whatAI >= 40)
+	if (whatAI >= maxAI)
 		whatAI = 0;
 	//////////////////////
 	cIter = monster_list.begin();
@@ -315,7 +311,6 @@ void loadWave(Sprite &obj,int wave,int &whatAI,Vector &vScreen)
 			default:
 				loadAIC(*cIter,4,vScreen);
 			}
-		cIter++;
 	}
 	switch(wave)
 	{
@@ -645,7 +640,8 @@ void updatePowerUp(Sprite &power, int &iLives,Vector &vScreen,Sprite &healthIcon
 /// @param  checks the enemies tag, checks if enemy collides, checks if boss collides,
 /// @return void
 //////////////////////////////////////////////////////////////////////////
-void updateAi(Sprite &monster,Sprite &power, int &iLives,int &whatAI,float &wave,Vector &vScreen,Sprite &beam,Boss &boss,Sprite &healthIcon,Sprite &player1,Sprite &powerUp){
+Sprite updateAiC(Sprite monsterr,Sprite &power, int &iLives,int &whatAI,float &wave,Vector &vScreen,Sprite &beam,Boss &boss,Sprite &healthIcon,Sprite &player1,Sprite &powerUp){
+	Sprite monster(monsterr);
 	if (monster.getAlive())
 	{
 		Vector plannedMovement;
@@ -696,175 +692,6 @@ void updateAi(Sprite &monster,Sprite &power, int &iLives,int &whatAI,float &wave
 				cIterTemp = cIter;
 				monster.setAlive(false);
 				bullet_list.erase(cIterTemp);
-				//(*cIter).setAlive(false);
-				loadWave(monster,(int) wave,whatAI,vScreen);
-				cIterAlive = false;
-				break;
-			}
-			if (cIterAlive)
-				if (!(*cIter).detectCollision((*cIter).getPosition(),boss.getPosition(),boss.getHeight(),boss.getWidth()))
-				{
-					cIterTemp = cIter;
-					boss.lowerHealth(2);
-					bullet_list.erase(cIterTemp);
-					//(*cIter).setAlive(false);
-					break;
-				}
-		}
-		}
-		catch(int e){}
-		if (!beam.detectCollisionA(boss.getPosition(),boss.getHeight(),boss.getWidth()))
-		{
-			boss.lowerHealth(0.01f);
-		}
-		if (moving && !stopIt)
-			monster.position.vectorAdd(plannedMovement);
-		else
-			monster.speed.multiplyScalarX(-1);
-	}
-	if (boss.getLaunch() && !monster.getAlive())
-	{
-		boss.setLaunch(false);
-		monster.setAlive(false);
-		loadAI(monster,rand()%4,vScreen);
-	}
-}
-void updateAiC(Sprite * monster,Sprite &power, int &iLives,int &whatAI,float &wave,Vector &vScreen,Sprite &beam,Boss &boss,Sprite &healthIcon,Sprite &player1,Sprite &powerUp){
-	if (monster->getAlive())
-	{
-		Vector plannedMovement;
-		plannedMovement.vectorAdd(monster->getSpeed());
-		bool moving = true;
-		bool stopIt = false;
-		if (monster->getTag() == "RED" && rand()%600 == 2)
-		{
-			monster->setSpeedY(20);
-		}
-		else if (monster->getTag() == "RED")
-		{
-			monster->setSpeedY(0);
-		}
-		if (monster->getPositionY() > vScreen.getVectorY())
-		{
-			wave += 0.1f;
-			loadWave(monster,(int)wave,whatAI,vScreen);
-		}
-		if (!player1.detectCollision(monster->getPosition(),monster->getHeight(),monster->getWidth()))
-		{
-			if (monster->getTag() == "GREEN" && power.getTag() != "FROZEN")
-			{
-				power.setTag("VENOM");
-				healthIcon.setSprite(CreateSprite( "./images/healthbarV.png", 50 * iLives, 25, true ));
-			}
-			monster->setAlive(false);
-			updateLives(powerUp,iLives,vScreen,healthIcon,player1);
-			loadWave(monster,(int)wave,whatAI,vScreen);
-		}
-		else if (!beam.detectCollisionA(monster->getPosition(),monster->getHeight(),monster->getWidth()))
-		{
-			monster->setAlive(false);
-			loadWave(monster,(int)wave,whatAI,vScreen);
-		}
-		if (monster->position.getVectorX() + plannedMovement.getVectorX() < 20 || monster->position.getVectorX() + plannedMovement.getVectorX() > 1260)
-			moving = false;
-		std::list<Bullet>::const_iterator cIter;
-		std::list<Bullet>::const_iterator cIterTemp;
-		try
-		{
-		if (!bullet_list.empty())
-		for ( cIter = bullet_list.begin( ); cIter != bullet_list.end( ); cIter++ )
-		{
-			bool cIterAlive = true;
- 			if(!(*cIter).detectCollision((*cIter).getPosition(),monster->position,monster->getHeight(),monster->getWidth()))
-			{
-				cIterTemp = cIter;
-				monster->setAlive(false);
-				bullet_list.erase(cIterTemp);
-				//(*cIter).setAlive(false);
-				loadWave(monster,(int) wave,whatAI,vScreen);
-				cIterAlive = false;
-				break;
-			}
-			if (cIterAlive)
-				if (!(*cIter).detectCollision((*cIter).getPosition(),boss.getPosition(),boss.getHeight(),boss.getWidth()))
-				{
-					cIterTemp = cIter;
-					boss.lowerHealth(2);
-					bullet_list.erase(cIterTemp);
-					//(*cIter).setAlive(false);
-					break;
-				}
-		}
-		}
-		catch(int e){}
-		if (!beam.detectCollisionA(boss.getPosition(),boss.getHeight(),boss.getWidth()))
-		{
-			boss.lowerHealth(0.01f);
-		}
-		if (moving && !stopIt)
-			monster->position.vectorAdd(plannedMovement);
-		else
-			monster->speed.multiplyScalarX(-1);
-	}
-	if (boss.getLaunch() && !monster->getAlive())
-	{
-		boss.setLaunch(false);
-		monster->setAlive(false);
-		loadAIC(monster,rand()%4,vScreen);
-	}
-}
-void updateAiC(Sprite monster,Sprite &power, int &iLives,int &whatAI,float &wave,Vector &vScreen,Sprite &beam,Boss &boss,Sprite &healthIcon,Sprite &player1,Sprite &powerUp){
-	if (monster.getAlive())
-	{
-		Vector plannedMovement;
-		plannedMovement.vectorAdd(monster.getSpeed());
-		bool moving = true;
-		bool stopIt = false;
-		if (monster.getTag() == "RED" && rand()%600 == 2)
-		{
-			monster.setSpeedY(20);
-		}
-		else if (monster.getTag() == "RED")
-		{
-			monster.setSpeedY(0);
-		}
-		if (monster.getPositionY() > vScreen.getVectorY())
-		{
-			wave += 0.1f;
-			loadWave(monster,(int)wave,whatAI,vScreen);
-		}
-		if (!player1.detectCollision(monster.getPosition(),monster.getHeight(),monster.getWidth()))
-		{
-			if (monster.getTag() == "GREEN" && power.getTag() != "FROZEN")
-			{
-				power.setTag("VENOM");
-				healthIcon.setSprite(CreateSprite( "./images/healthbarV.png", 50 * iLives, 25, true ));
-			}
-			monster.setAlive(false);
-			updateLives(powerUp,iLives,vScreen,healthIcon,player1);
-			loadWave(monster,(int)wave,whatAI,vScreen);
-		}
-		else if (!beam.detectCollisionA(monster.getPosition(),monster.getHeight(),monster.getWidth()))
-		{
-			monster.setAlive(false);
-			loadWave(monster,(int)wave,whatAI,vScreen);
-		}
-		if (monster.position.getVectorX() + plannedMovement.getVectorX() < 20 || monster.position.getVectorX() + plannedMovement.getVectorX() > 1260)
-			moving = false;
-		std::list<Bullet>::const_iterator cIter;
-		std::list<Bullet>::const_iterator cIterTemp;
-		try
-		{
-		if (!bullet_list.empty())
-		for ( cIter = bullet_list.begin( ); cIter != bullet_list.end( ); cIter++ )
-		{
-			bool cIterAlive = true;
- 			if(!(*cIter).detectCollision((*cIter).getPosition(),monster.position,monster.getHeight(),monster.getWidth()))
-			{
-				cIterTemp = cIter;
-				monster.setAlive(false);
-				bullet_list.erase(cIterTemp);
-				//(*cIter).setAlive(false);
 				loadWave(monster,(int) wave,whatAI,vScreen);
 				cIterAlive = false;
 				break;
@@ -896,9 +723,8 @@ void updateAiC(Sprite monster,Sprite &power, int &iLives,int &whatAI,float &wave
 		monster.setAlive(false);
 		loadAIC(monster,rand()%4,vScreen);
 	}
-	return;
+	return monster;
 }
-
 //////////////////////////////////////////////////////////////////////////
 /// <Updates the two moving screens>
 ///
@@ -1112,7 +938,7 @@ void updateGame(int &iLives,int &whatBullet, int &whatAI,float &wave,Vector &vMo
 			std::list<Sprite>::const_iterator cIter;
 			for ( cIter = monster_list.begin( ); cIter != monster_list.end( ); cIter++ )
 			{
-				updateAiC(*cIter,powerUp,iLives,whatAI,wave,vScreen,beam,boss,healthIcon,player1,powerUp);
+				cIter->loadSprite(updateAiC(*cIter,powerUp,iLives,whatAI,wave,vScreen,beam,boss,healthIcon,player1,powerUp));
 				if (cIter->getAlive())
 					cIter->updateSprite();
 			}
