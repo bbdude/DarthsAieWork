@@ -1,0 +1,20 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Screen Game", "Screen Game.vcxproj", "{A38B2D39-52E8-4B40-9B56-99E3332FE813}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A38B2D39-52E8-4B40-9B56-99E3332FE813}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A38B2D39-52E8-4B40-9B56-99E3332FE813}.Debug|Win32.Build.0 = Debug|Win32
+		{A38B2D39-52E8-4B40-9B56-99E3332FE813}.Release|Win32.ActiveCfg = Release|Win32
+		{A38B2D39-52E8-4B40-9B56-99E3332FE813}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
