@@ -50,7 +50,7 @@ std::list<Bullet> bullet_list;
 //Sprite monster[20];
 Sprite monster;
 std::list<Sprite> monster_list;
-int maxAI = 20;
+float maxAI = 10;
 //////////////////////////////////////////////////////////////////////////
 /// <Generates a certain enemy based on the functions parameters>
 ///
@@ -242,7 +242,7 @@ void loadLevel(int level,Sprite &powerUp)
 	case 1:
 		{
 		int index = 0;
-		while (index != maxAI)
+		while (index != maxAI + 20)
 		{
 			index++;
 			if (index <= 3)
@@ -658,6 +658,8 @@ Sprite updateAiC(Sprite monsterr,Sprite &power, int &iLives,int &whatAI,float &w
 		}
 		if (monster.getPositionY() > vScreen.getVectorY())
 		{
+			if (maxAI < 30)
+				maxAI += 0.5f;
 			wave += 0.1f;
 			loadWave(monster,(int)wave,whatAI,vScreen);
 		}
@@ -884,8 +886,12 @@ void updateLevel(int &level, int &iLives,Vector &vScreen,Sprite &healthIcon,Spri
 /// @return void
 //////////////////////////////////////////////////////////////////////////
 void updateGame(int &iLives,int &whatBullet, int &whatAI,float &wave,Vector &vMouse,Vector &vScreen,bool &pressTrigger,movableObject &screen,movableObject &screenTwo,Sprite &beam,Boss &boss,Sprite &healthIcon,Sprite &player1,Sprite &powerUp,Sprite &target) {
-	
-	if (iLives == 9)
+	if (iLives == 10)
+	{
+		MoveSprite(getSprite('W'),(int)vScreen.getVectorX()/2,(int)vScreen.getVectorY()/2);
+		//Win stuffs
+	}
+	else if (iLives == 9)
 	{
 		if ((IsKeyDown(GLFW_KEY_ENTER)) ||(vMouse.getVectorX() >= 100 && vMouse.getVectorX() <= 500 && vMouse.getVectorY() >= 50 && vMouse.getVectorY() <= 350 && GetMouseButtonDown(0))){
 			player1.setInv(0);
@@ -910,14 +916,21 @@ void updateGame(int &iLives,int &whatBullet, int &whatAI,float &wave,Vector &vMo
 	}
 	else
 	{
+		Vector vector;
+		vector.vectorSet(0,0);
 		bullet.updateBullet(bullet.getAngle(),bullet.getPosition(),bullet.getAlive(),bullet.getSprite());
 		if (!bullet_list.empty())
 		{
 			std::list<Bullet>::const_iterator cIter;
-			for ( cIter = bullet_list.begin( ); cIter != bullet_list.end( ); cIter++ )
+			for ( cIter = bullet_list.begin( ); cIter != bullet_list.end( ); )
 			{
 				cIter->updateBullet(cIter->getAngle(),cIter->getPosition(),cIter->getAlive(),cIter->getSprite());
 				MoveSprite(cIter->getSprite(),cIter->getPosition().getVectorX(),cIter->getPosition().getVectorY());
+				//if (cIter != bullet_list.rend())
+				if (cIter->getPosition().getVectorX() < 20 || cIter->getPosition().getVectorX()> vScreen.getVectorX() || cIter->getPosition().getVectorY() < 0 || cIter->getPosition().getVectorY()> vScreen.getVectorY())
+						cIter = bullet_list.erase(cIter);
+					else
+						cIter++;
 			}
 		}
 
@@ -931,8 +944,10 @@ void updateGame(int &iLives,int &whatBullet, int &whatAI,float &wave,Vector &vMo
 		boss.updateBoss();
 		boss.setPlayerPosition(player1.getPosition());
 		player1.updateSprite();
-		if(wave >= 3)
+		if(wave >= 10)
 			boss.moveWave();
+		if (wave > 30 && boss.getHealth() <= 0)
+			iLives = 10;
 		if (!monster_list.empty())
 		{
 			std::list<Sprite>::const_iterator cIter;
@@ -958,8 +973,11 @@ void updateGame(int &iLives,int &whatBullet, int &whatAI,float &wave,Vector &vMo
 void drawGame(int &iLives,movableObject &screen,movableObject &screenTwo,Sprite &beam,Boss &boss,Sprite &healthIcon,Sprite &player1,Sprite &powerUp,Sprite &target) {
 
 	target.drawSprite();
-
-	if (iLives == 9)
+	if (iLives == 10)
+	{
+		DrawSprite(getSprite('W'));
+	}
+	else if (iLives == 9)
 	{
 		DrawSprite(getSprite('P'));
 		DrawSprite(getSprite('E'));
